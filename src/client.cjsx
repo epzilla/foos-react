@@ -25,22 +25,17 @@ Header = React.createClass
 
 Home = React.createClass
   render: ->
-    <div className="column">
-      <div className="ui segment">
-        <h1 className="ui header">
-          <span>Get to work!</span>
-          <div className="sub header">
-            Make sure to check out README.md for development notes.
+    <div className="row">
+      <div className="column">
+        <div className="ui segment">
+          <h1 className="ui header center aligned">Good News, Everyone!</h1>
+          <h3 className="ui header center aligned">The table is open.</h3>
+          <img src="images/professor.jpg" className="ui image large centered" />
+          <div className="ui align-center padding-top-1em">
+            <button className="ui large blue button center aligned">Start New Match</button>
           </div>
-        </h1>
-      </div>
-    </div>
-
-About = React.createClass
-  render: ->
-    <div className="column">
-      <div className="ui segment">
-        <h4 className="ui black header">This is the about page.</h4>
+          <div className="ui clearing section divider"></div>
+        </div>
       </div>
     </div>
 
@@ -48,7 +43,7 @@ Main = React.createClass
   render: ->
     <div>
       <Header/>
-      <div className="ui page grid">
+      <div className="ui padded grid">
         <@props.activeRouteHandler/>
       </div>
     </div>

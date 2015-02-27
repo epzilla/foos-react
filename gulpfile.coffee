@@ -70,6 +70,7 @@ gulp.task 'clean', ->
 
 gulp.task 'copy', ->
   gulp.src("#{src_path}/*.html").pipe(gulp.dest(dist_path))
+  gulp.src("#{src_path}/images/**").pipe(gulp.dest("#{dist_path}/images/"))
   gulp.src("#{src_path}/favicon.ico").pipe(gulp.dest(dist_path))
   gulp.src("#{semantic_path}/themes/default/assets/**/*").pipe(gulp.dest("#{dist_path}/themes/default/assets/"))
 
