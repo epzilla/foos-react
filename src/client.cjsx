@@ -28,8 +28,8 @@ Home = React.createClass
     <div className="row">
       <div className="column">
         <div className="ui segment">
-          <h1 className="ui header center aligned">Good News, Everyone!</h1>
-          <h3 className="ui header center aligned">The table is open.</h3>
+          <h1 className="ui huge header center aligned">Good News, Everyone!</h1>
+          <h3 className="ui huge header center aligned">The table is open.</h3>
           <img src="images/professor.jpg" className="ui image large centered" />
           <div className="ui align-center padding-top-1em">
             <button className="ui large blue button center aligned">Start New Match</button>

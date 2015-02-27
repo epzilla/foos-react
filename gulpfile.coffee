@@ -6,9 +6,9 @@ plumber = require 'gulp-plumber'
 gwebpack = require 'gulp-webpack'
 less = require 'gulp-less'
 postcss = require 'gulp-postcss'
+open = require 'gulp-open'
 autoprefixer = require 'autoprefixer-core'
 rimraf = require 'rimraf'
-
 src_path = "src"
 components_path = "bower_components"
 modules_path = "node_modules"
@@ -65,6 +65,14 @@ gulp.task 'css', ->
   .pipe(postcss([autoprefixer(browsers: ["last 2 versions", "ie 8", "ie 9"])]))
   .pipe(gulp.dest(dist_path))
 
+openFunc = ->
+  gulp.src('./dist/index.html').pipe open('',
+    url: 'http://localhost:3000'
+    app: 'google chrome')
+
+gulp.task 'open', ->
+  setTimeout openFunc, 5000
+
 gulp.task 'clean', ->
   rimraf.sync(dist_path)
 
@@ -84,7 +92,7 @@ gulp.task 'server', ->
     env:
       PORT: process.env.PORT or 3000
 
-gulp.task 'default', ['clean', 'copy', 'css', 'server', 'js-dev', 'watch']
+gulp.task 'default', ['clean', 'copy', 'css', 'server', 'js-dev', 'watch', 'open']
 
 gulp.task 'watch', ['copy'], ->
   livereload.listen()
