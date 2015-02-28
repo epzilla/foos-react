@@ -30,7 +30,7 @@ webpack = (name, ext, watch) ->
       sourceMapFilename: "[file].map"
     resolve:
       extensions: ["", ".webpack.js", ".web.js", ".js", ".jsx", ".coffee", ".cjsx"]
-      modulesDirectories: [components_path, modules_path]
+      modulesDirectories: [components_path, modules_path, src_path]
     module:
       loaders: [
         {
@@ -47,7 +47,7 @@ webpack = (name, ext, watch) ->
         }
       ]
 
-  gulp.src("#{src_path}/#{name}.#{ext}")
+  gulp.src("#{src_path}/**/#{name}.#{ext}")
   .pipe(gwebpack(options))
   .pipe(gulp.dest(dist_path))
 
@@ -58,14 +58,14 @@ gulp.task "js", -> js(false)
 gulp.task "js-dev", -> js(true)
 
 gulp.task "css", ->
-  gulp.src("#{src_path}/styles.less")
+  gulp.src("#{src_path}/styles/styles.less")
   .pipe(plumber())
   .pipe(less(
     paths: [components_path, modules_path]
   ))
   .on("error", err)
   .pipe(postcss([autoprefixer(browsers: ["last 2 versions", "ie 8", "ie 9"])]))
-  .pipe(gulp.dest(dist_path))
+  .pipe(gulp.dest("#{dist_path}/styles"))
 
 gulp.task "usemin", ->
   gulp.src("#{dist_path}/index.html").pipe(usemin(
