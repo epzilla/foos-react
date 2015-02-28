@@ -1,15 +1,17 @@
-gulp = require 'gulp'
-gutil = require 'gulp-util'
-livereload = require 'gulp-livereload'
-nodemon = require 'gulp-nodemon'
-plumber = require 'gulp-plumber'
-gwebpack = require 'gulp-webpack'
-less = require 'gulp-less'
-postcss = require 'gulp-postcss'
-open = require 'gulp-open'
-autoprefixer = require 'autoprefixer-core'
-rimraf = require 'rimraf'
+gulp = require "gulp"
+gutil = require "gulp-util"
+livereload = require "gulp-livereload"
+nodemon = require "gulp-nodemon"
+plumber = require "gulp-plumber"
+gwebpack = require "gulp-webpack"
+less = require "gulp-less"
+postcss = require "gulp-postcss"
+open = require "gulp-open"
+autoprefixer = require "autoprefixer-core"
+rimraf = require "rimraf"
 src_path = "src"
+usemin = require "gulp-usemin"
+uglify = require "gulp-uglify"
 components_path = "bower_components"
 modules_path = "node_modules"
 semantic_path = "#{modules_path}/semantic-ui/dist"
@@ -51,51 +53,57 @@ webpack = (name, ext, watch) ->
 
 
 js = (watch) -> webpack("client", "cjsx", watch)
-gulp.task 'js', -> js(false)
+gulp.task "js", -> js(false)
 
-gulp.task 'js-dev', -> js(true)
+gulp.task "js-dev", -> js(true)
 
-gulp.task 'css', ->
+gulp.task "css", ->
   gulp.src("#{src_path}/styles.less")
   .pipe(plumber())
   .pipe(less(
     paths: [components_path, modules_path]
   ))
-  .on('error', err)
+  .on("error", err)
   .pipe(postcss([autoprefixer(browsers: ["last 2 versions", "ie 8", "ie 9"])]))
   .pipe(gulp.dest(dist_path))
 
-openFunc = ->
-  gulp.src('./dist/index.html').pipe open('',
-    url: 'http://localhost:3000'
-    app: 'google chrome')
+gulp.task "usemin", ->
+  gulp.src("#{dist_path}/index.html").pipe(usemin(
+    js: [
+      uglify()
+    ])).pipe gulp.dest("#{dist_path}")
 
-gulp.task 'open', ->
+openFunc = ->
+  gulp.src("./dist/index.html").pipe open("",
+    url: "http://localhost:3000"
+    app: "google chrome")
+
+gulp.task "open", ->
   setTimeout openFunc, 5000
 
-gulp.task 'clean', ->
+gulp.task "clean", ->
   rimraf.sync(dist_path)
 
-gulp.task 'copy', ->
+gulp.task "copy", ->
   gulp.src("#{src_path}/*.html").pipe(gulp.dest(dist_path))
   gulp.src("#{src_path}/images/**").pipe(gulp.dest("#{dist_path}/images/"))
   gulp.src("#{src_path}/favicon.ico").pipe(gulp.dest(dist_path))
   gulp.src("#{semantic_path}/themes/default/assets/**/*").pipe(gulp.dest("#{dist_path}/themes/default/assets/"))
 
-gulp.task 'build', ['clean', 'copy', 'css', 'js']
+gulp.task "build", ["clean", "copy", "css", "js"]
 
 server_main = "#{src_path}/server.coffee"
-gulp.task 'server', ->
+gulp.task "server", ->
   nodemon
     script: server_main
     watch: [server_main]
     env:
       PORT: process.env.PORT or 3000
 
-gulp.task 'default', ['clean', 'copy', 'css', 'server', 'js-dev', 'watch', 'open']
+gulp.task "default", ["clean", "copy", "css", "server", "js-dev", "usemin", "watch", "open"]
 
-gulp.task 'watch', ['copy'], ->
+gulp.task "watch", ["copy"], ->
   livereload.listen()
-  gulp.watch(["#{dist_path}/**/*"]).on('change', livereload.changed)
-  gulp.watch ["#{src_path}/**/*.less"], ['css']
-  gulp.watch ["#{src_path}/**/*.html"], ['copy']
+  gulp.watch(["#{dist_path}/**/*"]).on("change", livereload.changed)
+  gulp.watch ["#{src_path}/**/*.less"], ["css"]
+  gulp.watch ["#{src_path}/**/*.html"], ["copy"]

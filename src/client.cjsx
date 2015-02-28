@@ -3,6 +3,7 @@ require('semantic-ui/dist/semantic')
 React = require('react/addons')
 Router = require('react-router')
 Stats = require('./stats.cjsx')
+qwest = require('qwest')
 {Routes, Route, DefaultRoute, Link} = Router
 
 Header = React.createClass
@@ -24,20 +25,60 @@ Header = React.createClass
     </div>
 
 Home = React.createClass
+  getInitialState: ->
+    qwest.get '/api/teams'
+      .then( (response) ->
+        return {
+          data: []
+        }
+      )
+
+  componentDidMount:  ->
+    qwest.get '/api/matches/current'
+      .then( (response) =>
+        if @isMounted()
+          console.log response
+          @setState(
+            currentMatch: response
+          )
+        return
+      )
+
   render: ->
-    <div className="row">
-      <div className="column">
-        <div className="ui segment">
-          <h1 className="ui huge header center aligned">Good News, Everyone!</h1>
-          <h3 className="ui huge header center aligned">The table is open.</h3>
-          <img src="images/professor.jpg" className="ui image large centered" />
-          <div className="ui align-center padding-top-1em">
-            <button className="ui large blue button center aligned">Start New Match</button>
+    match = this.state.currentMatch
+    
+    if match and match.active
+      <div className="row">
+        <div className="column">
+          <div className="ui segment">
+            <h1 className="ui huge header center aligned">Bad News, Everyone!</h1>
+            <h3 className="ui huge header center aligned">The table is taken.</h3>
+            <img src="images/professor.jpg" className="ui image large centered" />
+            <div className="ui align-center padding-top-1em">
+              <Link className="ui large blue button center aligned" to="newMatch">
+                Start New Match
+              </Link>
+            </div>
+            <div className="ui clearing section divider"></div>
           </div>
-          <div className="ui clearing section divider"></div>
         </div>
       </div>
-    </div>
+    else
+      <div className="row">
+        <div className="column">
+          <div className="ui segment">
+            <h1 className="ui huge header center aligned">Good News, Everyone!</h1>
+            <h3 className="ui huge header center aligned">The table is open.</h3>
+            <img src="images/professor.jpg" className="ui image large centered" />
+            <div className="ui align-center padding-top-1em">
+              <Link className="ui large blue button center aligned" to="newMatch">
+                Start New Match
+              </Link>
+            </div>
+            <div className="ui clearing section divider"></div>
+          </div>
+        </div>
+      </div>
 
 Main = React.createClass
   render: ->
@@ -48,11 +89,18 @@ Main = React.createClass
       </div>
     </div>
 
+NewMatch = React.createClass
+  render: ->
+    <div>
+      <h2>Crikey!</h2>
+    </div>
+
 routes =
   <Routes location="history">
     <Route path="/" handler={Main}>
       <DefaultRoute name="home" handler={Home}/>
       <Route name="stats" handler={Stats}/>
+      <Route name="newMatch" handler={NewMatch}/>
     </Route>
   </Routes>
 
