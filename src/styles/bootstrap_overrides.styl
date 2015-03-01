@@ -1,0 +1,59 @@
+@import 'variables'
+
+.navbar
+  ul
+   li
+     a.active
+       background-color #52CDAC
+
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus
+  background-color #52CDAC
+  color white
+
+.navbar-collapse
+  &.collapse
+    display block!important
+
+.navbar-default
+  background-color snappyBlue
+  .navbar-brand
+    color snappyBlue
+    padding 5px 5px
+    img
+      border 2px solid white
+  .navbar-toggle
+    border-color whitesmoke
+  .navbar-nav
+    & > li
+      & > a
+        color white
+        font-size 18px
+
+.btn-primary
+  background-color snappyBlue
+  border-color #0294B8
+
+.btn-primary.active, .btn-primary.focus, .btn-primary:active, .btn-primary:focus, .btn-primary:hover, .open>.dropdown-toggle.btn-primary
+  color white
+  background-color #0097BD
+  border-color #204d74
+
+@media (max-width: 768px)
+  .navbar-nav
+    float left !important
+    margin 5px 50px
+
+  .navbar-nav>li
+    float left !important
+  
+  .container > .navbar-header, .container-fluid > .navbar-header, .container > .navbar-collapse, .container-fluid > .navbar-collapse
+    display inline-block
+    float left
+
+.navbar-nav
+  &.navbar-right
+    &:last-child
+      margin-right -15px !important
+
+.navbar-right
+  float right!important
