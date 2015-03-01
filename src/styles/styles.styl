@@ -1,10 +1,16 @@
 @import '../../bower_components/bootstrap/dist/css/bootstrap.css'
+@import url('http://fonts.googleapis.com/css?family=Lato:300,400,700,900,400italic')
+
+snappyBlue = #00ADD8
+tailsYellow = rgb(255, 232, 0)
+mainFont = 'Lato', 'Helvetica Neue', HelveticaNeue, Helvetica, Arial, sans-serif
 
 *
   box-sizing border-box
 
 body
   padding-top 60px
+  font-family mainFont
 
 .align-center
   text-align center
@@ -16,17 +22,39 @@ body
   ul
    li
      a.active
-       background-color #ccc
-
-.navbar-brand
-  padding 5px 5px
+       background-color #52CDAC
 
 .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus
-  background-color #ccc
+  background-color #52CDAC
+  color white
 
 .navbar-collapse
   &.collapse
     display block!important
+
+.navbar-default
+  background-color snappyBlue
+  .navbar-brand
+    color snappyBlue
+    padding 5px 5px
+    img
+      border 2px solid white
+  .navbar-toggle
+    border-color whitesmoke
+  .navbar-nav
+    & > li
+      & > a
+        color white
+        font-size 18px
+
+.btn-primary
+  background-color snappyBlue
+  border-color #0294B8
+
+.btn-primary.active, .btn-primary.focus, .btn-primary:active, .btn-primary:focus, .btn-primary:hover, .open>.dropdown-toggle.btn-primary
+  color white
+  background-color #0097BD
+  border-color #204d74
 
 @media (max-width: 768px)
   .navbar-nav
