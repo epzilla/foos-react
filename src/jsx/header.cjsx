@@ -4,18 +4,24 @@ Router = require('react-router')
 
 module.exports = React.createClass
   render: ->
-    <div className="ui blue inverted menu">
-      <div className="ui page grid">
-        <div className="column" style={"padding-bottom": 0}>
-          <div className="title item">
-            <b>SnappyFoos</b>
-          </div>
-          <Link className="item" to="home">
-            Home
-          </Link>
-          <Link className="item" to="stats">
-            Stats
-          </Link>
+    <nav className="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div className="container">
+        <div className="navbar-header">
+          <a className="navbar-brand" href="#">
+            <img className="img img-rounded" src="images/snappy-foos.jpg" width="40" height="40" />
+          </a>
         </div>
+        <ul className="nav navbar-nav">
+          <li>
+            <Link to="home">
+              Home
+            </Link>
+          </li>
+          <li>
+            <Link to="stats">
+              Stats
+            </Link>
+          </li>
+        </ul>
       </div>
-    </div>
+    </nav>
