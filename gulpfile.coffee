@@ -4,7 +4,7 @@ livereload = require "gulp-livereload"
 nodemon = require "gulp-nodemon"
 plumber = require "gulp-plumber"
 gwebpack = require "gulp-webpack"
-less = require "gulp-less"
+stylus = require "gulp-stylus"
 postcss = require "gulp-postcss"
 open = require "gulp-open"
 autoprefixer = require "autoprefixer-core"
@@ -58,11 +58,9 @@ gulp.task "js", -> js(false)
 gulp.task "js-dev", -> js(true)
 
 gulp.task "css", ->
-  gulp.src("#{src_path}/styles/styles.less")
+  gulp.src("#{src_path}/styles/styles.styl")
   .pipe(plumber())
-  .pipe(less(
-    paths: [components_path, modules_path]
-  ))
+  .pipe(stylus())
   .on("error", err)
   .pipe(postcss([autoprefixer(browsers: ["last 2 versions", "ie 8", "ie 9"])]))
   .pipe(gulp.dest("#{dist_path}/styles"))
@@ -88,7 +86,7 @@ gulp.task "copy", ->
   gulp.src("#{src_path}/*.html").pipe(gulp.dest(dist_path))
   gulp.src("#{src_path}/images/**").pipe(gulp.dest("#{dist_path}/images/"))
   gulp.src("#{src_path}/favicon.ico").pipe(gulp.dest(dist_path))
-  gulp.src("#{semantic_path}/themes/default/assets/**/*").pipe(gulp.dest("#{dist_path}/themes/default/assets/"))
+  gulp.src("#{components_path}/**/*").pipe(gulp.dest("#{dist_path}/#{components_path}"))
 
 gulp.task "build", ["clean", "copy", "css", "js"]
 
@@ -105,5 +103,5 @@ gulp.task "default", ["clean", "copy", "css", "server", "js-dev", "usemin", "wat
 gulp.task "watch", ["copy"], ->
   livereload.listen()
   gulp.watch(["#{dist_path}/**/*"]).on("change", livereload.changed)
-  gulp.watch ["#{src_path}/**/*.less"], ["css"]
+  gulp.watch ["#{src_path}/**/*.styl"], ["css"]
   gulp.watch ["#{src_path}/**/*.html"], ["copy"]

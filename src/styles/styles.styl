@@ -1,0 +1,52 @@
+@import '../../bower_components/bootstrap/dist/css/bootstrap.css'
+
+*
+  box-sizing border-box
+
+body
+  padding-top 60px
+
+.align-center
+  text-align center
+
+.padding-top-1em
+  padding-top 1em
+
+.navbar
+  ul
+   li
+     a.active
+       background-color #ccc
+
+.navbar-brand
+  padding 5px 5px
+
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus
+  background-color #ccc
+
+.navbar-collapse
+  &.collapse
+    display block!important
+
+@media (max-width: 768px)
+  .navbar-nav
+    float left !important
+    margin 5px 50px
+
+  .navbar-nav>li
+    float left !important
+  
+  .container > .navbar-header, .container-fluid > .navbar-header, .container > .navbar-collapse, .container-fluid > .navbar-collapse
+    display inline-block
+    float left
+
+.navbar-nav
+  &.navbar-right
+    &:last-child
+      margin-right -15px !important
+
+.navbar-right
+  float right!important
+  
+.margin-centered
+  margin 0 auto
