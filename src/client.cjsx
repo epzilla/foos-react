@@ -1,5 +1,5 @@
 window.$ = window.jQuery = require('jquery')
-require('semantic-ui/dist/semantic')
+require('bootstrap')
 React = require('react/addons')
 Router = require('react-router')
 Stats = require('jsx/stats')
@@ -13,7 +13,7 @@ Main = React.createClass
   render: ->
     <div>
       <Header/>
-      <div className="ui padded grid">
+      <div className="container">
         <@props.activeRouteHandler/>
       </div>
     </div>
