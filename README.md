@@ -7,4 +7,5 @@ Foos React
   * ~~Better modularization~~
 * ~~Port server-side code over from old foos project~~
 * ~~Implement Flux~~
+* Get Sockets set up and working
 * Implement the rest! :)
