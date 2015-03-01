@@ -1,12 +1,12 @@
-window.$ = window.jQuery = require('jquery')
-require('bootstrap')
-React = require('react/addons')
-Router = require('react-router')
-Stats = require('jsx/stats')
-Header = require('jsx/header')
-Home = require('jsx/home')
-NewMatch = require('jsx/new-match')
-Rest = require('scripts/rest')
+window.$ = window.jQuery = require 'jquery'
+require 'bootstrap'
+React = require 'react/addons'
+Router = require 'react-router'
+Stats = require 'scripts/components/stats'
+Header = require 'scripts/components/header'
+Home = require 'scripts/components/home'
+NewMatch = require 'scripts/components/new-match'
+API = require 'scripts/utils/api'
 {Routes, Route, DefaultRoute, Link} = Router
 
 Main = React.createClass
@@ -27,4 +27,6 @@ routes =
     </Route>
   </Routes>
 
-$ -> React.renderComponent(routes, document.body)
+$ -> 
+  API.getHomeData()
+  React.renderComponent(routes, document.body)

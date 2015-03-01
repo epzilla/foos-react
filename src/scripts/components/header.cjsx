@@ -1,5 +1,5 @@
-React = require('react/addons')
-Router = require('react-router')
+React = require 'react/addons'
+Router = require 'react-router'
 {Link} = Router
 
 module.exports = React.createClass

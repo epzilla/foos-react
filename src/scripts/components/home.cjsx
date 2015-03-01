@@ -1,24 +1,24 @@
-React = require('react/addons')
-Router = require('react-router')
-Rest = require('scripts/rest')
+React = require 'react/addons'
+Router = require 'react-router'
+Rest = require 'scripts/utils/rest-service'
 {Link} = Router
+MatchStore = require 'scripts/stores/match-store'
 
-module.exports = React.createClass
+getMatchState = ->
+  {
+    currentMatch: MatchStore.getCurrentMatch()
+    recentMatches: MatchStore.getRecentMatches()
+  }
+
+Home = React.createClass
   getInitialState: ->
-    currentMatch: []
-    recentMatches: []
+    getMatchState()
 
   componentDidMount:  ->
-    Promise.all [Rest.get('/api/matches/current'), Rest.get('/api/matches/recent')]
-      .then( (response) =>
-        if @isMounted()
-          @setState(
-            currentMatch: response[0]
-            recentMatches: response[1]
-          )
-        console.log _this.state
-        return
-      )
+    MatchStore.addChangeListener this._onChange
+
+  componentWillUnmount: ->
+    MatchStore.removeChangeListener this._onChange
 
   render: ->
     match = this.state.currentMatch
@@ -55,3 +55,10 @@ module.exports = React.createClass
           </div>
         </div>
       </div>
+
+  _onChange: ->
+    @setState getMatchState()
+    console.log this.state
+    return
+
+module.exports = Home

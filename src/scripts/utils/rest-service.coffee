@@ -1,6 +1,7 @@
-qwest = require('qwest')
+qwest = require 'qwest'
 
 module.exports = 
+  
   get: (url) ->
     qwest.get(url, null, {responseType: 'json'})
 
