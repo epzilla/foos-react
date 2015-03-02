@@ -3,6 +3,7 @@ Router = require 'react-router'
 Rest = require 'scripts/utils/rest-service'
 {Link} = Router
 MatchStore = require 'scripts/stores/match-store'
+Recents = require 'scripts/components/recents'
 
 getMatchState = ->
   {
@@ -22,39 +23,47 @@ Home = React.createClass
 
   render: ->
     match = this.state.currentMatch
-    
+    jumbotron = null
+
     if match and match.active
-      <div className="row">
-        <div className="col-md-12">
-          <div className="jumbotron text-center">
-            <h1>Bad News, Everyone!</h1>
-            <h3>The table is taken.</h3>
-            <img className="img img-responsive margin-centered" src="images/professor.jpg" />
-            <div className="text-center padding-top-1em">
-              <Link className="btn btn-lg btn-primary" to="newMatch">
-                Start New Match
-              </Link>
+      jumbotron = 
+        <div className="row">
+          <div className="col-md-12">
+            <div className="jumbotron text-center">
+              <h1>Bad News, Everyone!</h1>
+              <h3>The table is taken.</h3>
+              <img className="img img-responsive margin-centered" src="images/professor.jpg" />
+              <div className="text-center pad-top-1em">
+                <Link className="btn btn-lg btn-primary" to="newMatch">
+                  Start New Match
+                </Link>
+              </div>
+              <hr/>
             </div>
-            <hr/>
           </div>
         </div>
-      </div>
     else
-      <div className="row">
-        <div className="col-md-12">
-          <div className="jumbotron text-center">
-            <h1>Good News, Everyone!</h1>
-            <h3>The table is open.</h3>
-            <img className="img img-responsive margin-centered" src="images/professor.jpg" />
-            <div className="text-center padding-top-1em">
-              <Link className="btn btn-lg btn-primary" to="newMatch">
-                Start New Match
-              </Link>
+      jumbotron =
+        <div className="row">
+          <div className="col-md-12">
+            <div className="jumbotron text-center">
+              <h1>Good News, Everyone!</h1>
+              <h3>The table is open.</h3>
+              <img className="img img-responsive margin-centered" src="images/professor.jpg" />
+              <div className="text-center pad-top-1em">
+                <Link className="btn btn-lg btn-primary" to="newMatch">
+                  Start New Match
+                </Link>
+              </div>
+              <hr />
             </div>
-            <hr />
           </div>
         </div>
-      </div>
+
+    <div>
+      <section>{jumbotron}</section>
+      <Recents recents={this.state.recentMatches}/>
+    </div>
 
   _onChange: ->
     @setState getMatchState()

@@ -17,6 +17,13 @@ module.exports =
     )
     return
 
+  receiveScoreUpdate: (data) ->
+    Dispatcher.handleServerAction(
+      type: ActionTypes.RECEIVE_SCORE_UPDATE
+      data: data
+    )
+    return
+
   receiveRecentMatches: (data) ->
     Dispatcher.handleServerAction(
       type: ActionTypes.RECEIVE_RECENT_MATCHES
