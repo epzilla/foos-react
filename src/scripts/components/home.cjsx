@@ -4,6 +4,7 @@ Rest = require 'scripts/utils/rest-service'
 {Link} = Router
 MatchStore = require 'scripts/stores/match-store'
 Recents = require 'scripts/components/recents'
+Scoreboard = require 'scripts/components/scoreboard'
 
 getMatchState = ->
   {
@@ -27,21 +28,7 @@ Home = React.createClass
 
     if match and match.active
       jumbotron = 
-        <div className="row">
-          <div className="col-md-12">
-            <div className="jumbotron text-center">
-              <h1>Bad News, Everyone!</h1>
-              <h3>The table is taken.</h3>
-              <img className="img img-responsive margin-centered" src="images/professor.jpg" />
-              <div className="text-center pad-top-1em">
-                <Link className="btn btn-lg btn-primary" to="newMatch">
-                  Start New Match
-                </Link>
-              </div>
-              <hr/>
-            </div>
-          </div>
-        </div>
+        <Scoreboard match={match}/>
     else
       jumbotron =
         <div className="row">
@@ -55,13 +42,13 @@ Home = React.createClass
                   Start New Match
                 </Link>
               </div>
-              <hr />
             </div>
           </div>
         </div>
 
     <div>
       <section>{jumbotron}</section>
+      <hr />
       <Recents recents={this.state.recentMatches}/>
     </div>
 
