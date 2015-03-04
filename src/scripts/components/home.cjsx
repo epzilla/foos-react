@@ -4,12 +4,14 @@ Rest = require 'scripts/utils/rest-service'
 {Link} = Router
 MatchStore = require 'scripts/stores/match-store'
 Recents = require 'scripts/components/recents'
+SeriesHistory = require 'scripts/components/series'
 Scoreboard = require 'scripts/components/scoreboard'
 
 getMatchState = ->
   {
     currentMatch: MatchStore.getCurrentMatch()
     recentMatches: MatchStore.getRecentMatches()
+    seriesHistory: MatchStore.getSeriesHistory()
   }
 
 Home = React.createClass
@@ -24,18 +26,23 @@ Home = React.createClass
 
   render: ->
     match = this.state.currentMatch
-    jumbotron = null
+    series = undefined
 
     if match and match.active
-      jumbotron = 
+      jumbotron =
         <Scoreboard match={match}/>
+      series =
+        <div>
+          <SeriesHistory series={@state.seriesHistory}/>
+          <hr />
+        </div>
     else
       jumbotron =
         <div className="row">
           <div className="col-md-12">
             <div className="jumbotron text-center">
-              <h1>Good News, Everyone!</h1>
-              <h3>The table is open.</h3>
+              <h1>Good news, everyone!</h1>
+              <p>The table is open.</p>
               <img className="img img-responsive margin-centered" src="images/professor.jpg" />
               <div className="text-center pad-top-1em">
                 <Link className="btn btn-lg btn-primary" to="newMatch">
@@ -49,6 +56,7 @@ Home = React.createClass
     <div>
       <section>{jumbotron}</section>
       <hr />
+      {series}
       <Recents recents={this.state.recentMatches}/>
     </div>
 

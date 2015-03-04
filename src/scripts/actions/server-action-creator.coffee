@@ -1,7 +1,7 @@
 Dispatcher = require 'scripts/dispatcher/app-dispatcher'
 ActionTypes = require('scripts/constants/constants').ActionTypes
 
-module.exports = 
+module.exports =
 
   receiveHomeData: (data) ->
     Dispatcher.handleServerAction(
@@ -13,6 +13,13 @@ module.exports =
   receiveCurrentMatch: (data) ->
     Dispatcher.handleServerAction(
       type: ActionTypes.RECEIVE_CURRENT_MATCH
+      data: data
+    )
+    return
+
+  receiveSeriesHistory: (data) ->
+    Dispatcher.handleServerAction(
+      type: ActionTypes.RECEIVE_SERIES_HISTORY
       data: data
     )
     return

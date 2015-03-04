@@ -1,12 +1,13 @@
 keyMirror = require 'keymirror'
 
-module.exports = 
+module.exports =
 
   ActionTypes: keyMirror(
     RECEIVE_HOME_DATA: null
     RECEIVE_CURRENT_MATCH: null
     RECEIVE_RECENT_MATCHES: null
     RECEIVE_SCORE_UPDATE: null
+    RECEIVE_SERIES_HISTORY: null
   )
 
   PayloadSources: keyMirror(

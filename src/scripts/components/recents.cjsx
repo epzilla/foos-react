@@ -23,7 +23,7 @@ module.exports = React.createClass
     <section id="recent-matches" className="recent-matches row pad-bottom-1em">
       <div className="row">
         <div className="col-xs-12">
-          <h3 className="underline text-center">Recent Matches</h3>
+          <h2 className="underline text-center">Recent Matches</h2>
         </div>
       </div>
       <div className="row">
