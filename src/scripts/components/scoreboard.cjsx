@@ -1,8 +1,10 @@
 React = require 'react/addons'
+TimeAgo = require './time-ago'
+moment = require 'moment'
+cx = React.addons.classSet
 
 GameNum = React.createClass
   render: ->
-    cx = React.addons.classSet
     current = true if @props.gameNum is @props.currentGame
     classes = cx(
       'no-pad-xs': true
@@ -16,50 +18,50 @@ GameNum = React.createClass
 
 GameScoreBox = React.createClass
   render: ->
-    scores = @props.scores
-    team1isWinning = scores.team1 > scores.team2
-    team2isWinning = scores.team2 > scores.team1
-    
-    cx = React.addons.classSet
-    team1classes = cx(
-      'score': true
-      'winning-score': team1isWinning
-      'losing-score': team2isWinning)
-
-    team2classes = cx(
-      'score': true
-      'winning-score': team2isWinning
-      'losing-score': team1isWinning)
 
     <div className="col-xs-4 text-center no-pad-xs">
-      <TeamGameScore className={team1classes} score={scores.team1}/>
-      <TeamGameScore className={team2classes} score={scores.team2}/>
+      <TeamGameScore score={@props.scores.team1} otherScore={@props.scores.team2} isCurrentGame={@props.isCurrentGame}/>
+      <TeamGameScore score={@props.scores.team2} otherScore={@props.scores.team1} isCurrentGame={@props.isCurrentGame}/>
     </div>
 
 TeamGameScore = React.createClass
   render: ->
-    <h2>{this.props.score}</h2>
+    won = @props.score > @props.otherScore && !@props.isCurrentGame
+    lost = @props.score < @props.otherScore && !@props.isCurrentGame
+    classes = cx(
+      'winning-score': won
+      'losing-score': lost)
+
+    <h2 className={classes}>{@props.score}</h2>
 
 
 module.exports = React.createClass
-  
+
   render: ->
     gameNums = []
     gameScores = []
     match = this.props.match
-    
+    gameStart = undefined
+
     i = 1
     while i <= 3
       gameNums.push(<GameNum gameNum={i} currentGame={match.gameNum}/>)
       if match.scores.length >= i
-        gameScores.push(<GameScoreBox scores={match.scores[i-1]}/>)
+        isCurrentGame = match.gameNum == i
+        gameScores.push(<GameScoreBox scores={match.scores[i-1]} isCurrentGame={isCurrentGame}/>)
       else
         fakeScore =
           team1: 0
           team2: 0
         gameScores.push(<GameScoreBox scores={fakeScore} />)
       i++
-    
+
+    if match.gameNum > 1
+      gameStart =
+        <div className="row text-center">
+          <h5><i className="fa fa-clock-o"></i><em>&nbsp;Game {match.gameNum} started <TimeAgo time={match.gameStartTime}/>.</em></h5>
+        </div>
+
     <div className="row">
       <div className="col-md-12">
         <div className="jumbotron scoreboard text-center">
@@ -89,6 +91,13 @@ module.exports = React.createClass
               </div>
             </div>
           </div>
+          <div className="row text-center">
+            <h3>Game {match.gameNum} In Progress</h3>
+          </div>
+          <div className="row text-center">
+            <h5><i className="fa fa-clock-o"></i><em>&nbsp;Match started <TimeAgo time={match.startTime} />.</em></h5>
+          </div>
+          {gameStart}
         </div>
       </div>
     </div>
