@@ -1,2 +1,0 @@
-io = require 'socket.io'
-

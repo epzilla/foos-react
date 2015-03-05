@@ -1,6 +1,5 @@
 React = require 'react/addons'
 Router = require 'react-router'
-Rest = require 'scripts/utils/rest-service'
 {Link} = Router
 MatchStore = require 'scripts/stores/match-store'
 Recents = require 'scripts/components/recents'
@@ -28,7 +27,7 @@ Home = React.createClass
     match = this.state.currentMatch
     series = undefined
 
-    if match and match.active
+    if match
       jumbotron =
         <Scoreboard match={match}/>
       series =
@@ -62,7 +61,5 @@ Home = React.createClass
 
   _onChange: ->
     @setState getMatchState()
-    console.log this.state
-    return
 
 module.exports = Home

@@ -39,17 +39,15 @@ MatchStore.dispatchToken = Dispatcher.register( (payload) ->
     when ActionTypes.RECEIVE_HOME_DATA
       _currentMatch = action.data.currentMatch or null
       _recentMatches = if action.data.recentMatches.length > 0 then action.data.recentMatches else []
-      MatchStore.emitChange()
     when ActionTypes.RECEIVE_CURRENT_MATCH
       _currentMatch = action.data
-      MatchStore.emitChange()
     when ActionTypes.RECEIVE_SERIES_HISTORY
       _seriesHistory = action.data
-      MatchStore.emitChange()
     when ActionTypes.RECEIVE_RECENT_MATCHES
       _recentMatches = action.data
-      MatchStore.emitChange()
-    # do nothing
+    when ActionTypes.CHANGE_SCORE
+      _currentMatch = action.data
+  MatchStore.emitChange()
   return
 )
 

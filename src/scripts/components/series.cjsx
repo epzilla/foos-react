@@ -34,8 +34,10 @@ module.exports = React.createClass
           </div>
         </section>
 
-    for match in matches
-      seriesMatches.push(<FinalBoxScore key={match._id} match={match} />)
+
+    if matches
+      for match in matches
+        seriesMatches.push(<FinalBoxScore key={match._id} match={match} />)
 
     <section id="series-history" className="series-history row pad-bottom-1em">
       <div className="row">

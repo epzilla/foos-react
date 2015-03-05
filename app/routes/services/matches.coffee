@@ -150,6 +150,16 @@ MatchService.endMatch = (sock, match) ->
     return
   return
 
+###
+# changeScore - update the score of a game
+# @param  {socket.io socket} sock
+# @param  {Object} data
+#         {
+#           id: Mongoose ObjecId
+#           team: ['team1', 'team2']
+#           plusMinus: ['plus', 'minus']
+#         }
+###
 MatchService.changeScore = (sock, data) ->
   Match.findById data.id, (err, match) ->
     if err
@@ -168,7 +178,7 @@ MatchService.changeScore = (sock, data) ->
     if match.scores[match.gameNum - 1][team] == 10
       gameOver = true
       if match.gameNum == 3
-        statPack = 
+        statPack =
           team1:
             id: match.team1
             gameWins: 0
@@ -347,7 +357,7 @@ MatchService.getSeriesHistory = (req, res) ->
           quickStats.avg = t2.title + ' ' + team2avg.toFixed(1) + '-' + team1avg.toFixed(1)
         else
           quickStats.avg = 'Dead even at ' + team2avg.toFixed(1) + '-' + team1avg.toFixed(1)
-        payload = 
+        payload =
           matches: matches
           stats:
             team1:

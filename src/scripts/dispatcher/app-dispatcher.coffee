@@ -19,6 +19,14 @@ AppDispatcher = assign(new Dispatcher, {
 
     @dispatch payload
     return
+
+  handleRequestAction: (action) ->
+    payload =
+      source: PayloadSources.REQUEST_ACTION
+      action: action
+
+    @dispatch payload
+    return
 })
 
 module.exports = AppDispatcher

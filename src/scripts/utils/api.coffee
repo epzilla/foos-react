@@ -1,6 +1,6 @@
 Rest = require './rest-service'
 ServerActionCreator = require 'scripts/actions/server-action-creator'
-
+socket = require 'scripts/utils/socket'
 module.exports =
 
   getCurrentMatch: ->
@@ -39,3 +39,7 @@ module.exports =
           )
       .catch (err) ->
         console.error err.stack
+
+  changeScore: (info) ->
+    self = this
+    Rest.post('/api/matches/changeScore', info)
