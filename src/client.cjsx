@@ -27,6 +27,6 @@ routes =
     </Route>
   </Routes>
 
-$ -> 
+$ ->
   API.getHomeData()
-  React.renderComponent(routes, document.body)
+  React.render(routes, document.body)
