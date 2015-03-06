@@ -42,4 +42,4 @@ module.exports =
 
   changeScore: (info) ->
     self = this
-    Rest.post('/api/matches/changeScore', info)
+    socket.emit 'scoreChange', info
