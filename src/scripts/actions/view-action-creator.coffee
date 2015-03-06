@@ -4,9 +4,9 @@ API = require 'scripts/utils/api'
 module.exports =
 
   changeScore: (info) ->
-    API.changeScore(info).then (res) ->
-      Dispatcher.handleRequestAction(
-        type: ActionTypes.CHANGE_SCORE
-        data: res
-      )
+    API.changeScore(info)
+    Dispatcher.handleRequestAction(
+      type: ActionTypes.CHANGE_SCORE
+      data: res
+    )
     return
