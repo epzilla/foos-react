@@ -7,5 +7,13 @@
 </head>
 <body>
 <script type="text/javascript" src="client.js"></script>
+<script type="text/javascript" src="bower_components/fastclick/lib/fastclick.js"></script>
+<script type="text/javascript">
+    if ('addEventListener' in document) {
+      document.addEventListener('DOMContentLoaded', function() {
+        FastClick.attach(document.body);
+      }, false);
+    }
+  </script>
 </body>
 </html>
