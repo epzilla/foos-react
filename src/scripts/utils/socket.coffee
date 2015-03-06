@@ -12,3 +12,5 @@ socket.on 'connect', ->
 
   socket.on 'disconnect', ->
     console.warn 'Socket disconnected.'
+
+module.exports = socket

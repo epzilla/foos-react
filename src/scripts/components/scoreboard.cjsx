@@ -1,5 +1,6 @@
 React = require 'react/addons'
 TimeAgo = require './time-ago'
+Actions = require 'scripts/actions/view-action-creator'
 moment = require 'moment'
 ls = require 'scripts/utils/local-storage'
 cx = React.addons.classSet
@@ -35,6 +36,40 @@ TeamGameScore = React.createClass
 
     <h2 className={classes}>{@props.score}</h2>
 
+ScoreStepper = React.createClass
+  incrementScore: ->
+    payload =
+      id: @props.match._id
+      team: @props.teamNum
+      plusMinus: 'plus'
+
+    Actions.changeScore(payload)
+
+  decrementScore: ->
+    payload =
+      id: @props.match._id
+      team: @props.teamNum
+      plusMinus: 'minus'
+
+    Actions.changeScore(payload)
+
+  render: ->
+    teamNum = @props.teamNum
+    title = @props.match[teamNum].title
+    classes = @props.classes
+
+    <div className={classes}>
+      <div className="col-xs-4 minus no-pad">
+        <button onClick={this.decrementScore} className="btn btn-expand"><i className="fa fa-minus"></i></button>
+      </div>
+      <div className="col-xs-4">
+        <h3 className="text-center">{title}</h3>
+      </div>
+      <div className="col-xs-4 plus no-pad">
+        <button onClick={this.incrementScore} className="btn btn-expand"><i className="fa fa-plus"></i></button>
+      </div>
+    </div>
+
 
 module.exports = React.createClass
 
@@ -67,28 +102,8 @@ module.exports = React.createClass
 
       scoreSteppers =
         <div>
-          <div className={team1classes}>
-            <div className="col-xs-4 minus no-pad">
-              <button className="btn btn-expand"><i className="fa fa-minus"></i></button>
-            </div>
-            <div className="col-xs-4">
-              <h3 className="text-center">{match.team1.title}</h3>
-            </div>
-            <div className="col-xs-4 plus no-pad">
-              <button className="btn btn-expand"><i className="fa fa-plus"></i></button>
-            </div>
-          </div>
-          <div className={team2classes}>
-            <div className="col-xs-4 minus no-pad">
-              <button className="btn btn-expand"><i className="fa fa-minus"></i></button>
-            </div>
-            <div className="col-xs-4">
-              <h3 className="text-center">{match.team2.title}</h3>
-            </div>
-            <div className="col-xs-4 plus no-pad">
-              <button className="btn btn-expand"><i className="fa fa-plus"></i></button>
-            </div>
-          </div>
+          <ScoreStepper classes={team1classes} match={match} teamNum='team1'/>
+          <ScoreStepper classes={team2classes} match={match} teamNum='team2'/>
         </div>
 
     i = 1
