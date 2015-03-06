@@ -95,6 +95,7 @@ gulp.task "server", ->
   nodemon
     script: server_main
     watch: [server_main]
+    nodeArgs: ['--nodejs','--debug']
     env:
       PORT: process.env.PORT or 3000
 
