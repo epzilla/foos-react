@@ -78,7 +78,7 @@ ScoreStepper = React.createClass
       <div className="col-xs-4 minus no-pad">
         <button onClick={this.decrementScore} className="btn btn-expand"><i className="fa fa-minus"></i></button>
       </div>
-      <div className="col-xs-4">
+      <div className="col-xs-4 flex-container height-3-5em">
         <h3 className="text-center">{title}</h3>
       </div>
       <div className="col-xs-4 plus no-pad">
