@@ -14,27 +14,6 @@ module.exports = React.createClass
     seriesMatches = []
     stats = null
 
-    if quickStats
-      stats =
-        <section id="quick-stats" className="pad-bottom-1em">
-          <div className="row">
-            <div className="col-xs-12 text-center">
-              <h4>{quickStats.matchRecord}</h4>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-xs-12 text-center">
-              <strong>Game Record: </strong>&nbsp;<span>{quickStats.gameRecord}</span>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-xs-12 text-center">
-              <strong>Average Score: </strong>&nbsp;<span>{quickStats.avg}</span>
-            </div>
-          </div>
-        </section>
-
-
     if matches
       for match in matches
         seriesMatches.push(<FinalBoxScore key={match._id} match={match} />)
@@ -42,12 +21,35 @@ module.exports = React.createClass
       if matches.length > 0
         pastHeadline =
           <div className="row text-center">
-            <p className="underline">Past Results</p>
+            <div className="col-xs-12">
+              <p className="underline">Past Results</p>
+            </div>
           </div>
+
+        stats =
+          <section id="quick-stats" className="pad-bottom-1em">
+            <div className="row">
+              <div className="col-xs-12 text-center">
+                <h4>{quickStats.matchRecord}</h4>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-xs-12 text-center">
+                <strong>Game Record: </strong>&nbsp;<span>{quickStats.gameRecord}</span>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-xs-12 text-center">
+                <strong>Average Score: </strong>&nbsp;<span>{quickStats.avg}</span>
+              </div>
+            </div>
+          </section>
       else
         pastHeadline =
           <div className="row text-center">
-            <p>First Meeting</p>
+            <div className="col-xs-12">
+              <p>First Meeting</p>
+            </div>
           </div>
 
     <section id="series-history" className="series-history row pad-bottom-1em">
@@ -57,9 +59,7 @@ module.exports = React.createClass
         </div>
       </div>
       {stats}
-      <div className="row text-center">
-        <p className="underline">Past Results</p>
-      </div>
+      {pastHeadline}
       <div className="row">
         {seriesMatches}
       </div>
