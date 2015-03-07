@@ -7,6 +7,9 @@
 *
   box-sizing border-box
 
+html, body
+  overflow-x hidden
+
 body
   overflow-y scroll
   -webkit-overflow-scrolling touch
@@ -66,7 +69,8 @@ input#by-team[type=radio]:checked
   &.stepper
     font-weight bolder
     border-radius 15px
-    margin-bottom 1em
+    margin 0 auto
+    max-width 100%
     padding 0
     font-size 1.5em
 
