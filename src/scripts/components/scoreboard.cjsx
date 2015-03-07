@@ -27,12 +27,28 @@ GameScoreBox = React.createClass
     </div>
 
 TeamGameScore = React.createClass
+  getInitialState: ->
+    {
+      flash: false
+    }
+
+  componentWillReceiveProps: (nextProps) ->
+    if nextProps.score isnt @props.score
+      self = this
+      self.state.flash = true
+      window.setTimeout(->
+        self.state.flash = false
+        self.getDOMNode().classList.remove 'score-flash'
+        return
+      , 5000)
+
   render: ->
     won = @props.score > @props.otherScore && !@props.isCurrentGame
     lost = @props.score < @props.otherScore && !@props.isCurrentGame
     classes = cx(
       'winning-score': won
-      'losing-score': lost)
+      'losing-score': lost
+      'score-flash': this.state.flash)
 
     <h2 className={classes}>{@props.score}</h2>
 

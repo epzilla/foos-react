@@ -29,14 +29,7 @@ module.exports =
           recentMatches: recentMatches
         )
         if currentMatch
-          self.getSeriesHistory(currentMatch.team1._id, currentMatch.team2._id).then (res) ->
-            ServerActionCreator.receiveSeriesHistory(
-              seriesHistory: res
-            )
-        else
-          ServerActionCreator.receiveSeriesHistory(
-            seriesHistory: null
-          )
+          self.getSeriesHistory(currentMatch.team1._id, currentMatch.team2._id)
       .catch (err) ->
         console.error err.stack
 

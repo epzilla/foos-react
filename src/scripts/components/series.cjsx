@@ -39,6 +39,17 @@ module.exports = React.createClass
       for match in matches
         seriesMatches.push(<FinalBoxScore key={match._id} match={match} />)
 
+      if matches.length > 0
+        pastHeadline =
+          <div className="row text-center">
+            <p className="underline">Past Results</p>
+          </div>
+      else
+        pastHeadline =
+          <div className="row text-center">
+            <p>First Meeting</p>
+          </div>
+
     <section id="series-history" className="series-history row pad-bottom-1em">
       <div className="row">
         <div className="col-xs-12">
