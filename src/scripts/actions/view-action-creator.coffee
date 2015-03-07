@@ -7,6 +7,6 @@ module.exports =
     API.changeScore(info)
     Dispatcher.handleRequestAction(
       type: ActionTypes.CHANGE_SCORE
-      data: res
+      data: info
     )
     return
