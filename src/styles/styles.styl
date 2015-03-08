@@ -247,3 +247,36 @@ h2.score-flash
   .Select-control
     background-color tailsYellow
     color black
+
+table
+  thead
+    background-color rgb(97, 46, 186)
+    color whitesmoke
+    cursor pointer
+
+th[class*='reactable-header-sort-']
+  background #3F04A6
+
+th[class*='reactable-header-sort-asc']
+  &:after
+    content ''
+    width 0
+    height 0
+    border-left 5px solid transparent
+    border-right 5px solid transparent
+    border-bottom 5px solid whitesmoke
+    position relative
+    top -1em
+    right -0.5em
+
+th[class*='reactable-header-sort-desc']
+  &:after
+    content ''
+    width 0
+    height 0
+    border-left 5px solid transparent
+    border-right 5px solid transparent
+    border-top 5px solid whitesmoke
+    position relative
+    top 1em
+    right -0.5em

@@ -15,6 +15,10 @@ module.exports =
     API.getPlayers()
     return
 
+  getTeams: () ->
+    API.getTeams()
+    return
+
   startMatch: (players) ->
     API.startMatch(players)
     return

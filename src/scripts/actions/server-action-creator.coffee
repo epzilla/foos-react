@@ -44,3 +44,10 @@ module.exports =
       data: data
     )
     return
+
+  receiveTeams: (data) ->
+    Dispatcher.handleServerAction(
+      type: ActionTypes.RECEIVE_TEAMS
+      data: data
+    )
+    return

@@ -9,6 +9,7 @@ module.exports =
     RECEIVE_SCORE_UPDATE: null
     RECEIVE_SERIES_HISTORY: null
     RECEIVE_PLAYERS: null
+    RECEIVE_TEAMS: null
     CHANGE_SCORE: null
   )
 

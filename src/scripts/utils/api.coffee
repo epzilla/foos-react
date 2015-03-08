@@ -25,6 +25,11 @@ module.exports =
       .then (res) ->
         ServerActionCreator.receivePlayers res
 
+  getTeams: ->
+    Rest.get '/api/teams'
+      .then (res) ->
+        ServerActionCreator.receiveTeams res
+
   getHomeData: ->
     self = this
     Promise.all [Rest.get('/api/matches/current'), Rest.get('/api/matches/recent')]

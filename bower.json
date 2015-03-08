@@ -15,7 +15,8 @@
     "tests"
   ],
   "dependencies": {
-    "fastclick": "~1.0.6"
+    "fastclick": "~1.0.6",
+    "reactable": "~0.10.1"
   },
   "devDependencies": {}
 }
