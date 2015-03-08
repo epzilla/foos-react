@@ -10,3 +10,11 @@ module.exports =
       data: info
     )
     return
+
+  getPlayers: () ->
+    API.getPlayers()
+    return
+
+  startMatch: (players) ->
+    API.startMatch(players)
+    return

@@ -24,7 +24,7 @@ Home = React.createClass
     MatchStore.removeChangeListener this._onChange
 
   render: ->
-    match = this.state.currentMatch
+    match = if @state.currentMatch and @state.currentMatch.active then @state.currentMatch else null
     series = undefined
 
     if match

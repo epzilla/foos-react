@@ -12,5 +12,6 @@ module.exports =
   set: (key, val) ->
     self = this
     prefixedKey = self.prefix.concat('-', key)
-    window.localStorage.setItem prefixedKey, JSON.stringify(value)
-    self.get prefixedKey
+    value = JSON.stringify(val)
+    window.localStorage.setItem prefixedKey, value
+    value

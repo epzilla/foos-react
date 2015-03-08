@@ -1,5 +1,6 @@
 @require '../../bower_components/bootstrap/dist/css/bootstrap.css'
 @require '../../bower_components/fontawesome/css/font-awesome.css'
+@require 'react-select.css'
 @require 'variables'
 @require 'helpers'
 @require 'bootstrap_overrides'
@@ -110,7 +111,7 @@ input#by-team[type=radio]:checked
   background linear-gradient(#eee, white)
   background linear-gradient(white, #eee)
 
-.heads:before, .heads-form:before
+.heads:before
   background-color black
   width 25px
   height 25px
@@ -119,7 +120,7 @@ input#by-team[type=radio]:checked
   top 40%
   content ''
 
-.tails:before, .tails-form:before
+.tails:before
   background-color tailsYellow
   border 1px solid #999
   width 25px
@@ -129,14 +130,14 @@ input#by-team[type=radio]:checked
   top 40%
   content ''
 
-.heads-form
-  background-color black
-  color white
-  font-size 1.25em
+// .heads-form
+//   background-color black
+//   color white
+//   font-size 1.25em
 
-.tails-form
-  background-color tailsYellow
-  font-size 1.25em
+// .tails-form
+//   background-color tailsYellow
+//   font-size 1.25em
 
 .heads-stepper
   background-color black
@@ -230,3 +231,19 @@ h2.score-flash
    opacity 1.0
  to
   opacity 0.5
+
+.new-match-form
+  max-width 400px
+  margin 0 auto
+  min-height 35em
+
+.heads-form
+  .Select-control
+    background-color black
+    color white
+  .has-value > .Select-control > .Select-placeholder
+    color white
+.tails-form
+  .Select-control
+    background-color tailsYellow
+    color black

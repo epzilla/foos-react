@@ -84,6 +84,7 @@ gulp.task "clean", ->
 
 gulp.task "copy", ->
   gulp.src("#{src_path}/*.html").pipe(gulp.dest(dist_path))
+  gulp.src("#{src_path}/styles/*.css").pipe(gulp.dest("#{dist_path}/styles/"))
   gulp.src("#{src_path}/images/**").pipe(gulp.dest("#{dist_path}/images/"))
   gulp.src("#{src_path}/favicon.ico").pipe(gulp.dest(dist_path))
   gulp.src("#{components_path}/**/*").pipe(gulp.dest("#{dist_path}/#{components_path}"))

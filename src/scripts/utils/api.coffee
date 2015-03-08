@@ -1,6 +1,8 @@
 Rest = require './rest-service'
 ServerActionCreator = require 'scripts/actions/server-action-creator'
 socket = require 'scripts/utils/socket'
+ls = require 'scripts/utils/local-storage'
+
 module.exports =
 
   getCurrentMatch: ->
@@ -18,6 +20,11 @@ module.exports =
       .then (res) ->
         ServerActionCreator.receiveRecentMatches res
 
+  getPlayers: ->
+    Rest.get '/api/players'
+      .then (res) ->
+        ServerActionCreator.receivePlayers res
+
   getHomeData: ->
     self = this
     Promise.all [Rest.get('/api/matches/current'), Rest.get('/api/matches/recent')]
@@ -29,10 +36,17 @@ module.exports =
           recentMatches: recentMatches
         )
         if currentMatch
-          self.getSeriesHistory(currentMatch.team1._id, currentMatch.team2._id)
+          self.getSeriesHistory currentMatch.team1._id, currentMatch.team2._id
       .catch (err) ->
         console.error err.stack
 
   changeScore: (info) ->
-    self = this
     socket.emit 'scoreChange', info
+
+  startMatch: (players) ->
+    self = this
+    Rest.post('/api/matches', players)
+      .then (res) ->
+        ls.set 'matchID', res._id.concat(window.navigator.userAgent)
+        self.getHomeData()
+    return

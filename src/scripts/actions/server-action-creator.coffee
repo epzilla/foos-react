@@ -37,3 +37,10 @@ module.exports =
       data: data
     )
     return
+
+  receivePlayers: (data) ->
+    Dispatcher.handleServerAction(
+      type: ActionTypes.RECEIVE_PLAYERS
+      data: data
+    )
+    return

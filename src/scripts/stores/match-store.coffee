@@ -7,8 +7,8 @@ ActionTypes = Constants.ActionTypes
 CHANGE_EVENT = 'change'
 
 _recentMatches = []
-_currentMatch = null
-_seriesHistory = null
+_currentMatch = {}
+_seriesHistory = {}
 
 MatchStore = assign({}, EventEmitter.prototype,
   emitChange: ->
@@ -37,7 +37,7 @@ MatchStore.dispatchToken = Dispatcher.register( (payload) ->
   action = payload.action
   switch action.type
     when ActionTypes.RECEIVE_HOME_DATA
-      _currentMatch = action.data.currentMatch or null
+      _currentMatch = action.data.currentMatch or {}
       _recentMatches = if action.data.recentMatches.length > 0 then action.data.recentMatches else []
     when ActionTypes.RECEIVE_CURRENT_MATCH
       _currentMatch = action.data
@@ -46,9 +46,12 @@ MatchStore.dispatchToken = Dispatcher.register( (payload) ->
     when ActionTypes.RECEIVE_RECENT_MATCHES
       _recentMatches = action.data
     when ActionTypes.RECEIVE_SCORE_UPDATE
-      _currentMatch.scores = action.data.updatedMatch.scores
-      _currentMatch.gameNum = action.data.updatedMatch.gameNum
-      _currentMatch.active = action.data.updatedMatch.active
+      if action.data.status is 'new'
+        _currentMatch = action.data.updatedMatch
+      else
+        _currentMatch.scores = action.data.updatedMatch.scores
+        _currentMatch.gameNum = action.data.updatedMatch.gameNum
+        _currentMatch.active = action.data.updatedMatch.active
   MatchStore.emitChange()
   return
 )
