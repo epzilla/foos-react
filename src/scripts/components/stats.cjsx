@@ -13,17 +13,19 @@ module.exports = React.createClass
     formattedTeams = []
 
     _.forEach players, (player) ->
-      formattedMatchPct = if player.pct < 1 then ('.' + player.pct.toPrecision(4).toString().split('.')[1]) else '1.000'
-      formattedGamePct = if player.gamesWon then (player.gamesWon / player.games).toPrecision(3) else '.000'
-      if formattedGamePct is '1.00'
-        formattedGamePct = '1.000'
-      formattedPlayers.push
-        'Player': player.name
-        'Match Record': player.matchesWon + '-' + player.matchesLost
-        'Match Win Pct.': formattedMatchPct
-        'Game Record': player.gamesWon + '-' + player.gamesLost
-        'Game win Pct.': formattedGamePct
-        'Avg. Score': player.avgPtsFor + '-' + player.avgPtsAgainst
+      if player.matches isnt 0
+        # We want to filter out any player who hasn't actually played a match yet
+        formattedMatchPct = if player.pct < 1 then ('.' + player.pct.toPrecision(4).toString().split('.')[1]) else '1.000'
+        formattedGamePct = if player.gamesWon then (player.gamesWon / player.games).toPrecision(3) else '.000'
+        if formattedGamePct is '1.00'
+          formattedGamePct = '1.000'
+        formattedPlayers.push
+          'Player': player.name
+          'Match Record': player.matchesWon + '-' + player.matchesLost
+          'Match Win Pct.': formattedMatchPct
+          'Game Record': player.gamesWon + '-' + player.gamesLost
+          'Game win Pct.': formattedGamePct
+          'Avg. Score': player.avgPtsFor + '-' + player.avgPtsAgainst
 
     {
       players: formattedPlayers
@@ -48,6 +50,7 @@ module.exports = React.createClass
         <Table className="table table-hover table-responsive text-center table-bordered"
           data={@state.players}
           sortable={true}
+          defaultSort={{column: 'Match Win Pct.', direction: 'desc' }}
         />
       </div>
     </section>
