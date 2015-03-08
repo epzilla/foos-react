@@ -5,6 +5,18 @@ PlayerStore = require 'scripts/stores/player-store'
 TeamStore = require 'scripts/stores/team-store'
 _ = require 'lodash'
 
+TableView = React.createClass
+  render: ->
+    <section className="row">
+      <div className="col-md-12">
+        <Table className="table table-hover table-responsive text-center table-bordered"
+          data={@props.data}
+          sortable={true}
+          defaultSort={@props.sorting}
+        />
+      </div>
+    </section>
+
 module.exports = React.createClass
   _getTeamsAndPlayers: ->
     players = PlayerStore.getPlayers()
@@ -27,8 +39,25 @@ module.exports = React.createClass
           'Game win Pct.': formattedGamePct
           'Avg. Score': player.avgPtsFor + '-' + player.avgPtsAgainst
 
+    _.forEach teams, (team) ->
+      if team.matches isnt 0
+        # We want to filter out any team who hasn't actually played a match yet
+        formattedMatchPct = if team.pct < 1 then ('.' + team.pct.toPrecision(4).toString().split('.')[1]) else '1.000'
+        formattedGamePct = if team.gamesWon then (team.gamesWon / team.games).toPrecision(3) else '.000'
+        if formattedGamePct is '1.00'
+          formattedGamePct = '1.000'
+        formattedTeams.push
+          'Team': team.title
+          'Match Record': team.matchesWon + '-' + team.matchesLost
+          'Match Win Pct.': formattedMatchPct
+          'Game Record': team.gamesWon + '-' + team.gamesLost
+          'Game win Pct.': formattedGamePct
+          'Avg. Score': team.avgPtsFor + '-' + team.avgPtsAgainst
+
     {
       players: formattedPlayers
+      teams: formattedTeams
+      selectedTab: 'players'
     }
 
   _onChange: ->
@@ -44,13 +73,35 @@ module.exports = React.createClass
     Actions.getPlayers()
     return
 
+  handleChange: (e) ->
+    @state.selectedTab = e.target.value
+    @forceUpdate()
+
   render: ->
-    <section className="row">
-      <div className="col-md-12">
-        <Table className="table table-hover table-responsive text-center table-bordered"
-          data={@state.players}
-          sortable={true}
-          defaultSort={{column: 'Match Win Pct.', direction: 'desc' }}
-        />
-      </div>
-    </section>
+    table = undefined
+    if @state.selectedTab is 'players'
+      table = <TableView data={@state.players} sorting={{column: 'Match Win Pct.', direction: 'desc' }}/>
+    else
+      table = <TableView data={@state.teams} sorting={{column: 'Match Win Pct.', direction: 'desc' }}/>
+
+    <div>
+      <section class="row">
+        <section class="flex-container col-xs-12">
+          <section class="flex-item width-200">
+            <input id="by-player" type="radio" name="toggle"
+              onChange={@handleChange}
+              checked={@state.selectedTab is 'players'}
+              value="players" />
+            <label htmlFor="by-player" id="by-player-label">By Player</label>
+            <input id="by-team" type="radio" name="toggle"
+              onChange={@handleChange}
+              checked={@state.selectedTab is 'teams'}
+              value="teams"/>
+            <label htmlFor="by-team" id="by-team-label">By Team</label>
+          </section>
+        </section>
+      </section>
+      <section class="row main-table">
+        {table}
+      </section>
+    </div>
