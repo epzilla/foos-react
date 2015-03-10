@@ -8,5 +8,7 @@ Foos React
 * ~~Port server-side code over from old foos project~~
 * ~~Implement Flux~~
 * ~~Get Sockets set up and working~~
-* Create Start Match page
-* Create Stats page
+* ~~Create Start Match page~~
+* ~~Create Stats page~~
+* Create alerts
+* Make offline-first
