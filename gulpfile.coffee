@@ -14,7 +14,6 @@ usemin = require "gulp-usemin"
 uglify = require "gulp-uglify"
 components_path = "bower_components"
 modules_path = "node_modules"
-semantic_path = "#{modules_path}/semantic-ui/dist"
 dist_path = "dist"
 
 err = (x...) -> gutil.log(x...); gutil.beep(x...)
