@@ -95,7 +95,7 @@ module.exports = React.createClass
     match = this.props.match
     gameStart = undefined
     scoreSteppers = undefined
-    currentUserStartedMatch = match._id.concat(window.navigator.userAgent) is ls.get('matchID')
+    currentUserStartedMatch = match._id is ls.get('matchID')
 
     if currentUserStartedMatch
       team1classes = cx(

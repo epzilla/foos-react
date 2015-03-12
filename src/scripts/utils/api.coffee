@@ -52,6 +52,6 @@ module.exports =
     self = this
     Rest.post('/api/matches', players)
       .then (res) ->
-        ls.set 'matchID', res._id.concat(window.navigator.userAgent)
+        ls.set 'matchID', res._id
         self.getHomeData()
     return
