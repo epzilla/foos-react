@@ -9,12 +9,13 @@ postcss = require "gulp-postcss"
 open = require "gulp-open"
 autoprefixer = require "autoprefixer-core"
 rimraf = require "rimraf"
-src_path = "src"
+srcPath = "src"
 usemin = require "gulp-usemin"
 uglify = require "gulp-uglify"
-components_path = "bower_components"
-modules_path = "node_modules"
-dist_path = "dist"
+componentsPath = "bower_components"
+runSequence = require "run-sequence"
+modulesPath = "node_modules"
+distPath = "dist"
 
 err = (x...) -> gutil.log(x...); gutil.beep(x...)
 
@@ -29,7 +30,7 @@ webpack = (name, ext, watch) ->
       sourceMapFilename: "[file].map"
     resolve:
       extensions: ["", ".webpack.js", ".web.js", ".js", ".jsx", ".coffee", ".cjsx"]
-      modulesDirectories: [components_path, modules_path, src_path]
+      modulesDirectories: [componentsPath, modulesPath, srcPath]
     module:
       loaders: [
         {
@@ -46,9 +47,9 @@ webpack = (name, ext, watch) ->
         }
       ]
 
-  gulp.src("#{src_path}/**/#{name}.#{ext}")
+  gulp.src("#{srcPath}/**/#{name}.#{ext}")
   .pipe(gwebpack(options))
-  .pipe(gulp.dest(dist_path))
+  .pipe(gulp.dest(distPath))
 
 
 js = (watch) -> webpack("client", "cjsx", watch)
@@ -57,18 +58,18 @@ gulp.task "js", -> js(false)
 gulp.task "js-dev", -> js(true)
 
 gulp.task "css", ->
-  gulp.src("#{src_path}/styles/styles.styl")
+  gulp.src("#{srcPath}/styles/styles.styl")
   .pipe(plumber())
   .pipe(stylus())
   .on("error", err)
   .pipe(postcss([autoprefixer(browsers: ["last 2 versions", "ie 8", "ie 9"])]))
-  .pipe(gulp.dest("#{dist_path}/styles"))
+  .pipe(gulp.dest("#{distPath}/styles"))
 
 gulp.task "usemin", ->
-  gulp.src("#{dist_path}/index.html").pipe(usemin(
+  gulp.src("#{distPath}/index.html").pipe(usemin(
     js: [
       uglify()
-    ])).pipe gulp.dest("#{dist_path}")
+    ])).pipe gulp.dest("#{distPath}")
 
 openFunc = ->
   gulp.src("./dist/index.html").pipe open("",
@@ -76,21 +77,21 @@ openFunc = ->
     app: "google chrome")
 
 gulp.task "open", ->
-  setTimeout openFunc, 5000
+  setTimeout openFunc, 9000
 
 gulp.task "clean", ->
-  rimraf.sync(dist_path)
+  rimraf.sync(distPath)
 
 gulp.task "copy", ->
-  gulp.src("#{src_path}/*.html").pipe(gulp.dest(dist_path))
-  gulp.src("#{src_path}/styles/*.css").pipe(gulp.dest("#{dist_path}/styles/"))
-  gulp.src("#{src_path}/images/**").pipe(gulp.dest("#{dist_path}/images/"))
-  gulp.src("#{src_path}/favicon.ico").pipe(gulp.dest(dist_path))
-  gulp.src("#{components_path}/**/*").pipe(gulp.dest("#{dist_path}/#{components_path}"))
+  gulp.src("#{srcPath}/*.html").pipe(gulp.dest(distPath))
+  gulp.src("#{srcPath}/styles/*.css").pipe(gulp.dest("#{distPath}/styles/"))
+  gulp.src("#{srcPath}/images/**").pipe(gulp.dest("#{distPath}/images/"))
+  gulp.src("#{srcPath}/favicon.ico").pipe(gulp.dest(distPath))
+  gulp.src("#{componentsPath}/**/*").pipe(gulp.dest("#{distPath}/#{componentsPath}"))
 
 gulp.task "build", ["clean", "copy", "css", "js"]
 
-server_main = "#{src_path}/server.coffee"
+server_main = "#{srcPath}/server.coffee"
 gulp.task "server", ->
   nodemon
     script: server_main
@@ -99,10 +100,11 @@ gulp.task "server", ->
     env:
       PORT: process.env.PORT or 3000
 
-gulp.task "default", ["clean", "copy", "css", "server", "js-dev", "usemin", "watch", "open"]
+gulp.task "default", ->
+  runSequence("clean", ["copy", "css", "server", "js-dev", "usemin", "watch", "open"])
 
 gulp.task "watch", ["copy"], ->
   livereload.listen()
-  gulp.watch(["#{dist_path}/**/*"]).on("change", livereload.changed)
-  gulp.watch ["#{src_path}/**/*.styl"], ["css"]
-  gulp.watch ["#{src_path}/**/*.html"], ["copy"]
+  gulp.watch(["#{distPath}/**/*"]).on("change", livereload.changed)
+  gulp.watch ["#{srcPath}/**/*.styl"], ["css"]
+  gulp.watch ["#{srcPath}/**/*.html"], ["copy"]
