@@ -85,9 +85,14 @@ module.exports = React.createClass
       table = <TableView data={@state.teams} sorting={{column: 'Match Win Pct.', direction: 'desc' }}/>
 
     <div>
-      <section class="row">
-        <section class="flex-container col-xs-12">
-          <section class="flex-item width-200">
+      <section className="row">
+        <section className="col-xs-12 text-center">
+          <h1>Stats &amp; Records</h1>
+        </section>
+      </section>
+      <section className="row">
+        <section className="flex-container col-xs-12">
+          <section className="flex-item width-200">
             <input id="by-player" type="radio" name="toggle"
               onChange={@handleChange}
               checked={@state.selectedTab is 'players'}
@@ -101,7 +106,7 @@ module.exports = React.createClass
           </section>
         </section>
       </section>
-      <section class="row main-table">
+      <section className="row main-table">
         {table}
       </section>
     </div>
