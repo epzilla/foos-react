@@ -21,21 +21,26 @@ module.exports =
         ServerActionCreator.receiveRecentMatches res
 
   getPlayers: ->
-    players = ls.get('players')
+    players = ls.get 'players'
     if players
       ServerActionCreator.receivePlayers players
 
     Rest.get '/api/players'
       .then (res) ->
         if not players or (res.toString() isnt players.toString())
-          console.log 'new players'
           ls.set 'players', res
           ServerActionCreator.receivePlayers res
 
   getTeams: ->
+    teams = ls.get 'teams'
+    if teams
+      ServerActionCreator.receiveTeams teams
+
     Rest.get '/api/teams'
       .then (res) ->
-        ServerActionCreator.receiveTeams res
+        if not teams or (res.toString() isnt teams.toString())
+          ls.set 'teams', res
+          ServerActionCreator.receiveTeams res
 
   getHomeData: ->
     self = this
