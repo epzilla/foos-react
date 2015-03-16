@@ -27,7 +27,7 @@ module.exports =
 
     Rest.get '/api/players'
       .then (res) ->
-        if not players or (res.toString() isnt players.toString())
+        if not players or (JSON.stringify(players) isnt JSON.stringify(res))
           ls.set 'players', res
           ServerActionCreator.receivePlayers res
 
@@ -38,7 +38,7 @@ module.exports =
 
     Rest.get '/api/teams'
       .then (res) ->
-        if not teams or (res.toString() isnt teams.toString())
+        if not teams or (JSON.stringify(teams) isnt JSON.stringify(res))
           ls.set 'teams', res
           ServerActionCreator.receiveTeams res
 
