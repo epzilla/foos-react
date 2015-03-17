@@ -34,9 +34,7 @@ module.exports = React.createClass
         formattedPlayers.push
           'Player': player.name
           'Match Record': player.matchesWon + '-' + player.matchesLost
-          'Match Win Pct.': formattedMatchPct
           'Game Record': player.gamesWon + '-' + player.gamesLost
-          'Game win Pct.': formattedGamePct
           'Avg. Score': player.avgPtsFor + '-' + player.avgPtsAgainst
 
     _.forEach teams, (team) ->
@@ -49,9 +47,7 @@ module.exports = React.createClass
         formattedTeams.push
           'Team': team.title
           'Match Record': team.matchesWon + '-' + team.matchesLost
-          'Match Win Pct.': formattedMatchPct
           'Game Record': team.gamesWon + '-' + team.gamesLost
-          'Game win Pct.': formattedGamePct
           'Avg. Score': team.avgPtsFor + '-' + team.avgPtsAgainst
 
     {
