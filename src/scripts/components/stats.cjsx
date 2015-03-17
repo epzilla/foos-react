@@ -11,7 +11,49 @@ TableView = React.createClass
       <div className="col-md-12">
         <Table className="table table-hover table-responsive text-center table-bordered"
           data={@props.data}
-          sortable={true}
+          sortable={[
+            'Team',
+            'Player',
+            {
+              column: 'Match Record',
+              sortFunction: (a, b) ->
+                aParts = a.split '-'
+                bParts = b.split '-'
+                aPct = aParts[0] / (aParts[0] + aParts[1])
+                bPct = bParts[0] / (bParts[0] + bParts[1])
+                if aPct is bPct
+                  if aParts[0] is bParts[0]
+                    aParts[1] < bParts[1]
+                  else
+                    aParts[0] > bParts[0]
+                else
+                  aPct > bPct
+            },
+            {
+              column: 'Game Record',
+              sortFunction: (a, b) ->
+                aParts = a.split '-'
+                bParts = b.split '-'
+                aPct = aParts[0] / (aParts[0] + aParts[1])
+                bPct = bParts[0] / (bParts[0] + bParts[1])
+                if aPct is bPct
+                  if aParts[0] is bParts[0]
+                    aParts[1] > bParts[1]
+                  else
+                    aParts[0] > bParts[0]
+                else
+                  aPct > bPct
+            },
+            {
+              column: 'Avg. Score',
+              sortFunction: (a, b) ->
+                aParts = a.split '-'
+                bParts = b.split '-'
+                aMargin = aParts[0] - aParts[1]
+                bMargin = bParts[0] - bParts[1]
+                aMargin > bMargin
+            },
+          ]}
           defaultSort={@props.sorting}
         />
       </div>
