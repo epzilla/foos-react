@@ -76,9 +76,9 @@ module.exports = React.createClass
   render: ->
     table = undefined
     if @state.selectedTab is 'players'
-      table = <TableView data={@state.players} sorting={{column: 'Match Win Pct.', direction: 'desc' }}/>
+      table = <TableView data={@state.players} sorting={{column: 'Match Record', direction: 'desc' }}/>
     else
-      table = <TableView data={@state.teams} sorting={{column: 'Match Win Pct.', direction: 'desc' }}/>
+      table = <TableView data={@state.teams} sorting={{column: 'Match Record', direction: 'desc' }}/>
 
     <div>
       <section className="row">
