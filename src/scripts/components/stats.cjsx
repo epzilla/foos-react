@@ -63,11 +63,15 @@ module.exports = React.createClass
     @_getTeamsAndPlayers()
 
   componentDidMount: ->
-    PlayerStore.addChangeListener this._onChange
-    TeamStore.addChangeListener this._onChange
+    PlayerStore.addChangeListener @_onChange
+    TeamStore.addChangeListener @_onChange
     Actions.getTeams()
     Actions.getPlayers()
     return
+
+  componentWillUnmount: ->
+    PlayerStore.removeChangeListener @_onChange
+    TeamStore.removeChangeListener @_onChange
 
   handleChange: (e) ->
     @state.selectedTab = e.target.value
