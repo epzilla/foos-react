@@ -18,10 +18,10 @@ Home = React.createClass
     getMatchState()
 
   componentDidMount:  ->
-    MatchStore.addChangeListener this._onChange
+    MatchStore.addChangeListener @_onChange
 
   componentWillUnmount: ->
-    MatchStore.removeChangeListener this._onChange
+    MatchStore.removeChangeListener @_onChange
 
   render: ->
     match = if @state.currentMatch and @state.currentMatch.active then @state.currentMatch else null
@@ -56,7 +56,7 @@ Home = React.createClass
       <section>{jumbotron}</section>
       <hr />
       {series}
-      <Recents recents={this.state.recentMatches}/>
+      <Recents recents={@state.recentMatches}/>
     </div>
 
   _onChange: ->

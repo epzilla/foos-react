@@ -19,7 +19,7 @@ moment = require('moment')
 TimeAgo = React.createClass(
   mixins: [ SetIntervalMixin ]
   render: ->
-    <span>{moment(this.props.time).fromNow()}</span>
+    <span>{moment(@props.time).fromNow()}</span>
   componentDidMount: ->
     interval = @props.refreshMillis or 60000
     # TODO(joel) why did I have to bind forceUpdate?

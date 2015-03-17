@@ -11,7 +11,7 @@ module.exports = React.createClass
   mixins: [Navigation]
 
   _onChange: ->
-    this.setState(
+    @setState(
       players: PlayerStore.getPlayers()
     )
 
@@ -55,13 +55,14 @@ module.exports = React.createClass
       @goBack()
 
   componentDidMount: ->
-    PlayerStore.addChangeListener this._onChange
-    MatchStore.addChangeListener this._onMatchChange
+    PlayerStore.addChangeListener @_onChange
+    MatchStore.addChangeListener @_onMatchChange
     Actions.getPlayers()
     return
 
   componentWillUnmount: ->
-    PlayerStore.removeChangeListener this._onChange
+    PlayerStore.removeChangeListener @_onChange
+    MatchStore.removeChangeListener @_onMatchChange
 
   render: ->
     options = []

@@ -14,7 +14,7 @@ module.exports = React.createClass
     if not recents or recents.length < 1
       null
 
-    recents = this.props.recents
+    recents = @props.recents
     recentMatches = []
 
     for recent in recents

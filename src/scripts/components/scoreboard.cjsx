@@ -15,7 +15,7 @@ GameNum = React.createClass
       'current': current)
 
     <div className={classes}>
-      <h5>{this.props.gameNum}</h5>
+      <h5>{@props.gameNum}</h5>
     </div>
 
 GameScoreBox = React.createClass
@@ -48,7 +48,7 @@ TeamGameScore = React.createClass
     classes = cx(
       'winning-score': won
       'losing-score': lost
-      'score-flash': this.state.flash)
+      'score-flash': @state.flash)
 
     <h2 className={classes}>{@props.score}</h2>
 
@@ -76,13 +76,13 @@ ScoreStepper = React.createClass
 
     <div className={classes}>
       <div className="col-xs-4 minus no-pad">
-        <button onClick={this.decrementScore} className="btn btn-expand"><i className="fa fa-minus"></i></button>
+        <button onClick={@decrementScore} className="btn btn-expand"><i className="fa fa-minus"></i></button>
       </div>
       <div className="col-xs-4 flex-container height-3-5em">
         <h3 className="text-center">{title}</h3>
       </div>
       <div className="col-xs-4 plus no-pad">
-        <button onClick={this.incrementScore} className="btn btn-expand"><i className="fa fa-plus"></i></button>
+        <button onClick={@incrementScore} className="btn btn-expand"><i className="fa fa-plus"></i></button>
       </div>
     </div>
 
@@ -92,7 +92,7 @@ module.exports = React.createClass
   render: ->
     gameNums = []
     gameScores = []
-    match = this.props.match
+    match = @props.match
     gameStart = undefined
     scoreSteppers = undefined
     currentUserStartedMatch = match._id is ls.get('matchID')

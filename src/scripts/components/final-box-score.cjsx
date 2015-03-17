@@ -9,12 +9,12 @@ module.exports = React.createClass
   }
 
   render: ->
-    match = this.props.match
+    match = @props.match
     team1scores = []
     team2scores = []
     team1checkmark = null
     team2checkmark = null
-    
+
     # Date and time formatting for display
     start = moment(match.startTime)
     end = moment(match.endTime)
@@ -47,14 +47,14 @@ module.exports = React.createClass
         </div>
       </div>
       <div className="row">
-        <div className="col-xs-2 text-right">{team1checkmark}</div>
+        <div className="col-xs-2 text-right pad-right-5px-mobile">{team1checkmark}</div>
         <div className="col-xs-5 no-pad-left text-left">
           <span>{match.team1.title}</span>
         </div>
         <div>{team1scores}</div>
       </div>
       <div className="row">
-        <div className="col-xs-2 text-right">{team2checkmark}</div>
+        <div className="col-xs-2 text-right pad-right-5px-mobile">{team2checkmark}</div>
         <div className="col-xs-5 no-pad-left text-left">
           <span>{match.team2.title}</span>
         </div>
