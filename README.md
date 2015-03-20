@@ -10,5 +10,5 @@ Foos React
 * ~~Get Sockets set up and working~~
 * ~~Create Start Match page~~
 * ~~Create Stats page~~
+* ~~Make offline-first~~
 * Create alerts
-* Make offline-first
