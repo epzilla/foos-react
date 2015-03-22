@@ -5,6 +5,7 @@ Router = require 'react-router'
 Stats = require 'scripts/components/stats'
 Header = require 'scripts/components/header'
 Home = require 'scripts/components/home'
+Alerts = require 'scripts/components/alerts'
 NewMatch = require 'scripts/components/new-match'
 API = require 'scripts/utils/api'
 {Routes, Route, DefaultRoute, Link} = Router
@@ -12,10 +13,11 @@ API = require 'scripts/utils/api'
 Main = React.createClass
   render: ->
     <div>
-      <Header/>
+      <Header />
       <div className="container">
         <@props.activeRouteHandler/>
       </div>
+      <Alerts />
     </div>
 
 routes =
