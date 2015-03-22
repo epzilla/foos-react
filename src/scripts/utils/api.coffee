@@ -58,7 +58,10 @@ module.exports =
         console.error err.stack
 
   changeScore: (info) ->
-    socket.emit 'scoreChange', info
+    if socket.connected
+      socket.emit 'scoreChange', info
+    else
+      ServerActionCreator.offlineScoreUpdate info
 
   startMatch: (players) ->
     self = this

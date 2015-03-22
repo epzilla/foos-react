@@ -52,6 +52,13 @@ module.exports =
     )
     return
 
+  offlineScoreUpdate: (data) ->
+    Dispatcher.handleServerAction(
+      type: ActionTypes.OFFLINE_SCORE_UPDATE
+      data: data
+    )
+    return
+
   sendAlert: (data) ->
     Dispatcher.handleServerAction(
       type: ActionTypes.RECEIVE_ALERT

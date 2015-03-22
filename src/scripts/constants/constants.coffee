@@ -13,6 +13,7 @@ module.exports =
     CHANGE_SCORE: null
     RECEIVE_ALERT: null
     CLEAR_ALERTS: null
+    OFFLINE_SCORE_UPDATE: null
   )
 
   PayloadSources: keyMirror(

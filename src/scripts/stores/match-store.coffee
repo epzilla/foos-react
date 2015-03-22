@@ -10,6 +10,20 @@ _recentMatches = []
 _currentMatch = {}
 _seriesHistory = {}
 
+_updateOfflineScore = (info) ->
+  if info.plusMinus is 'plus'
+    _currentMatch.scores[_currentMatch.gameNum - 1][info.team]++
+    if _currentMatch.scores[_currentMatch.gameNum - 1][info.team] is 10
+      if _currentMatch.gameNum isnt 3
+        _currentMatch.gameNum++
+        _currentMatch.scores.push(
+          team1: 0,
+          team2: 0
+        )
+  else
+    if _currentMatch.scores[_currentMatch.gameNum - 1][info.team] isnt 0
+      _currentMatch.scores[_currentMatch.gameNum - 1][info.team]--
+
 MatchStore = assign({}, EventEmitter.prototype,
   emitChange: ->
     @emit CHANGE_EVENT
@@ -52,6 +66,8 @@ MatchStore.dispatchToken = Dispatcher.register( (payload) ->
         _currentMatch.scores = action.data.updatedMatch.scores
         _currentMatch.gameNum = action.data.updatedMatch.gameNum
         _currentMatch.active = action.data.updatedMatch.active
+    when ActionTypes.OFFLINE_SCORE_UPDATE
+      _updateOfflineScore action.data
   MatchStore.emitChange()
   return
 )
