@@ -11,6 +11,8 @@ module.exports =
     RECEIVE_PLAYERS: null
     RECEIVE_TEAMS: null
     CHANGE_SCORE: null
+    RECEIVE_ALERT: null
+    CLEAR_ALERTS: null
   )
 
   PayloadSources: keyMirror(

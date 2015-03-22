@@ -21,17 +21,17 @@ AlertStore = assign({}, EventEmitter.prototype,
     @removeListener CHANGE_EVENT, callback
     return
 
-  getTeams: ->
-    _teams
+  getAlerts: ->
+    _alerts
 )
 
 AlertStore.dispatchToken = Dispatcher.register( (payload) ->
   action = payload.action
   switch action.type
     when ActionTypes.RECEIVE_ALERT
-      _alerts.push action.data
-    when ActionTypes.CLEAR_ALERT
-      _.remove _alerts, id: action.data.id
+      _alerts[0] = action.data
+    when ActionTypes.CLEAR_ALERTS
+      _alerts.pop()
   AlertStore.emitChange()
   return
 )

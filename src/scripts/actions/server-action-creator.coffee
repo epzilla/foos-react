@@ -51,3 +51,22 @@ module.exports =
       data: data
     )
     return
+
+  sendAlert: (data) ->
+    Dispatcher.handleServerAction(
+      type: ActionTypes.RECEIVE_ALERT
+      data: data
+    )
+    if !data.persistent
+      window.setTimeout(=>
+        @clearAlerts()
+        return
+      , 5000)
+      return
+    return
+
+  clearAlerts: () ->
+    Dispatcher.handleServerAction(
+      type: ActionTypes.CLEAR_ALERTS
+    )
+    return
