@@ -16,7 +16,9 @@
   ],
   "dependencies": {
     "fastclick": "~1.0.6",
-    "reactable": "~0.10.1"
+    "reactable": "~0.10.1",
+    "fontawesome": "~4.3.0",
+    "bootstrap": "~3.3.4"
   },
   "devDependencies": {}
 }
