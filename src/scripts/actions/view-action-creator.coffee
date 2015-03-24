@@ -19,6 +19,10 @@ module.exports =
     API.getTeams()
     return
 
+  getRecentMatches: () ->
+    API.getRecentMatches()
+    return
+
   startMatch: (players) ->
     API.startMatch(players)
     return

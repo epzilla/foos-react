@@ -2,6 +2,7 @@ Constants = require 'scripts/constants/constants'
 EventEmitter = require('events').EventEmitter
 assign = require 'object-assign'
 Dispatcher = require 'scripts/dispatcher/app-dispatcher'
+ViewActionCreator = require 'scripts/actions/view-action-creator'
 
 ActionTypes = Constants.ActionTypes
 CHANGE_EVENT = 'change'
@@ -66,6 +67,8 @@ MatchStore.dispatchToken = Dispatcher.register( (payload) ->
         _currentMatch.scores = action.data.updatedMatch.scores
         _currentMatch.gameNum = action.data.updatedMatch.gameNum
         _currentMatch.active = action.data.updatedMatch.active
+        if action.data.status is 'finished'
+          ViewActionCreator.getRecentMatches()
     when ActionTypes.OFFLINE_SCORE_UPDATE
       _updateOfflineScore action.data
   MatchStore.emitChange()
