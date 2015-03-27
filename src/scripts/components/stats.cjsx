@@ -40,12 +40,18 @@ TableView = React.createClass
               sortFunction: recordSort
             },
             {
-              column: 'Avg. Score',
+              column: 'Avg. Score (Margin)',
               sortFunction: (a, b) ->
                 aParts = a.split '-'
                 bParts = b.split '-'
-                aMargin = parseInt(aParts[0]) - parseInt(aParts[1])
-                bMargin = parseInt(bParts[0]) - parseInt(bParts[1])
+                aFor = parseFloat(aParts[0])
+                aSecondPart = aParts[1].split ' '
+                aAgainst = parseFloat(aSecondPart[0])
+                bFor = parseFloat(bParts[0])
+                bSecondPart = bParts[1].split ' '
+                bAgainst = parseFloat(bSecondPart[0])
+                aMargin = aFor - aAgainst
+                bMargin = bFor - bAgainst
                 aMargin - bMargin
             },
           ]}
@@ -66,26 +72,36 @@ module.exports = React.createClass
         # We want to filter out any player who hasn't actually played a match yet
         formattedMatchPct = if player.pct < 1 then ('.' + player.pct.toPrecision(4).toString().split('.')[1]) else '1.000'
         formattedGamePct = if player.gamesWon then (player.gamesWon / player.games).toPrecision(3) else '.000'
+        rawAvgMargin = (player.avgPtsFor - player.avgPtsAgainst).toFixed 1
+        if rawAvgMargin > 0
+          avgMargin = '(+' + rawAvgMargin + ')'
+        else
+          avgMargin = '(' + rawAvgMargin + ')'
         if formattedGamePct is '1.00'
           formattedGamePct = '1.000'
         formattedPlayers.push
           'Player': player.name
           'Match Record': player.matchesWon + '-' + player.matchesLost
           'Game Record': player.gamesWon + '-' + player.gamesLost
-          'Avg. Score': player.avgPtsFor + '-' + player.avgPtsAgainst
+          'Avg. Score (Margin)': player.avgPtsFor + '-' + player.avgPtsAgainst + ' ' + avgMargin
 
     _.forEach teams, (team) ->
       if team.matches isnt 0
         # We want to filter out any team who hasn't actually played a match yet
         formattedMatchPct = if team.pct < 1 then ('.' + team.pct.toPrecision(4).toString().split('.')[1]) else '1.000'
         formattedGamePct = if team.gamesWon then (team.gamesWon / team.games).toPrecision(3) else '.000'
+        rawAvgMargin = (team.avgPtsFor - team.avgPtsAgainst).toFixed 1
+        if rawAvgMargin > 0
+          avgMargin = '(+' + rawAvgMargin + ')'
+        else
+          avgMargin = '(' + rawAvgMargin + ')'
         if formattedGamePct is '1.00'
           formattedGamePct = '1.000'
         formattedTeams.push
           'Team': team.title
           'Match Record': team.matchesWon + '-' + team.matchesLost
           'Game Record': team.gamesWon + '-' + team.gamesLost
-          'Avg. Score': team.avgPtsFor + '-' + team.avgPtsAgainst
+          'Avg. Score (Margin)': team.avgPtsFor + '-' + team.avgPtsAgainst + ' ' + avgMargin
 
     {
       players: formattedPlayers
