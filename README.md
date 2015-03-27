@@ -24,4 +24,4 @@ Foos React
 * ~~Create Start Match page~~
 * ~~Create Stats page~~
 * ~~Make offline-first~~
-* Create alerts
+* Create alerts for when the connection is lost
