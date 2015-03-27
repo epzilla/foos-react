@@ -5,6 +5,23 @@ PlayerStore = require 'scripts/stores/player-store'
 TeamStore = require 'scripts/stores/team-store'
 _ = require 'lodash'
 
+recordSort = (a, b) ->
+  aParts = a.split '-'
+  bParts = b.split '-'
+  aWins = parseInt(aParts[0])
+  aLosses = parseInt(aParts[1])
+  bWins = parseInt(bParts[0])
+  bLosses = parseInt(bParts[1])
+  aPct = aWins / (aWins + aLosses)
+  bPct = bWins / (bWins + bLosses)
+  if aPct is bPct
+    if aWins is bWins
+      bLosses - aLosses
+    else
+      aWins - bWins
+  else
+    aPct - bPct
+
 TableView = React.createClass
   render: ->
     <section className="row">
@@ -16,42 +33,20 @@ TableView = React.createClass
             'Player',
             {
               column: 'Match Record',
-              sortFunction: (a, b) ->
-                aParts = a.split '-'
-                bParts = b.split '-'
-                aPct = aParts[0] / (aParts[0] + aParts[1])
-                bPct = bParts[0] / (bParts[0] + bParts[1])
-                if aPct is bPct
-                  if aParts[0] is bParts[0]
-                    aParts[1] < bParts[1]
-                  else
-                    aParts[0] > bParts[0]
-                else
-                  aPct > bPct
+              sortFunction: recordSort
             },
             {
               column: 'Game Record',
-              sortFunction: (a, b) ->
-                aParts = a.split '-'
-                bParts = b.split '-'
-                aPct = aParts[0] / (aParts[0] + aParts[1])
-                bPct = bParts[0] / (bParts[0] + bParts[1])
-                if aPct is bPct
-                  if aParts[0] is bParts[0]
-                    aParts[1] > bParts[1]
-                  else
-                    aParts[0] > bParts[0]
-                else
-                  aPct > bPct
+              sortFunction: recordSort
             },
             {
               column: 'Avg. Score',
               sortFunction: (a, b) ->
                 aParts = a.split '-'
                 bParts = b.split '-'
-                aMargin = aParts[0] - aParts[1]
-                bMargin = bParts[0] - bParts[1]
-                aMargin > bMargin
+                aMargin = parseInt(aParts[0]) - parseInt(aParts[1])
+                bMargin = parseInt(bParts[0]) - parseInt(bParts[1])
+                aMargin - bMargin
             },
           ]}
           defaultSort={@props.sorting}
