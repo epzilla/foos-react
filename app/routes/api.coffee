@@ -5,6 +5,7 @@ teams = require('./services/teams')
 
 init = (socket) ->
   matches.init socket
+  players.init()
   return
 
 # middleware to use for all requests

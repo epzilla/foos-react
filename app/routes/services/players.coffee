@@ -1,7 +1,24 @@
-Player = require('../../models/player')
-_ = require('lodash')
+Player = require '../../models/player'
+_ = require 'lodash'
+fs = require 'fs'
 
 module.exports =
+  init: ->
+    Player.count (err, count) ->
+      if !err and count is 0
+        obj = undefined
+        fs.readFile 'app/conf/players.json', 'utf8', (err, data) ->
+          if err
+            throw err
+          Player.collection.insert JSON.parse(data), (err, players) ->
+            if err
+              throw err
+            console.log players
+          return
+      else
+        console.log 'Players already exist'
+      return
+
   create: (req, res) ->
     player = new Player(
       name: req.body.name

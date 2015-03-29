@@ -1,11 +1,13 @@
-express = require('express')
-bodyParser = require('body-parser')
+express = require 'express'
+bodyParser = require 'body-parser'
 app = express()
-morgan = require('morgan')
-path = require('path')
-conf = require('../app/config')
-routes = require('../app/routes/api')
+morgan = require 'morgan'
+path = require 'path'
+conf = require '../app/conf/config'
+routes = require '../app/routes/api'
 server = require('http').createServer(app)
+
+port = process.env.PORT or conf.PORT or 3000
 
 # configure app
 app.use morgan('dev')
@@ -21,7 +23,7 @@ app.all '*', (req, res, next) ->
   res.header("Access-Control-Allow-Headers", "X-Requested-With")
   next()
 
-port = process.env.PORT or conf.PORT or 3000
+# CONNECT TO DATABASE ====================================
 mongoose = require('mongoose')
 mongoose.connect 'mongodb://localhost:27017/foos'
 
@@ -34,9 +36,10 @@ app.get '/*', (req, res) ->
   res.render '../dist/index.html'
   return
 
-# SET UP SOCKETS =========================================
+# SET UP SOCKETS AND SEED DATABASE IF EMPTY ==============
 io = require('socket.io').listen(server)
 routes.init io
+
 # var socket_port = conf.SOCKET_PORT || 9000;
 server.listen app.get('port'), ->
   console.info 'server listening on port ' + port
