@@ -13,10 +13,9 @@ module.exports =
           Player.collection.insert JSON.parse(data), (err, players) ->
             if err
               throw err
-            console.log players
+            console.info 'Seeded list of players'
           return
-      else
-        console.log 'Players already exist'
+        return
       return
 
   create: (req, res) ->
