@@ -40,7 +40,6 @@ app.get '/*', (req, res) ->
 io = require('socket.io').listen(server)
 routes.init io
 
-# var socket_port = conf.SOCKET_PORT || 9000;
 server.listen app.get('port'), ->
   console.info 'server listening on port ' + port
   return
