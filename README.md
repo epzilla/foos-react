@@ -16,4 +16,4 @@ Foos React
 
 ## TODOs
 - Add ability to load profile pics
-- Add some more in-depth stats (head-to-head between players/teams in particular)
+- Add some more in-depth stats (head-to-head between players/teams in particular, and maybe some simple algorithms to try and predict outcomes)
