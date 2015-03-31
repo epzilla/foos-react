@@ -13,3 +13,7 @@ Foos React
 - `npm install`
 - `bower install`
 - `gulp` to start server
+
+## TODOs
+- Add ability to load profile pics
+- Add some more in-depth stats (head-to-head between players/teams in particular)
