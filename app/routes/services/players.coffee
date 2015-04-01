@@ -7,10 +7,28 @@ module.exports =
     Player.count (err, count) ->
       if !err and count is 0
         obj = undefined
-        fs.readFile 'app/conf/players.json', 'utf8', (err, data) ->
+        fs.readFile 'app/conf/players.txt', (err, data) ->
           if err
             throw err
-          Player.collection.insert JSON.parse(data), (err, players) ->
+          array = data.toString().split('\n')
+          players = []
+          array.forEach (ln) ->
+            if ln and ln isnt ''
+              players.push
+                'avgPtsAgainst': 0
+                'avgPtsFor': 0
+                'games': 0
+                'gamesLost': 0
+                'ptsFor': 0
+                'img': 'images/players/default.png'
+                'matches': 0
+                'matchesLost': 0
+                'matchesWon': 0
+                'name': ln
+                'pct': 0
+                'ptsAgainst': 0
+            return
+          Player.collection.insert players, (err, playerList) ->
             if err
               throw err
             console.info 'Seeded list of players'
