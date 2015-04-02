@@ -67,7 +67,6 @@ Home = React.createClass
     <div>
       <section>{jumbotron}</section>
       <hr />
-      <button id="audioBtn">Play Sound</button>
       {series}
       <Recents recents={@state.recentMatches}/>
     </div>
