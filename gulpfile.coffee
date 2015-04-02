@@ -87,6 +87,7 @@ gulp.task "copy", ->
   gulp.src("#{srcPath}/styles/*.css").pipe(gulp.dest("#{distPath}/styles/"))
   gulp.src("#{srcPath}/images/**").pipe(gulp.dest("#{distPath}/images/"))
   gulp.src("#{srcPath}/favicon.ico").pipe(gulp.dest(distPath))
+  gulp.src("#{srcPath}/sounds/**").pipe(gulp.dest("#{distPath}/sounds/"))
   gulp.src("#{componentsPath}/**/*").pipe(gulp.dest("#{distPath}/#{componentsPath}"))
 
 gulp.task "build", ["clean", "copy", "css", "js"]
