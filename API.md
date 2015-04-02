@@ -18,6 +18,12 @@
 ## Get a specific match by ID
 `GET` `/api/matches/:matchId`
 
+## List all teams
+`GET` `/api/teams`
+
+## Get specific team by ID
+`GET` `/api/teams/:teamId`
+
 ## Create new player
 `POST` `/api/players`
 
