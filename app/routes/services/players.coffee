@@ -18,6 +18,7 @@ module.exports =
                 'avgPtsAgainst': 0
                 'avgPtsFor': 0
                 'games': 0
+                'gamesWon': 0
                 'gamesLost': 0
                 'ptsFor': 0
                 'img': 'images/players/default.png'
