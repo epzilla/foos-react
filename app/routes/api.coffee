@@ -2,6 +2,7 @@ router = require('express').Router()
 players = require('./services/players')
 matches = require('./services/matches')
 teams = require('./services/teams')
+sounds = require('./services/sounds')
 
 init = (socket) ->
   matches.init socket
@@ -38,6 +39,10 @@ router.put '/matches/end/:matchId', matches.endMatch
 # Teams
 router.get '/teams', teams.findAll
 router.get '/teams/:teamId', teams.find
+
+# Sounds
+router.get '/sounds/random', sounds.getRandomSound
+
 module.exports =
   router: router
   init: init

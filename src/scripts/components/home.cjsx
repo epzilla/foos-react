@@ -5,6 +5,7 @@ MatchStore = require 'scripts/stores/match-store'
 Recents = require 'scripts/components/recents'
 SeriesHistory = require 'scripts/components/series'
 Scoreboard = require 'scripts/components/scoreboard'
+API = require 'scripts/utils/api'
 
 getMatchState = ->
   {
@@ -21,7 +22,13 @@ Home = React.createClass
     btn = document.querySelector '#audioBtn'
     sound = document.querySelector 'audio'
     btn.addEventListener 'click', (e) ->
-      sound.play()
+      API.getSound('/sounds/goal').then( (res) ->
+        sound.src = '/sounds/goal/' + res.file
+        sound.play()
+      ).catch( (err) ->
+        console.error err
+      )
+      return
     MatchStore.addChangeListener @_onChange
 
   componentWillUnmount: ->

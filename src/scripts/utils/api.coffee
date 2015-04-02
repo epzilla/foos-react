@@ -70,3 +70,6 @@ module.exports =
         ls.set 'matchID', res._id
         self.getHomeData()
     return
+
+  getSound: (folder) ->
+    Rest.get('/api/sounds/random?folder=/sounds/goal')
