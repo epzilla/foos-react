@@ -51,9 +51,11 @@ MatchService.create = (req, res) ->
         Match.findById(newMatch._id).populate('team1 team2').exec (err, match) ->
           if err
             res.send err
-          MatchService.io.emit 'matchUpdate',
-            status: 'new'
-            updatedMatch: match
+          SoundService.getRandomStartGameSound( (err, file) ->
+            MatchService.io.emit 'matchUpdate',
+              status: 'new'
+              sound: file
+              updatedMatch: match
           res.json match
           return
         return
@@ -251,10 +253,12 @@ MatchService.changeScore = (sock, data) ->
                 err: err
             else
               w = if teams[0]._id.equals(winnerID) then teams[0] else teams[1]
-              MatchService.io.emit 'matchUpdate',
-                status: 'finished'
-                winner: w
-                updatedMatch: updatedMatch
+              SoundService.getRandomEndGameSound( (err, file) ->
+                MatchService.io.emit 'matchUpdate',
+                  status: 'finished'
+                  winner: w
+                  sound: file
+                  updatedMatch: updatedMatch
             return
           return
       else
