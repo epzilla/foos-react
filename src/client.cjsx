@@ -18,6 +18,7 @@ Main = React.createClass
         <@props.activeRouteHandler/>
       </div>
       <Alerts />
+      <audio src="/sounds/goal/TOUCHDOWN.mp3" />
     </div>
 
 routes =

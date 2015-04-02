@@ -68,7 +68,6 @@ Home = React.createClass
       <section>{jumbotron}</section>
       <hr />
       <button id="audioBtn">Play Sound</button>
-      <audio src="/sounds/goal/TOUCHDOWN.mp3" />
       {series}
       <Recents recents={@state.recentMatches}/>
     </div>

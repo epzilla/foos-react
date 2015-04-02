@@ -53,7 +53,7 @@ SoundService.getRandomStartGameSound = (callback) ->
   )
   return
 
-  SoundService.getRandomEndGameSound = (callback) ->
+SoundService.getRandomEndGameSound = (callback) ->
   fs.readdir('./dist/sounds/endGame', (err, files) ->
     if err
       res.status(500).send(err)
