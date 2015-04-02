@@ -41,7 +41,7 @@ router.get '/teams', teams.findAll
 router.get '/teams/:teamId', teams.find
 
 # Sounds
-router.get '/sounds/random', sounds.getRandomSound
+# router.get '/sounds/random', sounds.getRandomSound
 
 module.exports =
   router: router

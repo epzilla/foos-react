@@ -12,6 +12,7 @@ getMatchState = ->
     currentMatch: MatchStore.getCurrentMatch()
     recentMatches: MatchStore.getRecentMatches()
     seriesHistory: MatchStore.getSeriesHistory()
+    sound: MatchStore.getSound()
   }
 
 Home = React.createClass
@@ -19,16 +20,16 @@ Home = React.createClass
     getMatchState()
 
   componentDidMount:  ->
-    btn = document.querySelector '#audioBtn'
-    sound = document.querySelector 'audio'
-    btn.addEventListener 'click', (e) ->
-      API.getSound('/sounds/goal').then( (res) ->
-        sound.src = '/sounds/goal/' + res.file
-        sound.play()
-      ).catch( (err) ->
-        console.error err
-      )
-      return
+    # btn = document.querySelector '#audioBtn'
+    # sound = document.querySelector 'audio'
+    # btn.addEventListener 'click', (e) ->
+    #   API.getSound('/sounds/goal').then( (res) ->
+    #     sound.src = '/sounds/goal/' + res.file
+    #     sound.play()
+    #   ).catch( (err) ->
+    #     console.error err
+    #   )
+    #   return
     MatchStore.addChangeListener @_onChange
 
   componentWillUnmount: ->
@@ -74,5 +75,8 @@ Home = React.createClass
 
   _onChange: ->
     @setState getMatchState()
+    sound = document.querySelector 'audio'
+    sound.src = @state.sound
+    sound.play()
 
 module.exports = Home

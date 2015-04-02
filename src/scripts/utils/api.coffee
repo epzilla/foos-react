@@ -71,5 +71,5 @@ module.exports =
         self.getHomeData()
     return
 
-  getSound: (folder) ->
-    Rest.get('/api/sounds/random?folder=/sounds/goal')
+  # getSound: (folder) ->
+  #   Rest.get('/api/sounds/random?folder=/sounds/goal')

@@ -2,6 +2,7 @@ Match = require('../../models/match')
 Team = require('../../models/team')
 TeamService = require('./teams')
 PlayerService = require('./players')
+SoundService = require('./sounds')
 moment = require('moment')
 MatchService = {}
 
@@ -150,6 +151,13 @@ MatchService.endMatch = (sock, match) ->
     return
   return
 
+# MatchService.incrementScore = (req, res) ->
+#   Match.find(active: true).populate('team1 team2').exec (err, match) ->
+#     if err
+#       res.send err
+#     if match
+
+
 ###
 # changeScore - update the score of a game
 # @param  {socket.io socket} sock
@@ -251,13 +259,17 @@ MatchService.changeScore = (sock, data) ->
           return
       else
         # Match continues
-        MatchService.io.emit 'matchUpdate',
-          status: 'ok'
-          updatedMatch: updatedMatch
-          whatChanged:
-            team: team[0]
-            plusMinus: data.plusMinus
-            gameOver: gameOver
+        SoundService.getRandomGoalSound( (err, file) ->
+          MatchService.io.emit 'matchUpdate',
+            status: 'ok'
+            updatedMatch: updatedMatch
+            sound: file
+            whatChanged:
+              team: team[0]
+              plusMinus: data.plusMinus
+              gameOver: gameOver
+          return
+        )
       return
     return
   return

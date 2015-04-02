@@ -10,6 +10,7 @@ CHANGE_EVENT = 'change'
 _recentMatches = []
 _currentMatch = {}
 _seriesHistory = {}
+_soundToPlay = ''
 
 _updateOfflineScore = (info) ->
   if info.plusMinus is 'plus'
@@ -46,6 +47,9 @@ MatchStore = assign({}, EventEmitter.prototype,
 
   getSeriesHistory: ->
     _seriesHistory
+
+  getSound: ->
+    _soundToPlay
 )
 
 MatchStore.dispatchToken = Dispatcher.register( (payload) ->
@@ -67,6 +71,7 @@ MatchStore.dispatchToken = Dispatcher.register( (payload) ->
         _currentMatch.scores = action.data.updatedMatch.scores
         _currentMatch.gameNum = action.data.updatedMatch.gameNum
         _currentMatch.active = action.data.updatedMatch.active
+        _soundToPlay = action.data.sound
         if action.data.status is 'finished'
           ViewActionCreator.getRecentMatches()
     when ActionTypes.OFFLINE_SCORE_UPDATE

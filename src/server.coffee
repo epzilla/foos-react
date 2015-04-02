@@ -25,7 +25,7 @@ app.all '*', (req, res, next) ->
 
 # CONNECT TO DATABASE ====================================
 mongoose = require('mongoose')
-mongoose.connect 'mongodb://localhost:27017/foos'
+mongoose.connect 'mongodb://localhost:27017/foos-test'
 
 # REGISTER ROUTES ========================================
 app.use '/api', routes.router
