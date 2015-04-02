@@ -3,6 +3,7 @@ TimeAgo = require './time-ago'
 Actions = require 'scripts/actions/view-action-creator'
 moment = require 'moment'
 ls = require 'scripts/utils/local-storage'
+fullscreen = require 'scripts/utils/fullscreen'
 cx = React.addons.classSet
 
 GameNum = React.createClass
@@ -88,6 +89,27 @@ ScoreStepper = React.createClass
 
 
 module.exports = React.createClass
+
+  componentDidMount: ->
+    btn = document.querySelector '.fullscreen-mode'
+    btn.addEventListener 'click', (e) ->
+      scoreboard = document.querySelector '.scoreboard'
+      if btn.classList.contains 'btn-success'
+        fullscreen.enterFullscreen scoreboard
+        btn.innerHTML = 'Exit Full Screen'
+        btn.classList.remove 'btn-success'
+        btn.classList.add 'btn-danger'
+      else
+        fullscreen.exitFullscreen scoreboard
+        btn.innerHTML = 'Full Screen Scoreboard'
+        btn.classList.add 'btn-success'
+        btn.classList.remove 'btn-danger'
+
+    window.addEventListener 'keyup', (e) ->
+      if e.keyCode is 27 and btn.classList.contains 'btn-danger'
+        btn.innerHTML = 'Full Screen Scoreboard'
+        btn.classList.add 'btn-success'
+        btn.classList.remove 'btn-danger'
 
   render: ->
     gameNums = []
@@ -178,6 +200,9 @@ module.exports = React.createClass
               <h5><i className="fa fa-clock-o"></i><em>&nbsp;Match started <TimeAgo time={match.startTime} />.</em></h5>
             </div>
             {gameStart}
+            <div className="row pad-top-1em">
+              <button className="btn btn-success fullscreen-mode">Full Screen Scoreboard</button>
+            </div>
           </div>
         </div>
       </div>
