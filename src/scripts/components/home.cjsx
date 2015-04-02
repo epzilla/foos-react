@@ -18,6 +18,10 @@ Home = React.createClass
     getMatchState()
 
   componentDidMount:  ->
+    btn = document.querySelector '#audioBtn'
+    sound = document.querySelector 'audio'
+    btn.addEventListener 'click', (e) ->
+      sound.play()
     MatchStore.addChangeListener @_onChange
 
   componentWillUnmount: ->
@@ -55,6 +59,8 @@ Home = React.createClass
     <div>
       <section>{jumbotron}</section>
       <hr />
+      <button id="audioBtn">Play Sound</button>
+      <audio src="/sounds/goal/TOUCHDOWN.mp3" />
       {series}
       <Recents recents={@state.recentMatches}/>
     </div>
