@@ -1,9 +1,6 @@
 fs = require 'fs'
-
+Utils = require './utils'
 SoundService = {}
-
-getRandomNum = (max, min) ->
-  Math.floor(Math.random() * (max - min) + min)
 
 SoundService.getRandomGoalSound = (callback) ->
   fs.readdir('./dist/sounds/goal', (err, files) ->
@@ -11,7 +8,7 @@ SoundService.getRandomGoalSound = (callback) ->
       res.status(500).send(err)
     if files
       count = files.length
-      fileNum = getRandomNum(0, count)
+      fileNum = Utils.getRandomNum(0, count)
       callback(null, '/sounds/goal/' + files[fileNum])
       return
   )
@@ -23,7 +20,7 @@ SoundService.getRandomTrashTalkSound = (callback) ->
       res.status(500).send(err)
     if files
       count = files.length
-      fileNum = getRandomNum(0, count)
+      fileNum = Utils.getRandomNum(0, count)
       callback(null, '/sounds/trashTalk/' + files[fileNum])
       return
   )
@@ -35,7 +32,7 @@ SoundService.getRandomSquirrelSound = (callback) ->
       res.status(500).send(err)
     if files
       count = files.length
-      fileNum = getRandomNum(0, count)
+      fileNum = Utils.getRandomNum(0, count)
       callback(null, '/sounds/squirrel/' + files[fileNum])
       return
   )
@@ -47,7 +44,7 @@ SoundService.getRandomStartGameSound = (callback) ->
       res.status(500).send(err)
     if files
       count = files.length
-      fileNum = getRandomNum(0, count)
+      fileNum = Utils.getRandomNum(0, count)
       callback(null, '/sounds/startGame/' + files[fileNum])
       return
   )
@@ -59,7 +56,7 @@ SoundService.getRandomEndGameSound = (callback) ->
       res.status(500).send(err)
     if files
       count = files.length
-      fileNum = getRandomNum(0, count)
+      fileNum = Utils.getRandomNum(0, count)
       callback(null, '/sounds/endGame/' + files[fileNum])
       return
   )
@@ -71,7 +68,7 @@ SoundService.getRandomWelcomeGameSound = (callback) ->
       res.status(500).send(err)
     if files
       count = files.length
-      fileNum = getRandomNum(0, count)
+      fileNum = Utils.getRandomNum(0, count)
       callback(null, '/sounds/welcome/' + files[fileNum])
       return
   )

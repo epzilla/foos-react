@@ -1,10 +1,22 @@
-Match = require('../../models/match')
-Team = require('../../models/team')
-TeamService = require('./teams')
-PlayerService = require('./players')
-SoundService = require('./sounds')
-moment = require('moment')
+Match = require '../../models/match'
+Team = require '../../models/team'
+TeamService = require './teams'
+PlayerService = require './players'
+SoundService = require './sounds'
+Utils = require './utils'
+moment = require 'moment'
+_ = require 'lodash'
 MatchService = {}
+
+getRandomTeamsFromPlayers = (playerList) ->
+  teams = [[], []]
+  if playerList.length is 4
+    shuffledPlayers = _.shuffle playerList
+    teams[0][0] = shuffledPlayers[0]
+    teams[0][1] = shuffledPlayers[1]
+    teams[1][0] = shuffledPlayers[2]
+    teams[1][1] = shuffledPlayers[3]
+  teams
 
 MatchService.init = (sock) ->
   MatchService.io = sock
@@ -30,6 +42,47 @@ MatchService.create = (req, res) ->
     if err
       res.status(400).send err
     TeamService.getOrCreate req.body.team2, (err, team2) ->
+      if err
+        res.status(400).send err
+      match = new Match(
+        team1: team1._id
+        team2: team2._id
+        winner: null
+        scores: [ {
+          team1: 0
+          team2: 0
+        } ]
+        startTime: now
+        endTime: null
+        gameStartTime: now
+        gameNum: 1
+        active: true)
+      match.save (err, newMatch) ->
+        if err
+          res.send err
+        Match.findById(newMatch._id).populate('team1 team2').exec (err, match) ->
+          if err
+            res.send err
+          SoundService.getRandomStartGameSound (err, file) ->
+            MatchService.io.emit 'matchUpdate',
+              status: 'new'
+              sound: file
+              updatedMatch: match
+          res.json match
+          return
+        return
+      return
+    return
+  return
+
+MatchService.createRandomWithPlayers = (req, res) ->
+  now = moment()
+  playerList = req.body.players
+  teams = getRandomTeamsFromPlayers playerList
+  TeamService.getOrCreate teams[0], (err, team1) ->
+    if err
+      res.status(400).send err
+    TeamService.getOrCreate teams[1], (err, team2) ->
       if err
         res.status(400).send err
       match = new Match(
