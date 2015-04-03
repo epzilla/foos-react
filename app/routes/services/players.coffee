@@ -14,9 +14,13 @@ module.exports =
           players = []
           array.forEach (ln) ->
             if ln and ln isnt ''
+              lnParts = ln.split(',')
+              name = lnParts[0]
+              nfc = if lnParts.length > 1 then lnParts[1] else ''
               players.push
                 'avgPtsAgainst': 0
                 'avgPtsFor': 0
+                'nfc': nfc
                 'games': 0
                 'gamesWon': 0
                 'gamesLost': 0
@@ -55,6 +59,7 @@ module.exports =
       res.json message: 'Player created!'
       return
     return
+
   findAll: (req, res) ->
     Player.find().sort('name': 'asc').exec (err, players) ->
       if err
@@ -62,6 +67,7 @@ module.exports =
       res.json players
       return
     return
+
   find: (req, res) ->
     Player.findById req.params.playerId, (err, player) ->
       if err
@@ -69,6 +75,7 @@ module.exports =
       res.json player
       return
     return
+
   update: (req, res) ->
     Player.findById req.params.playerId, (err, player) ->
       if err
@@ -85,6 +92,24 @@ module.exports =
         return
       return
     return
+
+  updateByName: (req, res) ->
+    Player.findOne {name: req.params.name}, (err, player) ->
+      if err
+        res.send err
+      newVals = req.body
+      for prop of newVals
+        if newVals.hasOwnProperty(prop)
+          if player[prop] != undefined
+            player[prop] = newVals[prop]
+      player.save (err) ->
+        if err
+          res.send err
+        res.json message: 'Player updated!'
+        return
+      return
+    return
+
   updatePlayerStats: (match, teams, statPack, cb) ->
     team1 = undefined
     team2 = undefined

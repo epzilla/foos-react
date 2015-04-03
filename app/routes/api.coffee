@@ -23,6 +23,7 @@ router.post '/players', players.create
 router.get '/players', players.findAll
 router.get '/players/:playerId', players.find
 router.put '/players/:playerId', players.update
+router.put '/players/updateByName/:name', players.updateByName
 # router.put('/reset/players', players.resetAll);
 
 # Matches

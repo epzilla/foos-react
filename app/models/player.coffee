@@ -3,6 +3,7 @@ Schema = mongoose.Schema
 
 PlayerSchema = new Schema(
   name: String
+  nfc: String
   matches: Number
   games: Number
   matchesWon: Number
