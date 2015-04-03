@@ -12,7 +12,6 @@ getMatchState = ->
     currentMatch: MatchStore.getCurrentMatch()
     recentMatches: MatchStore.getRecentMatches()
     seriesHistory: MatchStore.getSeriesHistory()
-    sound: MatchStore.getSound()
   }
 
 Home = React.createClass
@@ -73,8 +72,5 @@ Home = React.createClass
 
   _onChange: ->
     @setState getMatchState()
-    sound = document.querySelector 'audio'
-    sound.src = @state.sound
-    sound.play()
 
 module.exports = Home

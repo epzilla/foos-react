@@ -29,6 +29,9 @@ module.exports =
       type: ActionTypes.RECEIVE_SCORE_UPDATE
       data: data
     )
+    sound = document.querySelector 'audio'
+    sound.src = data.sound
+    sound.play()
     return
 
   receiveRecentMatches: (data) ->

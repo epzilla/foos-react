@@ -13,11 +13,7 @@ module.exports = React.createClass
   _onChange: ->
     @setState(
       players: PlayerStore.getPlayers()
-      sound: MatchStore.getSound()
     )
-    sound = document.querySelector 'audio'
-    sound.src = @state.sound
-    sound.play()
 
   _onMatchChange: ->
     match = MatchStore.getCurrentMatch()
