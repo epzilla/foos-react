@@ -45,6 +45,11 @@ MatchService.create = (req, res) ->
         gameStartTime: now
         gameNum: 1
         active: true)
+      SoundService.getRandomStartGameSound (err, file) ->
+        MatchService.io.emit 'matchUpdate',
+          status: 'ok'
+          sound: file
+          updatedMatch: updatedMatch
       match.save (err, newMatch) ->
         if err
           res.send err
