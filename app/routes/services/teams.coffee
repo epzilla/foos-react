@@ -1,5 +1,5 @@
-Team = require('../../models/team')
-Player = require('../../models/player')
+Team = require '../../models/team'
+Player = require '../../models/player'
 
 createNewTeam = (playerIDs, cb) ->
   title = ''
