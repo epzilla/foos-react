@@ -171,7 +171,7 @@ MatchService.endMatch = (sock, match) ->
 #         }
 ###
 MatchService.changeScore = (sock, data) ->
-  Match.findById data.id, (err, match) ->
+  Match.findOne {active:true}, (err, match) ->
     if err
       sock.emit 'matchError',
         status: 'matchNotFound'
