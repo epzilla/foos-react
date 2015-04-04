@@ -4,6 +4,7 @@ TeamService = require './teams'
 PlayerService = require './players'
 SoundService = require './sounds'
 Utils = require './utils'
+cache = require 'memory-cache'
 moment = require 'moment'
 _ = require 'lodash'
 MatchService = {}
@@ -18,6 +19,15 @@ getRandomTeamsFromPlayers = (playerList) ->
     teams[1][1] = shuffledPlayers[3]
   teams
 
+checkMatchInProgress = (cb) ->
+  Match.findOne {active: true}, (err, match) ->
+    if err
+      cb(err)
+    else if match
+      cb(null, true)
+    else
+      cb(null, false)
+
 MatchService.init = (sock) ->
   MatchService.io = sock
   MatchService.io.on 'connection', (socket) ->
@@ -30,11 +40,57 @@ MatchService.init = (sock) ->
     socket.on 'scoreBatchUpdate', (data) ->
       MatchService.update socket, data
       return
+    socket.on 'playerNFC', (data) ->
+      MatchService.addPlayerToPool data
+      return
     socket.on 'disconnect', ->
       console.info 'Socket disconnected : ' + clientIp + ':' + clientPort
       return
     return
   return
+
+MatchService.addPlayerToPool = (data) ->
+  ###
+  # First, check if match is already in progress.
+  # If so, do nothing and return. Else, go ahead and try to add them
+  ###
+  checkMatchInProgress (err, inProgress) ->
+    if err
+      MatchService.io.emit 'matchError',
+        status: 'badStuff'
+        err: err
+    else if inProgress
+      MatchService.io.emit 'matchError',
+        status: 'matchInProgress'
+        err: err
+    else
+      playerPool = cache.get('playerPool') or []
+      console.log playerPool
+
+      # Look up player by NFC ID
+      PlayerService.findByNFC data.nfc, (err, player) ->
+        if err
+          MatchService.io.emit 'matchError',
+            status: 'playerNotFound'
+            err: err
+
+        if player
+          playerPool.push player._id
+          cache.put 'playerPool', playerPool
+          console.log('Players in pool: ' + cache.get('playerPool'))
+
+          if playerPool.length is 4
+            console.log('Start Match With: ' + playerPool)
+            ###
+            # TODO - Start new match with those players
+            ###
+            MatchService.createRandomWithPlayers playerPool
+            cache.del 'playerPool'
+        else
+          MatchService.io.emit 'matchError',
+            status: 'playerNotFound'
+            err: err
+      return
 
 MatchService.create = (req, res) ->
   now = moment()
@@ -75,16 +131,20 @@ MatchService.create = (req, res) ->
     return
   return
 
-MatchService.createRandomWithPlayers = (req, res) ->
+MatchService.createRandomWithPlayers = (playerList) ->
   now = moment()
-  playerList = req.body.players
   teams = getRandomTeamsFromPlayers playerList
   TeamService.getOrCreate teams[0], (err, team1) ->
     if err
-      res.status(400).send err
+      MatchService.io.emit 'matchError',
+        status: 'teamNotFound'
+        err: err
     TeamService.getOrCreate teams[1], (err, team2) ->
       if err
-        res.status(400).send err
+        MatchService.io.emit 'matchError',
+          status: 'teamNotFound'
+          err: err
+
       match = new Match(
         team1: team1._id
         team2: team2._id
@@ -98,18 +158,24 @@ MatchService.createRandomWithPlayers = (req, res) ->
         gameStartTime: now
         gameNum: 1
         active: true)
+
       match.save (err, newMatch) ->
         if err
-          res.send err
+          MatchService.io.emit 'matchError',
+            status: 'matchSaveError'
+            err: err
+
         Match.findById(newMatch._id).populate('team1 team2').exec (err, match) ->
           if err
-            res.send err
+            MatchService.io.emit 'matchError',
+              status: 'matchSaveError'
+              err: err
+
           SoundService.getRandomStartGameSound (err, file) ->
             MatchService.io.emit 'matchUpdate',
               status: 'new'
               sound: file
               updatedMatch: match
-          res.json match
           return
         return
       return

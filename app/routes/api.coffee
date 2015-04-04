@@ -29,6 +29,7 @@ router.put '/players/updateByName/:name', players.updateByName
 # Matches
 router.post '/matches', matches.create
 router.post '/matches/createRandomWithPlayers', matches.createRandomWithPlayers
+router.post '/matches/addPlayerToPool', matches.addPlayerToPool
 router.get '/matches', matches.findAll
 router.get '/matches/current', matches.getCurrentMatch
 router.get '/matches/recent', matches.getRecentMatches

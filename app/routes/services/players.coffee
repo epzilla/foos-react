@@ -76,6 +76,14 @@ module.exports =
       return
     return
 
+  findByNFC: (nfc, cb) ->
+    Player.findOne {nfc: nfc}, (err, player) ->
+      if err
+        console.error err
+        cb err
+      cb(null, player)
+    return
+
   update: (req, res) ->
     Player.findById req.params.playerId, (err, player) ->
       if err
