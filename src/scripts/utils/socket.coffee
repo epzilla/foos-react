@@ -23,6 +23,6 @@ socket.on 'connect', ->
     ServerActionCreator.sendAlert(
       type: 'warn'
       persistent: true
-      text: 'You\'re offline. But no worries, your score will continue to be kept and published when you reconnect')
+      text: 'Bummer! Looks like you\'re offline, so you won\'t receive score updates until your connection is restored.')
 
 module.exports = socket
