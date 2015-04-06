@@ -65,7 +65,7 @@ MatchService.addPlayerToPool = (data) ->
         err: err
     else
       playerPool = cache.get('playerPool') or []
-      console.log playerPool
+      playerNames = cache.get('playerNames') or []
 
       # Look up player by NFC ID
       PlayerService.findByNFC data.nfc, (err, player) ->
@@ -75,17 +75,25 @@ MatchService.addPlayerToPool = (data) ->
             err: err
 
         if player
-          playerPool.push player._id
-          cache.put 'playerPool', playerPool
-          console.log('Players in pool: ' + cache.get('playerPool'))
+          # Make sure that player hasn't already been added
+          if playerPool.indexOf(player._id.toString()) is -1
+            playerPool.push player._id.toString()
+            playerNames.push player.name
+            cache.put 'playerPool', playerPool
+            cache.put 'playerNames', playerNames
+            console.log('Players in pool: ' + cache.get('playerNames').toString())
 
-          if playerPool.length is 4
-            console.log('Start Match With: ' + playerPool)
-            ###
-            # TODO - Start new match with those players
-            ###
-            MatchService.createRandomWithPlayers playerPool
-            cache.del 'playerPool'
+            if playerPool.length is 4
+              console.log('Start Match With: ' + playerNames.toString())
+              ###
+              # TODO - Start new match with those players
+              ###
+              MatchService.createRandomWithPlayers playerPool
+              cache.del 'playerPool'
+              cache.del 'playerNames'
+          else
+            console.warn('Registered NFC event for ' + player.name +
+                         ', but player is already in pool.')
         else
           MatchService.io.emit 'matchError',
             status: 'playerNotFound'
