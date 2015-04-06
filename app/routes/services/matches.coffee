@@ -118,7 +118,7 @@ MatchService.addPlayerToPool = (data) ->
         else
           MatchService.io.emit 'matchError',
             status: 'playerNotFound'
-            err: 'Could not find player bf NFC ID'
+            err: 'Could not find player by NFC ID'
       return
 
 MatchService.create = (req, res) ->
