@@ -4,10 +4,13 @@ TeamService = require './teams'
 PlayerService = require './players'
 SoundService = require './sounds'
 Utils = require './utils'
-cache = require 'memory-cache'
 moment = require 'moment'
 _ = require 'lodash'
 MatchService = {}
+timer = undefined
+errString = ''
+playerPool = []
+playerNames = []
 
 getRandomTeamsFromPlayers = (playerList) ->
   teams = [[], []]
@@ -57,16 +60,13 @@ MatchService.addPlayerToPool = (data) ->
   checkMatchInProgress (err, inProgress) ->
     if err
       MatchService.io.emit 'matchError',
-        status: 'badStuff'
+        status: 'matchError'
         err: err
     else if inProgress
       MatchService.io.emit 'matchError',
         status: 'matchInProgress'
-        err: err
+        err: 'Match Already in Progress'
     else
-      playerPool = cache.get('playerPool') or []
-      playerNames = cache.get('playerNames') or []
-
       # Look up player by NFC ID
       PlayerService.findByNFC data.nfc, (err, player) ->
         if err
@@ -77,27 +77,48 @@ MatchService.addPlayerToPool = (data) ->
         if player
           # Make sure that player hasn't already been added
           if playerPool.indexOf(player._id.toString()) is -1
+            # Clear the timeout
+            if timer
+              clearTimeout timer
+
+            # Add players to the pool
             playerPool.push player._id.toString()
             playerNames.push player.name
-            cache.put 'playerPool', playerPool
-            cache.put 'playerNames', playerNames
-            console.log('Players in pool: ' + cache.get('playerNames').toString())
+            console.info('Players in pool: ' + playerNames.toString())
 
+            # If we have enough players to start a match, then start it
             if playerPool.length is 4
-              console.log('Start Match With: ' + playerNames.toString())
-              ###
-              # TODO - Start new match with those players
-              ###
+              console.info('Start Match With: ' + playerNames.toString())
+              # Start new match with those players
               MatchService.createRandomWithPlayers playerPool
-              cache.del 'playerPool'
-              cache.del 'playerNames'
+              playerPool = []
+              playerNames = []
+            else
+              ###
+              # Set a timeout that will reset the player pool if enough
+              # players don't register within the given time
+              ###
+              timer = setTimeout( ->
+                playerPool = []
+                playerNames = []
+                errString = 'Timed out. Please try adding players again.'
+                console.warn errString
+                MatchService.io.emit 'matchError',
+                  status: 'timeout'
+                  err: errString
+              , 5000)
           else
-            console.warn('Registered NFC event for ' + player.name +
-                         ', but player is already in pool.')
+            # A player's NFC tag registered more than once
+            errString = 'Registered NFC event for ' + player.name +
+                            ', but player is already in pool.'
+            console.warn errString
+            MatchService.io.emit 'matchError',
+              status: 'duplicatePlayer'
+              err: errString
         else
           MatchService.io.emit 'matchError',
             status: 'playerNotFound'
-            err: err
+            err: 'Could not find player bf NFC ID'
       return
 
 MatchService.create = (req, res) ->
