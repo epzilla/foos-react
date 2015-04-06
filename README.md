@@ -16,6 +16,5 @@ Foos React
 - `gulp` to start server
 
 ## TODOs
-- Make MongoDB seeding better.
 - Add ability to load profile pics
-- Add some more in-depth stats (head-to-head between players/teams in particular, and maybe some simple algorithms to try and predict outcomes)
+- Add more in-depth stats (head-to-head between players/teams in particular, and maybe some simple algorithms to try and predict outcomes)
