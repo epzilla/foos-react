@@ -106,7 +106,7 @@ MatchService.addPlayerToPool = (data) ->
                 MatchService.io.emit 'matchError',
                   status: 'timeout'
                   err: errString
-              , 5000)
+              , 120000)
           else
             # A player's NFC tag registered more than once
             errString = 'Registered NFC event for ' + player.name +
