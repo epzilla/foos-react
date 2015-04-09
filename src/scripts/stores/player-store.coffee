@@ -2,11 +2,16 @@ Constants = require 'scripts/constants/constants'
 EventEmitter = require('events').EventEmitter
 assign = require 'object-assign'
 Dispatcher = require 'scripts/dispatcher/app-dispatcher'
-
+Announcer = require 'scripts/utils/announcer'
 ActionTypes = Constants.ActionTypes
 CHANGE_EVENT = 'change'
 
 _players = []
+
+# These are only used in new player registration at the beginning of a match
+_playerNames = []
+_newPlayer = undefined
+_didTimeout = false
 
 PlayerStore = assign({}, EventEmitter.prototype,
   emitChange: ->
@@ -23,6 +28,15 @@ PlayerStore = assign({}, EventEmitter.prototype,
 
   getPlayers: ->
     _players
+
+  getNewPlayerInfo: ->
+    _newPlayer
+
+  getPlayerNames: ->
+    _playerNames
+
+  didTimeout: ->
+    _didTimeout
 )
 
 PlayerStore.dispatchToken = Dispatcher.register( (payload) ->
@@ -30,6 +44,23 @@ PlayerStore.dispatchToken = Dispatcher.register( (payload) ->
   switch action.type
     when ActionTypes.RECEIVE_PLAYERS
       _players = action.data
+    when ActionTypes.RECEIVE_HOME_DATA
+      _playerNames = action.data.playersInPool
+      if _playerNames.length > 0
+        _newPlayer = _playerNames[_playerNames.length - 1]
+    when ActionTypes.RECEIVE_REGISTERED_PLAYER
+      _newPlayer = action.data.player
+      _playerNames = action.data.allPlayers
+      if _newPlayer
+        Announcer.announcePlayer _newPlayer
+    when ActionTypes.RECEIVE_SCORE_UPDATE
+      _newPlayer = undefined
+      _playerNames = []
+    when ActionTypes.RECEIVE_MATCH_ERROR
+      if action.data.status is 'timeout'
+        _newPlayer = undefined
+        _playerNames = []
+        _didTimeout = true
   PlayerStore.emitChange()
   return
 )

@@ -8,8 +8,10 @@ module.exports =
     RECEIVE_RECENT_MATCHES: null
     RECEIVE_SCORE_UPDATE: null
     RECEIVE_SERIES_HISTORY: null
+    RECEIVE_REGISTERED_PLAYER: null
     RECEIVE_PLAYERS: null
     RECEIVE_TEAMS: null
+    RECEIVE_MATCH_ERROR: null
     CHANGE_SCORE: null
     RECEIVE_ALERT: null
     CLEAR_ALERTS: null

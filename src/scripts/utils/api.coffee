@@ -44,13 +44,15 @@ module.exports =
 
   getHomeData: ->
     self = this
-    Promise.all [Rest.get('/api/matches/current'), Rest.get('/api/matches/recent')]
+    Promise.all [Rest.get('/api/matches/current'), Rest.get('/api/matches/recent'), Rest.get('/api/matches/playersInPool')]
       .then (res) ->
         currentMatch = if res[0].length > 0 then res[0][0] else null
         recentMatches = if res[1].length > 0 then res[1] else []
+        playersInPool = if res[2].length > 0 then res[2] else []
         ServerActionCreator.receiveHomeData(
           currentMatch: currentMatch
           recentMatches: recentMatches
+          playersInPool: playersInPool
         )
         if currentMatch
           self.getSeriesHistory currentMatch.team1._id, currentMatch.team2._id

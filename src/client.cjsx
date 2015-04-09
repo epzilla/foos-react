@@ -7,6 +7,7 @@ Header = require 'scripts/components/header'
 Home = require 'scripts/components/home'
 Alerts = require 'scripts/components/alerts'
 NewMatch = require 'scripts/components/new-match'
+PlayerRegistration = require 'scripts/components/player-registration'
 API = require 'scripts/utils/api'
 {Routes, Route, DefaultRoute, Link} = Router
 
@@ -27,6 +28,7 @@ routes =
       <DefaultRoute name="home" handler={Home}/>
       <Route name="stats" handler={Stats}/>
       <Route name="newMatch" handler={NewMatch}/>
+      <Route name="playerRegistration" handler={PlayerRegistration}/>
     </Route>
   </Routes>
 

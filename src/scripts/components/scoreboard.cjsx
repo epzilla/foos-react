@@ -115,9 +115,30 @@ module.exports = React.createClass
     gameNums = []
     gameScores = []
     match = @props.match
+    winner = @props.winner
     gameStart = undefined
     scoreSteppers = undefined
     currentUserStartedMatch = match._id is ls.get('matchID')
+
+    if winner
+      console.log winner
+      gameStatus = <h3>FINAL</h3>
+    else
+      gameStatus = <h3>Game {match.gameNum} In Progress</h3>
+
+    team1rowClasses = cx(
+      'row': true
+      'black': match.gameNum isnt 2
+      'yellow': match.gameNum is 2
+      'winner': winner and winner._id is match.team1._id
+    )
+
+    team2rowClasses = cx(
+      'row': true
+      'yellow': match.gameNum isnt 2
+      'black': match.gameNum is 2
+      'winner': winner and winner._id is match.team2._id
+    )
 
     if currentUserStartedMatch
       team1classes = cx(
@@ -181,10 +202,10 @@ module.exports = React.createClass
             <div className="row">
               <div className="col-sm-10 col-sm-offset-1">
                 <div className="col-xs-6">
-                  <div className="row">
+                  <div className={team1rowClasses}>
                     <h2>{match.team1.title}</h2>
                   </div>
-                  <div className="row">
+                  <div className={team2rowClasses}>
                     <h2>{match.team2.title}</h2>
                   </div>
                 </div>
@@ -194,7 +215,7 @@ module.exports = React.createClass
               </div>
             </div>
             <div className="row text-center">
-              <h3>Game {match.gameNum} In Progress</h3>
+              {gameStatus}
             </div>
             <div className="row text-center">
               <h5><i className="fa fa-clock-o"></i><em>&nbsp;Match started <TimeAgo time={match.startTime} />.</em></h5>

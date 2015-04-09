@@ -31,7 +31,8 @@ module.exports =
     )
     sound = document.querySelector 'audio'
     sound.src = data.sound
-    sound.play()
+    if data.status isnt 'new'
+      sound.play()
     return
 
   receiveRecentMatches: (data) ->
@@ -40,6 +41,12 @@ module.exports =
       data: data
     )
     return
+
+  receiveRegisteredPlayer: (data) ->
+    Dispatcher.handleServerAction(
+      type: ActionTypes.RECEIVE_REGISTERED_PLAYER
+      data: data
+    )
 
   receivePlayers: (data) ->
     Dispatcher.handleServerAction(
@@ -51,6 +58,13 @@ module.exports =
   receiveTeams: (data) ->
     Dispatcher.handleServerAction(
       type: ActionTypes.RECEIVE_TEAMS
+      data: data
+    )
+    return
+
+  receiveMatchError: (data) ->
+    Dispatcher.handleServerAction(
+      type: ActionTypes.RECEIVE_MATCH_ERROR
       data: data
     )
     return

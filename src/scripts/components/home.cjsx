@@ -1,7 +1,8 @@
 React = require 'react/addons'
 Router = require 'react-router'
-{Link} = Router
+{Link, Navigation} = Router
 MatchStore = require 'scripts/stores/match-store'
+PlayerStore = require 'scripts/stores/player-store'
 Recents = require 'scripts/components/recents'
 SeriesHistory = require 'scripts/components/series'
 Scoreboard = require 'scripts/components/scoreboard'
@@ -12,27 +13,23 @@ getMatchState = ->
     currentMatch: MatchStore.getCurrentMatch()
     recentMatches: MatchStore.getRecentMatches()
     seriesHistory: MatchStore.getSeriesHistory()
+    winner: MatchStore.getWinner()
+    newPlayerInfo: PlayerStore.getNewPlayerInfo()
   }
 
 Home = React.createClass
+  mixins: [Navigation]
+
   getInitialState: ->
     getMatchState()
 
   componentDidMount:  ->
-    # btn = document.querySelector '#audioBtn'
-    # sound = document.querySelector 'audio'
-    # btn.addEventListener 'click', (e) ->
-    #   API.getSound('/sounds/goal').then( (res) ->
-    #     sound.src = '/sounds/goal/' + res.file
-    #     sound.play()
-    #   ).catch( (err) ->
-    #     console.error err
-    #   )
-    #   return
     MatchStore.addChangeListener @_onChange
+    PlayerStore.addChangeListener @_onChange
 
   componentWillUnmount: ->
     MatchStore.removeChangeListener @_onChange
+    PlayerStore.removeChangeListener @_onChange
 
   render: ->
     match = if @state.currentMatch and @state.currentMatch.active then @state.currentMatch else null
@@ -40,7 +37,7 @@ Home = React.createClass
 
     if match
       jumbotron =
-        <Scoreboard match={match}/>
+        <Scoreboard match={match} winner={@state.winner}/>
       series =
         <div>
           <SeriesHistory series={@state.seriesHistory}/>
@@ -72,5 +69,7 @@ Home = React.createClass
 
   _onChange: ->
     @setState getMatchState()
+    if @state.newPlayerInfo
+      @transitionTo '/playerRegistration'
 
 module.exports = Home

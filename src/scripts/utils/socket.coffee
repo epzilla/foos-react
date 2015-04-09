@@ -14,8 +14,14 @@ socket.on 'connect', ->
       persistent: false
       text: 'And we\'re back!')
 
+  socket.on 'playerRegistered', (data) ->
+    ServerActionCreator.receiveRegisteredPlayer data
+
   socket.on 'matchUpdate', (data) ->
     ServerActionCreator.receiveScoreUpdate data
+
+  socket.on 'matchError', (data) ->
+    ServerActionCreator.receiveMatchError data
 
   socket.on 'disconnect', ->
     console.warn 'Socket disconnected.'
@@ -23,6 +29,6 @@ socket.on 'connect', ->
     ServerActionCreator.sendAlert(
       type: 'warn'
       persistent: true
-      text: 'Bummer! Looks like you\'re offline, so you won\'t receive score updates until your connection is restored.')
+      text: 'Bummer! Looks like you\'re offline. You won\'t receive score updates until your connection is restored.')
 
 module.exports = socket

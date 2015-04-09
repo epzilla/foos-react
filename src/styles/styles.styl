@@ -280,3 +280,47 @@ th[class*='reactable-header-sort-desc']
     margin-bottom 0 !important
     i
       margin-right 1em
+
+.row.black
+  position relative
+  &> h2
+    &:before
+      content ''
+      width 35px
+      height 35px
+      position absolute
+      background black
+      top 28px
+      left 0
+      border-radius 20px
+
+.row.yellow
+  position relative
+  &> h2
+    &:before
+      content ''
+      width 35px
+      height 35px
+      position absolute
+      background tailsYellow
+      border 2px solid #333
+      top 28px
+      left 0
+      border-radius 20px
+
+.winner
+  animation flash 1s linear infinite
+  background-color #52CDAC
+  color white
+
+@media (max-width 675px)
+  .row
+    .yellow > h2:before, .black > h2:before
+      left -10px
+
+@media (max-width 550px)
+  .row
+    .yellow > h2:before, .black > h2:before
+      width 20px
+      height 20px
+      top 23px
