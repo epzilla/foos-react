@@ -55,4 +55,6 @@ module.exports =
       window.speechSynthesis.speak msg
       return
     else
-      sound.play()
+      window.setTimeout(->
+        sound.play()
+      , 1000)
