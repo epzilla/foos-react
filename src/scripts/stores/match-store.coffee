@@ -85,10 +85,10 @@ MatchStore.dispatchToken = Dispatcher.register( (payload) ->
         if action.data.status is 'finished'
           _currentMatch.active = true
           _winner = action.data.winner
-          window.setTimeout(->
+          sound = document.querySelector 'audio'
+          sound.addEventListener 'ended', () ->
             _currentMatch.active = false
             MatchStore.emitChange()
-          , 10000)
           ViewActionCreator.getRecentMatches()
         MatchStore.emitChange()
     when ActionTypes.OFFLINE_SCORE_UPDATE

@@ -9,11 +9,13 @@ getWelcomePhrase = (name) ->
   phraseNum = Random.getRandomNum(0, phrases.length - 1)
   phrases[phraseNum]
 
-getMatchInstructions = (team, color) ->
+getMatchInstructions = (match) ->
+  black = match.team1.title
+  yellow = match.team2.title
   phrases = [
-    team + ', take those ' + color + ' bars.',
-    team + ', go ahead and grab the ' + color + ' rods.',
-    team + ', you\'ll be playing ' + color + ' for the first game.'
+    black + ', take the black bars. ' + yellow + ', go ahead and grab the yellow rods.',
+    black + ', you\'ll be playing black for the first game. ' + yellow + ', you\'ve got yellow.',
+    black + ', make like Jon Snow and take the black. ' + yellow + ', make like Coldplay and rock that yellow.'
   ]
   phraseNum = Random.getRandomNum(0, phrases.length - 1)
   phrases[phraseNum]
@@ -37,20 +39,20 @@ module.exports =
       return
 
   giveNewMatchInstructions: (match, nextSound) ->
-    black = getMatchInstructions match.team1.title, 'black'
-    yellow = getMatchInstructions match.team2.title, 'yellow'
-    startMsg = getStartMessage()
-    totalMsg = startMsg + ' ' + black + ' ' + yellow
-    console.log black
-    console.log yellow
-    console.log totalMsg
+    sound = document.querySelector 'audio'
+    sound.src = nextSound
+
     if window.speechSynthesis
+      startMsg = getStartMessage()
+      ins = getMatchInstructions match
+      totalMsg = startMsg + ' ' + ins
+
       msg = new SpeechSynthesisUtterance totalMsg
 
       msg.onend = (e) ->
-        sound = document.querySelector 'audio'
-        sound.src = nextSound
         sound.play()
 
       window.speechSynthesis.speak msg
       return
+    else
+      sound.play()
