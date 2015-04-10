@@ -26,3 +26,7 @@ module.exports =
   startMatch: (players) ->
     API.startMatch(players)
     return
+
+  registerPlayerNFC: (nfc, player) ->
+    API.registerPlayerNFC(nfc, player)
+    return

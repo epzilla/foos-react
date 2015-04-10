@@ -73,5 +73,7 @@ module.exports =
         self.getHomeData()
     return
 
-  # getSound: (folder) ->
-  #   Rest.get('/api/sounds/random?folder=/sounds/goal')
+  registerPlayerNFC: (nfc, player) ->
+    Rest.put('/api/players/' + player, {nfc: nfc})
+      .then (res) ->
+        socket.emit 'playerNFC', {nfc: res.nfc}

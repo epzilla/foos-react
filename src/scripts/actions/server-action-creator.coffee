@@ -69,6 +69,20 @@ module.exports =
     )
     return
 
+  receiveNFCError: (data) ->
+    Dispatcher.handleServerAction(
+      type: ActionTypes.RECEIVE_NFC_ERROR
+      data: data
+    )
+    return
+
+  receiveNewPlayer: (data) ->
+    Dispatcher.handleServerAction(
+      type: ActionTypes.RECEIVE_NEW_PLAYER
+      data: data
+    )
+    return
+
   offlineScoreUpdate: (data) ->
     Dispatcher.handleServerAction(
       type: ActionTypes.OFFLINE_SCORE_UPDATE

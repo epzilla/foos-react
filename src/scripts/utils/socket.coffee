@@ -23,6 +23,9 @@ socket.on 'connect', ->
   socket.on 'matchError', (data) ->
     ServerActionCreator.receiveMatchError data
 
+  socket.on 'nfcError', (data) ->
+    ServerActionCreator.receiveNFCError data
+
   socket.on 'disconnect', ->
     console.warn 'Socket disconnected.'
     online = false

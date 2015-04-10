@@ -8,6 +8,7 @@ getPlayerInfo = ->
     newPlayerInfo: PlayerStore.getNewPlayerInfo()
     playerNames: PlayerStore.getPlayerNames()
     didTimeout: PlayerStore.didTimeout()
+    unrecognized: PlayerStore.getUnrecognizedNFC()
   }
 
 module.exports = React.createClass
@@ -17,6 +18,8 @@ module.exports = React.createClass
     @setState getPlayerInfo()
     if @state.didTimeout
       @transitionTo '/'
+    if @state.unrecognized
+      @transitionTo '/nfcRegistration'
 
   _onMatchChange: ->
     match = MatchStore.getCurrentMatch()
@@ -41,16 +44,20 @@ module.exports = React.createClass
     newPlayerHeader = ''
 
     if newPlayer
-      newPlayerHeader = <h2 className="new-player">{newPlayer}</h2>
+      newPlayerHeader = <h2 className="new-player pad-bottom-1em">{newPlayer}</h2>
     if allPlayers
       for player in allPlayers
         playerList.push(<li>{player}</li>)
 
-    <section>
-      <h1>Player Added:</h1>
-      {newPlayerHeader}
-      <h3>Players So Far:</h3>
-      <ul className="player-list">
-        {playerList}
-      </ul>
+    <section className="container">
+      <div className="row">
+        <div className="col-xs-12 text-center">
+          <h1>Player Added:</h1>
+          {newPlayerHeader}
+          <h3>Players So Far:</h3>
+          <ul className="player-list">
+            {playerList}
+          </ul>
+        </div>
+      </div>
     </section>

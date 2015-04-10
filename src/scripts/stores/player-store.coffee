@@ -12,6 +12,8 @@ _players = []
 _playerNames = []
 _newPlayer = undefined
 _didTimeout = false
+_unrecognized = undefined
+_createdPlayer = undefined
 
 PlayerStore = assign({}, EventEmitter.prototype,
   emitChange: ->
@@ -37,6 +39,12 @@ PlayerStore = assign({}, EventEmitter.prototype,
 
   didTimeout: ->
     _didTimeout
+
+  getUnrecognizedNFC: ->
+    _unrecognized
+
+  getCreatedPlayer: ->
+    _createdPlayer
 )
 
 PlayerStore.dispatchToken = Dispatcher.register( (payload) ->
@@ -53,6 +61,11 @@ PlayerStore.dispatchToken = Dispatcher.register( (payload) ->
       _playerNames = action.data.allPlayers
       if _newPlayer
         Announcer.announcePlayer _newPlayer
+    when ActionTypes.RECEIVE_NEW_PLAYER
+      _createdPlayer = action.data
+      _newPlayer = action.data.name
+      _playerNames.push action.data.name
+      _unrecognized = undefined
     when ActionTypes.RECEIVE_SCORE_UPDATE
       _newPlayer = undefined
       _playerNames = []
@@ -61,6 +74,8 @@ PlayerStore.dispatchToken = Dispatcher.register( (payload) ->
         _newPlayer = undefined
         _playerNames = []
         _didTimeout = true
+    when ActionTypes.RECEIVE_NFC_ERROR
+      _unrecognized = action.data.nfc
   PlayerStore.emitChange()
   return
 )

@@ -15,6 +15,7 @@ getMatchState = ->
     seriesHistory: MatchStore.getSeriesHistory()
     winner: MatchStore.getWinner()
     newPlayerInfo: PlayerStore.getNewPlayerInfo()
+    unrecognizedNFC: PlayerStore.getUnrecognizedNFC()
   }
 
 Home = React.createClass
@@ -71,5 +72,7 @@ Home = React.createClass
     @setState getMatchState()
     if @state.newPlayerInfo
       @transitionTo '/playerRegistration'
+    else if @state.unrecognizedNFC
+      @transitionTo '/nfcRegistration'
 
 module.exports = Home
