@@ -19,7 +19,8 @@ Main = React.createClass
         <@props.activeRouteHandler/>
       </div>
       <Alerts />
-      <audio src="/sounds/goal/TOUCHDOWN.mp3" />
+      <audio src="/sounds/goal/TOUCHDOWN.mp3" preload="auto"/>
+      <div id="init"></div>
     </div>
 
 routes =
@@ -35,3 +36,17 @@ routes =
 $ ->
   API.getHomeData()
   React.render(routes, document.body)
+  sound = document.querySelector 'audio'
+
+  sndInit = ->
+    sound = document.querySelector 'audio'
+    sound.play()
+    sound.pause()
+    document.getElementById('init').style.display = 'none'
+
+  `if ('ontouchstart' in window) {
+    document.getElementById('init').addEventListener('touchstart', sndInit);
+  } else {
+    document.getElementById('init').style.display = 'none'
+  }`
+  return
