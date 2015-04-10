@@ -4,7 +4,11 @@ getWelcomePhrase = (name) ->
   phrases = [
     'Welcome, ' + name + '.',
     name + ' has entered the game.',
-    'Hey there, ' + name + '.'
+    'Hey there, ' + name + '.',
+    'What up, ' + name + '?',
+    name + ' is in the building! Holla!',
+    'What has two thumbs and loves foosball?... ' + name,
+    'Good to see you, ' + name + '!'
   ]
   phraseNum = Random.getRandomNum(0, phrases.length - 1)
   phrases[phraseNum]
@@ -15,7 +19,8 @@ getMatchInstructions = (match) ->
   phrases = [
     black + ', take the black bars. ' + yellow + ', go ahead and grab the yellow rods.',
     black + ', you\'ll be playing black for the first game. ' + yellow + ', you\'ve got yellow.',
-    black + ', make like Jon Snow and take the black. ' + yellow + ', make like Coldplay and rock that yellow.'
+    black + ', make like Jon Snow and take the black. ' + yellow + ', make like Coldplay and rock that yellow.',
+    black + ', they say once you go black... Um, nevermind. Anyway... ' + yellow + ', just go ahead and take yellow.'
   ]
   phraseNum = Random.getRandomNum(0, phrases.length - 1)
   phrases[phraseNum]
@@ -24,7 +29,8 @@ getStartMessage = ->
   phrases = [
     'OK, let\'s get ready to rumble!',
     'Alright, let\'s get it crack-a-lackin\'.',
-    'Looks like it\'s that time!'
+    'Looks like it\'s that time!',
+    'Are you ready for some foosball?!'
   ]
   phraseNum = Random.getRandomNum(0, phrases.length - 1)
   phrases[phraseNum]
