@@ -52,6 +52,9 @@ MatchService.init = (sock) ->
     return
   return
 
+MatchService.getPlayersInPool = (req, res) ->
+  res.json playerNames
+
 MatchService.addPlayerToPool = (data) ->
   ###
   # First, check if match is already in progress.
@@ -107,6 +110,12 @@ MatchService.addPlayerToPool = (data) ->
                   status: 'timeout'
                   err: errString
               , 120000)
+
+              # Send a socket message so the UI can show that a player has registered
+              MatchService.io.emit 'playerRegistered',
+                player: player.name
+                allPlayers: playerNames
+
           else
             # A player's NFC tag registered more than once
             errString = 'Registered NFC event for ' + player.name +
@@ -116,8 +125,9 @@ MatchService.addPlayerToPool = (data) ->
               status: 'duplicatePlayer'
               err: errString
         else
-          MatchService.io.emit 'matchError',
+          MatchService.io.emit 'nfcError',
             status: 'playerNotFound'
+            nfc: data.nfc
             err: 'Could not find player by NFC ID'
       return
 
@@ -301,13 +311,6 @@ MatchService.endMatch = (sock, match) ->
     return
   return
 
-# MatchService.incrementScore = (req, res) ->
-#   Match.find(active: true).populate('team1 team2').exec (err, match) ->
-#     if err
-#       res.send err
-#     if match
-
-
 ###
 # changeScore - update the score of a game
 # @param  {socket.io socket} sock
@@ -327,14 +330,18 @@ MatchService.changeScore = (sock, data) ->
     team = [ data.team ]
     rollbackScore = match.scores[match.gameNum - 1][team]
     gameOver = false
+
     # Increment or decrement the specified team's score
     if data.plusMinus == 'plus'
       match.scores[match.gameNum - 1][team]++
     else
-      match.scores[match.gameNum - 1][team]--
+      if match.scores[match.gameNum - 1][team] isnt 0
+        match.scores[match.gameNum - 1][team]--
+
     # If it's the last game, end it; otherwise, move to the next game
     if match.scores[match.gameNum - 1][team] == 10
       gameOver = true
+
       if match.gameNum == 3
         statPack =
           team1:
@@ -347,17 +354,21 @@ MatchService.changeScore = (sock, data) ->
             gameWins: 0
             pts: 0
             isWinner: false
+
         match.active = false
         match.endTime = moment()
+
         # Loop through each game in the match and collect stats
         match.scores.forEach (score) ->
           if score.team1 > score.team2
             statPack.team1.gameWins++
           else
             statPack.team2.gameWins++
+
           statPack.team1.pts += score.team1
           statPack.team2.pts += score.team2
           return
+
         # Determine the winner
         if statPack.team1.gameWins > statPack.team2.gameWins
           match.winner = match.team1
@@ -380,6 +391,7 @@ MatchService.changeScore = (sock, data) ->
             team: team
             score: rollbackScore
           err: err
+
       # Otherwise, broadcast the update
       if !updatedMatch.active
         # Match is over
@@ -409,6 +421,19 @@ MatchService.changeScore = (sock, data) ->
                   updatedMatch: updatedMatch
             return
           return
+      else if match.scores[match.gameNum - 1].team1 is 9 or match.scores[match.gameNum - 1].team2 is 9
+        # Game Point
+        SoundService.getRandomGamePointSound( (err, file) ->
+          MatchService.io.emit 'matchUpdate',
+            status: 'ok'
+            updatedMatch: updatedMatch
+            sound: file
+            whatChanged:
+              team: team[0]
+              plusMinus: data.plusMinus
+              gameOver: gameOver
+          return
+        )
       else
         # Match continues
         SoundService.getRandomGoalSound( (err, file) ->

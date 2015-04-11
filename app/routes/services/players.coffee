@@ -91,12 +91,11 @@ module.exports =
       newVals = req.body
       for prop of newVals
         if newVals.hasOwnProperty(prop)
-          if player[prop] != undefined
-            player[prop] = newVals[prop]
-      player.save (err) ->
+          player[prop] = newVals[prop]
+      player.save (err, updatedPlayer) ->
         if err
           res.send err
-        res.json message: 'Player updated!'
+        res.json updatedPlayer
         return
       return
     return
@@ -108,8 +107,7 @@ module.exports =
       newVals = req.body
       for prop of newVals
         if newVals.hasOwnProperty(prop)
-          if player[prop] != undefined
-            player[prop] = newVals[prop]
+          player[prop] = newVals[prop]
       player.save (err) ->
         if err
           res.send err
@@ -186,6 +184,57 @@ module.exports =
           return
       return
     return
+
+  resetOneByName: (req, res) ->
+    Player.findOne {'name': req.params.name}, (err, player) ->
+      if err
+        res.send err
+
+      if not player.nfc
+        player.nfc = ''
+      player.avgPtsFor = 0.0
+      player.avgPtsAgainst = 0.0
+      player.games = 0
+      player.gamesLost = 0
+      player.gamesWon = 0
+      player.matches = 0
+      player.matchesLost = 0
+      player.matchesWon = 0
+      player.pct = 0.000
+      player.ptsFor = 0
+      player.ptsAgainst = 0
+      player.save (err, updatedPlayer) ->
+        if err
+          res.status(500).send()
+
+        res.status(200).json updatedPlayer
+      return
+    return
+
+  resetOneById: (req, res) ->
+    Player.findOne {_id: req.params.id}, (err, player) ->
+      if err
+        res.send err
+
+      player.avgPtsFor = 0.0
+      player.avgPtsAgainst = 0.0
+      player.games = 0
+      player.gamesLost = 0
+      player.gamesWon = 0
+      player.matches = 0
+      player.matchesLost = 0
+      player.matchesWon = 0
+      player.pct = 0.000
+      player.ptsFor = 0
+      player.ptsAgainst = 0
+      pl.save (err) ->
+        if err
+          res.status(500).send()
+
+        res.status(200).send()
+      return
+    return
+
   resetAll: (req, res) ->
     Player.find (err, players) ->
       if err

@@ -24,12 +24,15 @@ router.get '/players', players.findAll
 router.get '/players/:playerId', players.find
 router.put '/players/:playerId', players.update
 router.put '/players/updateByName/:name', players.updateByName
-# router.put('/reset/players', players.resetAll);
+# router.put '/reset/players', players.resetAll
+router.put '/reset/playerByName/:name', players.resetOneByName
+# router.put '/reset/playerById/:id', players.resetOneById
 
 # Matches
 router.post '/matches', matches.create
 router.post '/matches/createRandomWithPlayers', matches.createRandomWithPlayers
 router.post '/matches/addPlayerToPool', matches.addPlayerToPool
+router.get '/matches/playersInPool', matches.getPlayersInPool
 router.get '/matches', matches.findAll
 router.get '/matches/current', matches.getCurrentMatch
 router.get '/matches/recent', matches.getRecentMatches
