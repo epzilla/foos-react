@@ -25,7 +25,7 @@ router.get '/players/:playerId', players.find
 router.put '/players/:playerId', players.update
 router.put '/players/updateByName/:name', players.updateByName
 # router.put '/reset/players', players.resetAll
-router.put '/reset/playerByName/:name', players.resetOneByName
+# router.put '/reset/playerByName/:name', players.resetOneByName
 # router.put '/reset/playerById/:id', players.resetOneById
 
 # Matches
