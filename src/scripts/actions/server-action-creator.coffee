@@ -1,5 +1,6 @@
 Dispatcher = require 'scripts/dispatcher/app-dispatcher'
 ActionTypes = require('scripts/constants/constants').ActionTypes
+Announcer = require 'scripts/utils/announcer'
 
 module.exports =
 
@@ -33,6 +34,13 @@ module.exports =
     sound.src = data.sound
     if data.status isnt 'new'
       sound.play()
+      match = data.updatedMatch
+      thisGame = match.scores[match.gameNum - 1]
+      totalPoints = thisGame.team1 + thisGame.team2
+      if totalPoints % 5 is 0 and totalPoints isnt 0
+        sound.addEventListener 'ended', listener = () ->
+          Announcer.announceSwitch()
+          sound.removeEventListener 'ended', listener
     return
 
   receiveRecentMatches: (data) ->

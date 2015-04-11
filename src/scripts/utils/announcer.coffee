@@ -35,6 +35,18 @@ getStartMessage = ->
   phraseNum = Random.getRandomNum(0, phrases.length - 1)
   phrases[phraseNum]
 
+getSwitchMessage = ->
+  phrases = [
+    'OK, time to switch it up!',
+    'And that\'s a switch!',
+    'Looks like it\'s time to switch!',
+    'Hey! Don\'t forget to switch!',
+    'That five went by fast! Time for a switch already?'
+    'That\'s five! Switch it up!'
+  ]
+  phraseNum = Random.getRandomNum(0, phrases.length - 1)
+  phrases[phraseNum]
+
 module.exports =
   announcePlayer: (name) ->
     if window.speechSynthesis
@@ -64,3 +76,10 @@ module.exports =
       window.setTimeout(->
         sound.play()
       , 1000)
+
+  announceSwitch: () ->
+    if window.speechSynthesis
+      words = getSwitchMessage()
+      msg = new SpeechSynthesisUtterance words
+      window.speechSynthesis.speak msg
+      return
