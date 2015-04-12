@@ -1,5 +1,6 @@
 Match = require '../../models/match'
 Team = require '../../models/team'
+Player = require '../../models/player'
 TeamService = require './teams'
 PlayerService = require './players'
 SoundService = require './sounds'
@@ -7,6 +8,9 @@ EmailService = require './email'
 Utils = require './utils'
 moment = require 'moment'
 _ = require 'lodash'
+mongoose = require 'mongoose'
+ObjectId = mongoose.Types.ObjectId
+
 MatchService = {}
 timer = undefined
 errString = ''
@@ -184,11 +188,21 @@ MatchService.create = (req, res) ->
         Match.findById(newMatch._id).populate('team1 team2').exec (err, match) ->
           if err
             res.send err
+          console.log req.body.team1
+          console.log req.body.team2
           SoundService.getRandomStartGameSound (err, file) ->
             MatchService.io.emit 'matchUpdate',
               status: 'new'
               sound: file
               updatedMatch: match
+
+            playerIDs = req.body.team1
+            Array.prototype.push.apply playerIDs, req.body.team2
+            code = getRandomCode()
+
+            Player.find {'_id' : { $in: playerIDs}}, (err, players) ->
+              EmailService.sendStartMatchEmail players, code
+
           res.json match
           return
         return
@@ -439,7 +453,7 @@ MatchService.changeScoreUsingCode = (sock, data) ->
 # @param  {socket.io socket} sock
 # @param  {Object} data
 #         {
-#           id: Mongoose ObjecId
+#           id: Mongoose ObjectId
 #           team: ['team1', 'team2']
 #           plusMinus: ['plus', 'minus']
 #         }

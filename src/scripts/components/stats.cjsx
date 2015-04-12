@@ -1,4 +1,6 @@
 React = require 'react/addons'
+Router = require 'react-router'
+{Link, Navigation} = Router
 Table = require('reactable').Table
 Actions = require 'scripts/actions/view-action-creator'
 PlayerStore = require 'scripts/stores/player-store'
@@ -61,6 +63,8 @@ TableView = React.createClass
     </section>
 
 module.exports = React.createClass
+  mixins: [Navigation]
+
   _getTeamsAndPlayers: ->
     players = PlayerStore.getPlayers()
     teams = TeamStore.getTeams()
@@ -106,11 +110,17 @@ module.exports = React.createClass
     {
       players: formattedPlayers
       teams: formattedTeams
+      newPlayerInfo: PlayerStore.getNewPlayerInfo()
+      unrecognizedNFC: PlayerStore.getUnrecognizedNFC()
       selectedTab: 'players'
     }
 
   _onChange: ->
     @setState @_getTeamsAndPlayers()
+    if @state.newPlayerInfo
+      @transitionTo '/playerRegistration'
+    else if @state.unrecognizedNFC
+      @transitionTo '/nfcRegistration'
 
   getInitialState: ->
     @_getTeamsAndPlayers()
