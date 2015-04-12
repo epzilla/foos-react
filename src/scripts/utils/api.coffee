@@ -3,6 +3,13 @@ ServerActionCreator = require 'scripts/actions/server-action-creator'
 socket = require 'scripts/utils/socket'
 ls = require 'scripts/utils/local-storage'
 
+# Polyfill for String.startsWith function
+if !String::includes
+
+  String::includes = ->
+    String::indexOf.apply(this, arguments) != -1
+
+
 module.exports =
 
   getCurrentMatch: ->
@@ -77,6 +84,21 @@ module.exports =
     Rest.put('/api/players/' + player, {nfc: nfc})
       .then (res) ->
         socket.emit 'playerNFC', {nfc: res.nfc}
+
+  registerEmailNotification: (email) ->
+    Rest.post('/api/notificationByEmailAddress/', {email: email})
+      .then (res) ->
+        console.log res.email
+        ServerActionCreator.sendAlert(
+          type: 'success'
+          persistent: false
+          text: 'OK. An email will be sent to <strong>' + res.email + '</strong> when this match ends!')
+      .catch (err) ->
+        if err.includes '400'
+          ServerActionCreator.sendAlert(
+            type: 'warn'
+            persistent: false
+            text: 'We already had you down for a notification. No worries!')
 
   endMatch: (code) ->
     socket.emit 'endMatch', {code: code}

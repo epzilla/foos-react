@@ -5,6 +5,7 @@ Dispatcher = require 'scripts/dispatcher/app-dispatcher'
 Announcer = require 'scripts/utils/announcer'
 ActionTypes = Constants.ActionTypes
 CHANGE_EVENT = 'change'
+_ = require 'lodash'
 
 _players = []
 
@@ -14,6 +15,9 @@ _newPlayer = undefined
 _didTimeout = false
 _unrecognized = undefined
 _createdPlayer = undefined
+
+# This is used in the email notification screen
+_playerEmails = []
 
 PlayerStore = assign({}, EventEmitter.prototype,
   emitChange: ->
@@ -37,6 +41,9 @@ PlayerStore = assign({}, EventEmitter.prototype,
   getPlayerNames: ->
     _playerNames
 
+  getPlayerEmails: ->
+    _playerEmails
+
   didTimeout: ->
     _didTimeout
 
@@ -52,6 +59,7 @@ PlayerStore.dispatchToken = Dispatcher.register( (payload) ->
   switch action.type
     when ActionTypes.RECEIVE_PLAYERS
       _players = action.data
+      _playerEmails = _.uniq(_.pluck _players, 'email')
     when ActionTypes.RECEIVE_HOME_DATA
       _playerNames = action.data.playersInPool
       if _playerNames.length > 0

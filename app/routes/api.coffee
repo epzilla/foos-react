@@ -48,8 +48,8 @@ router.get '/teams', teams.findAll
 router.get '/teams/:teamId', teams.find
 
 # Email Notifications
-router.post '/notificationByEmailAddress/:email', email.createNotificationByEmailAddress
-router.post '/notificationByPlayerId/:id', email.createNotificationByPlayerId
+router.post '/notificationByEmailAddress', email.createNotificationByEmailAddress
+router.post '/notificationByPlayerId', email.createNotificationByPlayerId
 
 # Sounds
 # router.get '/sounds/random', sounds.getRandomSound

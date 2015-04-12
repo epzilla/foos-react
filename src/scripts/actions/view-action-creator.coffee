@@ -34,3 +34,7 @@ module.exports =
   endMatch: (code) ->
     API.endMatch(code)
     return
+
+  submitEmail: (email) ->
+    API.registerEmailNotification(email)
+    return

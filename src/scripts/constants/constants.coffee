@@ -14,6 +14,7 @@ module.exports =
     RECEIVE_TEAMS: null
     RECEIVE_MATCH_ERROR: null
     RECEIVE_NFC_ERROR: null
+    EMAIL_REGISTERED: null
     CHANGE_SCORE: null
     RECEIVE_ALERT: null
     CLEAR_ALERTS: null

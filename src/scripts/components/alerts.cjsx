@@ -22,7 +22,7 @@ Alert = React.createClass
 
     <div className={classes} role="alert">
       <i className={iconClasses}></i>
-      {@props.text}
+      <span dangerouslySetInnerHTML={{__html: @props.text}} />
     </div>
 
 module.exports = React.createClass

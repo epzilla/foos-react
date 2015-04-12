@@ -24,25 +24,29 @@ module.exports =
                 'http://localhost:3000/scoreCorrection?code=' + passcode + '</a>'
 
   createNotificationByEmailAddress: (req, res) ->
-    Notification.findOne {email: req.params.email}, (err, notification) ->
+    Notification.findOne {email: req.body.email}, (err, notification) ->
       if err
         res.status(500).send err
+        return
 
       if not notification
         note = new Notification(
-          email: req.params.email
+          email: req.body.email
         )
 
         note.save (err, newNote) ->
           if err
             res.status(500).send err
 
-          res.sendStatus 200
+          res.json newNote
+          return
       else
         res.sendStatus 400
+        return
+    return
 
   createNotificationByPlayerId: (req, res) ->
-    Player.findById req.params.id, (err, player) ->
+    Player.findById req.body.id, (err, player) ->
       if err
         res.status(500).send err
 
