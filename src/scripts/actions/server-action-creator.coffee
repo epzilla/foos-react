@@ -37,7 +37,7 @@ module.exports =
       match = data.updatedMatch
       thisGame = match.scores[match.gameNum - 1]
       totalPoints = thisGame.team1 + thisGame.team2
-      if totalPoints % 5 is 0 and totalPoints isnt 0
+      if totalPoints % 5 is 0 and totalPoints isnt 0 and data.status isnt 'finished'
         sound.addEventListener 'ended', listener = () ->
           Announcer.announceSwitch()
           sound.removeEventListener 'ended', listener
@@ -82,6 +82,7 @@ module.exports =
       type: ActionTypes.RECEIVE_NFC_ERROR
       data: data
     )
+    Announcer.unrecognizedTag()
     return
 
   receiveNewPlayer: (data) ->

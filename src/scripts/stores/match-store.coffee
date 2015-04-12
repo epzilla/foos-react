@@ -77,9 +77,13 @@ MatchStore.dispatchToken = Dispatcher.register( (payload) ->
         _currentMatch = action.data.updatedMatch
         Announcer.giveNewMatchInstructions(_currentMatch, action.data.sound)
         MatchStore.emitChange()
+      else if action.data.status is 'aborted'
+        _currentMatch = {}
+        MatchStore.emitChange()
       else
         _currentMatch.scores = action.data.updatedMatch.scores
         _currentMatch.gameNum = action.data.updatedMatch.gameNum
+        _currentMatch.gameStartTime = action.data.updatedMatch.gameStartTime
         _currentMatch.active = action.data.updatedMatch.active
         _soundToPlay = action.data.sound
         if action.data.status is 'finished'

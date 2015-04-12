@@ -1,8 +1,9 @@
 router = require('express').Router()
-players = require('./services/players')
-matches = require('./services/matches')
-teams = require('./services/teams')
-sounds = require('./services/sounds')
+players = require './services/players'
+matches = require './services/matches'
+teams = require './services/teams'
+sounds = require './services/sounds'
+email = require './services/email'
 
 init = (socket) ->
   matches.init socket
@@ -45,6 +46,10 @@ router.put '/matches/end/:matchId', matches.endMatch
 # Teams
 router.get '/teams', teams.findAll
 router.get '/teams/:teamId', teams.find
+
+# Email Notifications
+router.post '/notificationByEmailAddress/:email', email.createNotificationByEmailAddress
+router.post '/notificationByPlayerId/:id', email.createNotificationByPlayerId
 
 # Sounds
 # router.get '/sounds/random', sounds.getRandomSound

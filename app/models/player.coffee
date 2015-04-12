@@ -4,6 +4,7 @@ Schema = mongoose.Schema
 PlayerSchema = new Schema(
   name: String
   nfc: String
+  email: String
   matches: Number
   games: Number
   matchesWon: Number

@@ -83,3 +83,10 @@ module.exports =
       msg = new SpeechSynthesisUtterance words
       window.speechSynthesis.speak msg
       return
+
+  unrecognizedTag: () ->
+    if window.speechSynthesis
+      words = 'I don\'t recognize that tag. Tell me who you are, and I\'ll get you set up to play.'
+      msg = new SpeechSynthesisUtterance words
+      window.speechSynthesis.speak msg
+      return

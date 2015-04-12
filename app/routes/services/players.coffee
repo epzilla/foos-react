@@ -7,7 +7,7 @@ module.exports =
     Player.count (err, count) ->
       if !err and count is 0
         obj = undefined
-        fs.readFile 'app/conf/players.txt', (err, data) ->
+        fs.readFile 'app/conf/players.csv', (err, data) ->
           if err
             throw err
           array = data.toString().split('\n')
@@ -16,11 +16,17 @@ module.exports =
             if ln and ln isnt ''
               lnParts = ln.split(',')
               name = lnParts[0]
-              nfc = if lnParts.length > 1 then lnParts[1] else ''
+              if lnParts.length > 1
+                email = lnParts[1]
+              else
+                firstlast = name.split ' '
+                email = firstlast[0] + '.' + firstlast[1] + '@synapse-wireless.com'
+              nfc = if lnParts.length > 2 then lnParts[2] else ''
               players.push
                 'avgPtsAgainst': 0
                 'avgPtsFor': 0
                 'nfc': nfc
+                'email': email
                 'games': 0
                 'gamesWon': 0
                 'gamesLost': 0
@@ -29,7 +35,7 @@ module.exports =
                 'matches': 0
                 'matchesLost': 0
                 'matchesWon': 0
-                'name': ln
+                'name': name
                 'pct': 0
                 'ptsAgainst': 0
             return

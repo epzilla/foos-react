@@ -9,6 +9,8 @@ Alerts = require 'scripts/components/alerts'
 NewMatch = require 'scripts/components/new-match'
 PlayerRegistration = require 'scripts/components/player-registration'
 NFCRegistration = require 'scripts/components/nfc-registration'
+ScoreCorrection = require 'scripts/components/score-correction'
+Notify = require 'scripts/components/notify'
 API = require 'scripts/utils/api'
 {Routes, Route, DefaultRoute, Link} = Router
 
@@ -32,6 +34,8 @@ routes =
       <Route name="newMatch" handler={NewMatch}/>
       <Route name="playerRegistration" handler={PlayerRegistration}/>
       <Route name="nfcRegistration" handler={NFCRegistration}/>
+      <Route name="scoreCorrection" handler={ScoreCorrection}/>
+      <Route name="notify" handler={Notify}/>
     </Route>
   </Routes>
 

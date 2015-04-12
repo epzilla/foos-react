@@ -3,14 +3,17 @@ Team = require '../../models/team'
 TeamService = require './teams'
 PlayerService = require './players'
 SoundService = require './sounds'
+EmailService = require './email'
 Utils = require './utils'
 moment = require 'moment'
 _ = require 'lodash'
 MatchService = {}
 timer = undefined
 errString = ''
-playerPool = []
+playerIdPool = []
 playerNames = []
+playerPool = []
+code = ''
 
 getRandomTeamsFromPlayers = (playerList) ->
   teams = [[], []]
@@ -21,6 +24,10 @@ getRandomTeamsFromPlayers = (playerList) ->
     teams[1][0] = shuffledPlayers[2]
     teams[1][1] = shuffledPlayers[3]
   teams
+
+getRandomCode = ->
+  code = Math.random().toString(36).substring(2, 10)
+  code
 
 checkMatchInProgress = (cb) ->
   Match.findOne {active: true}, (err, match) ->
@@ -37,15 +44,27 @@ MatchService.init = (sock) ->
     clientIp = socket.request.connection.remoteAddress
     clientPort = socket.request.connection.remotePort
     console.info 'Socket connected : ' + clientIp + ':' + clientPort
+
     socket.on 'scoreChange', (data) ->
       MatchService.changeScore socket, data
       return
+
+    socket.on 'changeScoreUsingCode', (data) ->
+      MatchService.changeScoreUsingCode socket, data
+      return
+
     socket.on 'scoreBatchUpdate', (data) ->
       MatchService.update socket, data
       return
+
     socket.on 'playerNFC', (data) ->
       MatchService.addPlayerToPool data
       return
+
+    socket.on 'endMatch', (data) ->
+      MatchService.endMatch data
+      return
+
     socket.on 'disconnect', ->
       console.info 'Socket disconnected : ' + clientIp + ':' + clientPort
       return
@@ -54,6 +73,7 @@ MatchService.init = (sock) ->
 
 MatchService.getPlayersInPool = (req, res) ->
   res.json playerNames
+  return
 
 MatchService.addPlayerToPool = (data) ->
   ###
@@ -79,30 +99,36 @@ MatchService.addPlayerToPool = (data) ->
 
         if player
           # Make sure that player hasn't already been added
-          if playerPool.indexOf(player._id.toString()) is -1
+          if playerIdPool.indexOf(player._id.toString()) is -1
             # Clear the timeout
             if timer
               clearTimeout timer
 
             # Add players to the pool
-            playerPool.push player._id.toString()
+            playerIdPool.push player._id.toString()
             playerNames.push player.name
+            playerPool.push player
             console.info('Players in pool: ' + playerNames.toString())
 
             # If we have enough players to start a match, then start it
-            if playerPool.length is 4
+            if playerIdPool.length is 4
               console.info('Start Match With: ' + playerNames.toString())
               # Start new match with those players
-              MatchService.createRandomWithPlayers playerPool
-              playerPool = []
-              playerNames = []
+              MatchService.createRandomWithPlayers playerIdPool, (err, match) ->
+                if err
+                  console.error err
+
+                EmailService.sendStartMatchEmail playerPool, code
+                playerIdPool = []
+                playerNames = []
+                playerPool = []
             else
               ###
               # Set a timeout that will reset the player pool if enough
               # players don't register within the given time
               ###
               timer = setTimeout( ->
-                playerPool = []
+                playerIdPool = []
                 playerNames = []
                 errString = 'Timed out. Please try adding players again.'
                 console.warn errString
@@ -170,7 +196,7 @@ MatchService.create = (req, res) ->
     return
   return
 
-MatchService.createRandomWithPlayers = (playerList) ->
+MatchService.createRandomWithPlayers = (playerList, cb) ->
   now = moment()
   teams = getRandomTeamsFromPlayers playerList
   TeamService.getOrCreate teams[0], (err, team1) ->
@@ -215,6 +241,9 @@ MatchService.createRandomWithPlayers = (playerList) ->
               status: 'new'
               sound: file
               updatedMatch: match
+            code = getRandomCode()
+            cb(null, match)
+            return
           return
         return
       return
@@ -262,6 +291,18 @@ MatchService.update = (sock, data) ->
     return
   return
 
+MatchService.delete = (id) ->
+  Match.findByIdAndRemove id, (err, match) ->
+    if err
+      console.error err
+    else
+      match.active = false
+      EmailService.fireNotifications()
+
+      MatchService.io.emit 'matchUpdate',
+        status: 'aborted'
+        updatedMatch: match
+
 MatchService.getRecentMatches = (req, res) ->
   Match.find(active: false).sort('endTime': 'desc').limit(req.param('num') or 10).populate('team1 team2').exec (err, matches) ->
     if err
@@ -278,38 +319,120 @@ MatchService.getCurrentMatch = (req, res) ->
     return
   return
 
-MatchService.endMatch = (sock, match) ->
-  newScore = match.score or
-    team1: 0
-    team2: 0
-  gameNum = match.gameNum or 3
-  matchOver = gameNum == 3
-  Match.findById match._id, (err, match) ->
-    if err
-      sock.emit 'matchError',
-        status: 'matchNotFound'
-        err: err
-    match.scores.push newScore
-    match.gameNum = gameNum
-    if matchOver
-      match.active = false
-    match.save (err, updatedMatch) ->
-      if err
-        sock.emit 'matchError',
-          status: 'matchUpdateFailed'
-          rollback: match
-          err: err
-      if matchOver
-        MatchService.io.emit 'matchUpdate',
-          status: 'finished'
-          updatedMatch: updatedMatch
-      else
-        MatchService.io.emit 'matchUpdate',
-          status: 'ok'
-          updatedMatch: updatedMatch
-      return
-    return
-  return
+MatchService.endMatch = (data) ->
+  if data.code is code
+    # If 2 games were finished, and the same team won them, we have a winner
+    Match.findOne {active: true}, (err, match) ->
+      if match
+        match.active = false
+        match.endTime = moment()
+
+        statPack =
+          team1:
+            id: match.team1
+            gameWins: 0
+            pts: 0
+            isWinner: false
+          team2:
+            id: match.team1
+            gameWins: 0
+            pts: 0
+            isWinner: false
+
+        # Loop through each game in the match and collect stats
+        match.scores.forEach (score) ->
+          if score.team1 > score.team2
+            statPack.team1.gameWins++
+          else
+            statPack.team2.gameWins++
+
+          statPack.team1.pts += score.team1
+          statPack.team2.pts += score.team2
+          return
+
+        if statPack.team1.gameWins > 1
+          match.winner = match.team1
+          statPack.team1.isWinner = true
+        else if statPack.team2.gameWins > 1
+          match.winner = match.team2
+          statPack.team2.isWinner = true
+
+        if match.winner
+          match.save (err, updatedMatch) ->
+            # If there was an error, roll back the score
+            if err
+              sock.emit 'matchError',
+                status: 'matchUpdateFailed'
+                err: err
+
+            # Otherwise, broadcast the update
+            if !updatedMatch.active
+              # Match is over
+              code = ''
+              EmailService.fireNotifications()
+
+              TeamService.updateTeamStats updatedMatch, statPack, (err, teams, winnerID) ->
+                if err
+                  sock.emit 'matchError',
+                    status: 'matchUpdateFailed'
+                    rollback:
+                      team: team
+                      score: rollbackScore
+                    err: err
+                PlayerService.updatePlayerStats updatedMatch, teams, statPack, (err) ->
+                  if err
+                    sock.emit 'matchError',
+                      status: 'matchUpdateFailed'
+                      rollback:
+                        team: team
+                        score: rollbackScore
+                      err: err
+                  else
+                    w = if teams[0]._id.equals(winnerID) then teams[0] else teams[1]
+                    SoundService.getRandomEndGameSound (err, file) ->
+                      MatchService.io.emit 'matchUpdate',
+                        status: 'finished'
+                        winner: w
+                        sound: file
+                        updatedMatch: updatedMatch
+                  return
+                return
+            else if match.scores[match.gameNum - 1].team1 is 9 or match.scores[match.gameNum - 1].team2 is 9
+              # Game Point
+              SoundService.getRandomGamePointSound( (err, file) ->
+                MatchService.io.emit 'matchUpdate',
+                  status: 'ok'
+                  updatedMatch: updatedMatch
+                  sound: file
+                  whatChanged:
+                    team: team[0]
+                    plusMinus: data.plusMinus
+                    gameOver: gameOver
+                return
+              )
+            else
+              # Match continues
+              SoundService.getRandomGoalSound( (err, file) ->
+                MatchService.io.emit 'matchUpdate',
+                  status: 'ok'
+                  updatedMatch: updatedMatch
+                  sound: file
+                  whatChanged:
+                    team: team[0]
+                    plusMinus: data.plusMinus
+                    gameOver: gameOver
+                return
+              )
+            return
+          return
+        else
+          MatchService.delete match._id
+          return
+
+# Increment or decrement the score from the UI
+MatchService.changeScoreUsingCode = (sock, data) ->
+  if data.code is code
+    MatchService.changeScore(sock, data)
 
 ###
 # changeScore - update the score of a game
@@ -395,6 +518,9 @@ MatchService.changeScore = (sock, data) ->
       # Otherwise, broadcast the update
       if !updatedMatch.active
         # Match is over
+        code = ''
+        EmailService.fireNotifications()
+
         TeamService.updateTeamStats updatedMatch, statPack, (err, teams, winnerID) ->
           if err
             sock.emit 'matchError',

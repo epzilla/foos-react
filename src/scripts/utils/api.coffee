@@ -61,7 +61,7 @@ module.exports =
 
   changeScore: (info) ->
     if socket.connected
-      socket.emit 'scoreChange', info
+      socket.emit 'changeScoreUsingCode', info
     else
       ServerActionCreator.offlineScoreUpdate info
 
@@ -77,3 +77,6 @@ module.exports =
     Rest.put('/api/players/' + player, {nfc: nfc})
       .then (res) ->
         socket.emit 'playerNFC', {nfc: res.nfc}
+
+  endMatch: (code) ->
+    socket.emit 'endMatch', {code: code}

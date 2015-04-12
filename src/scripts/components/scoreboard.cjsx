@@ -1,6 +1,9 @@
 React = require 'react/addons'
 TimeAgo = require './time-ago'
 Actions = require 'scripts/actions/view-action-creator'
+Router = require 'react-router'
+{Navigation} = Router
+ScoreStepper = require 'scripts/components/score-stepper'
 moment = require 'moment'
 ls = require 'scripts/utils/local-storage'
 fullscreen = require 'scripts/utils/fullscreen'
@@ -53,61 +56,33 @@ TeamGameScore = React.createClass
 
     <h2 className={classes}>{@props.score}</h2>
 
-ScoreStepper = React.createClass
-  incrementScore: ->
-    payload =
-      id: @props.match._id
-      team: @props.teamNum
-      plusMinus: 'plus'
-
-    Actions.changeScore(payload)
-
-  decrementScore: ->
-    payload =
-      id: @props.match._id
-      team: @props.teamNum
-      plusMinus: 'minus'
-
-    Actions.changeScore(payload)
-
-  render: ->
-    teamNum = @props.teamNum
-    title = @props.match[teamNum].title
-    classes = @props.classes
-
-    <div className={classes}>
-      <div className="col-xs-4 minus no-pad">
-        <button onClick={@decrementScore} className="btn btn-expand"><i className="fa fa-minus"></i></button>
-      </div>
-      <div className="col-xs-4 flex-container height-3-5em">
-        <h3 className="text-center">{title}</h3>
-      </div>
-      <div className="col-xs-4 plus no-pad">
-        <button onClick={@incrementScore} className="btn btn-expand"><i className="fa fa-plus"></i></button>
-      </div>
-    </div>
-
-
 module.exports = React.createClass
+  mixins: [Navigation]
 
   componentDidMount: ->
-    btn = document.querySelector '.fullscreen-mode'
-    btn.addEventListener 'click', (e) ->
+    fullscreenBtn = document.querySelector '.fullscreen-mode'
+    notifyBtn = document.querySelector '.notify-btn'
+
+    fullscreenBtn.addEventListener 'click', (e) ->
       scoreboard = document.querySelector '.scoreboard'
-      if btn.classList.contains 'btn-success'
+      if fullscreenBtn.classList.contains 'btn-success'
         fullscreen.enterFullscreen scoreboard
-        btn.innerHTML = 'Exit Full Screen'
-        btn.classList.remove 'btn-success'
-        btn.classList.add 'btn-danger'
+        fullscreenBtn.innerHTML = '<i class="fa fa-times"></i>Exit Full Screen'
+        fullscreenBtn.classList.remove 'btn-success'
+        fullscreenBtn.classList.add 'btn-danger'
       else
         fullscreen.exitFullscreen scoreboard
-        btn.innerHTML = 'Full Screen Scoreboard'
-        btn.classList.add 'btn-success'
-        btn.classList.remove 'btn-danger'
+        fullscreenBtn.innerHTML = '<i class="fa fa-arrows-alt"></i>Full Screen'
+        fullscreenBtn.classList.add 'btn-success'
+        fullscreenBtn.classList.remove 'btn-danger'
+
+    notifyBtn.addEventListener 'click', (e) =>
+      console.log 'Notify me'
+      @transitionTo '/notify'
 
     window.addEventListener 'keyup', (e) ->
       if e.keyCode is 27 and btn.classList.contains 'btn-danger'
-        btn.innerHTML = 'Full Screen Scoreboard'
+        btn.innerHTML = 'Full Screen'
         btn.classList.add 'btn-success'
         btn.classList.remove 'btn-danger'
 
@@ -139,31 +114,6 @@ module.exports = React.createClass
       'black': match.gameNum is 2
       'winner': winner and winner._id is match.team2._id
     )
-
-    if currentUserStartedMatch
-      team1classes = cx(
-        'heads-stepper': match.gameNum isnt 2
-        'tails-stepper': match.gameNum is 2
-        'row': true
-        'tall': true
-        'stepper': true
-        'margin-top-1em': true
-      )
-
-      team2classes = cx(
-        'heads-stepper': match.gameNum is 2
-        'tails-stepper': match.gameNum isnt 2
-        'row': true
-        'tall': true
-        'stepper': true
-        'margin-top-1em': true
-      )
-
-      scoreSteppers =
-        <div>
-          <ScoreStepper classes={team1classes} match={match} teamNum='team1'/>
-          <ScoreStepper classes={team2classes} match={match} teamNum='team2'/>
-        </div>
 
     i = 1
     while i <= 3
@@ -222,10 +172,18 @@ module.exports = React.createClass
             </div>
             {gameStart}
             <div className="row pad-top-1em">
-              <button className="btn btn-success fullscreen-mode">Full Screen Scoreboard</button>
+              <div className="col-md-2 col-md-offset-4 pad-bottom-1em">
+                <button className="btn btn-success fullscreen-mode">
+                  <i className="fa fa-arrows-alt"></i>Full Screen
+                </button>
+              </div>
+              <div className="col-md-2">
+                <button className="btn btn-info notify-btn">
+                  <i className="fa fa-envelope"></i>Notify Me
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      {scoreSteppers}
     </div>

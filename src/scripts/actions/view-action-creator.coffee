@@ -30,3 +30,7 @@ module.exports =
   registerPlayerNFC: (nfc, player) ->
     API.registerPlayerNFC(nfc, player)
     return
+
+  endMatch: (code) ->
+    API.endMatch(code)
+    return
