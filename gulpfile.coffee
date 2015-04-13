@@ -9,7 +9,8 @@ postcss = require "gulp-postcss"
 open = require "gulp-open"
 autoprefixer = require "autoprefixer-core"
 rimraf = require "rimraf"
-srcPath = "src"
+clientPath = "client"
+serverPath = "server"
 usemin = require "gulp-usemin"
 uglify = require "gulp-uglify"
 componentsPath = "bower_components"
@@ -30,7 +31,7 @@ webpack = (name, ext, watch) ->
       sourceMapFilename: "[file].map"
     resolve:
       extensions: ["", ".webpack.js", ".web.js", ".js", ".jsx", ".coffee", ".cjsx"]
-      modulesDirectories: [componentsPath, modulesPath, srcPath]
+      modulesDirectories: [componentsPath, modulesPath, clientPath]
     module:
       loaders: [
         {
@@ -47,7 +48,7 @@ webpack = (name, ext, watch) ->
         }
       ]
 
-  gulp.src("#{srcPath}/**/#{name}.#{ext}")
+  gulp.src("#{clientPath}/**/#{name}.#{ext}")
   .pipe(gwebpack(options))
   .pipe(gulp.dest(distPath))
 
@@ -58,7 +59,7 @@ gulp.task "js", -> js(false)
 gulp.task "js-dev", -> js(true)
 
 gulp.task "css", ->
-  gulp.src("#{srcPath}/styles/styles.styl")
+  gulp.src("#{clientPath}/styles/styles.styl")
   .pipe(plumber())
   .pipe(stylus())
   .on("error", err)
@@ -83,16 +84,16 @@ gulp.task "clean", ->
   rimraf.sync(distPath)
 
 gulp.task "copy", ->
-  gulp.src("#{srcPath}/*.html").pipe(gulp.dest(distPath))
-  gulp.src("#{srcPath}/styles/*.css").pipe(gulp.dest("#{distPath}/styles/"))
-  gulp.src("#{srcPath}/images/**").pipe(gulp.dest("#{distPath}/images/"))
-  gulp.src("#{srcPath}/favicon.ico").pipe(gulp.dest(distPath))
-  gulp.src("#{srcPath}/sounds/**").pipe(gulp.dest("#{distPath}/sounds/"))
+  gulp.src("#{clientPath}/*.html").pipe(gulp.dest(distPath))
+  gulp.src("#{clientPath}/styles/*.css").pipe(gulp.dest("#{distPath}/styles/"))
+  gulp.src("#{clientPath}/images/**").pipe(gulp.dest("#{distPath}/images/"))
+  gulp.src("#{clientPath}/favicon.ico").pipe(gulp.dest(distPath))
+  gulp.src("#{clientPath}/sounds/**").pipe(gulp.dest("#{distPath}/sounds/"))
   gulp.src("#{componentsPath}/**/*").pipe(gulp.dest("#{distPath}/#{componentsPath}"))
 
 gulp.task "build", ["clean", "copy", "css", "js"]
 
-server_main = "#{srcPath}/server.coffee"
+server_main = "#{serverPath}/server.coffee"
 gulp.task "server", ->
   nodemon
     script: server_main
@@ -107,5 +108,5 @@ gulp.task "default", ->
 gulp.task "watch", ["copy"], ->
   livereload.listen()
   gulp.watch(["#{distPath}/**/*"]).on("change", livereload.changed)
-  gulp.watch ["#{srcPath}/**/*.styl"], ["css"]
-  gulp.watch ["#{srcPath}/**/*.html"], ["copy"]
+  gulp.watch ["#{clientPath}/**/*.styl"], ["css"]
+  gulp.watch ["#{clientPath}/**/*.html"], ["copy"]

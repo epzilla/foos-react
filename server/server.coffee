@@ -3,8 +3,8 @@ bodyParser = require 'body-parser'
 app = express()
 morgan = require 'morgan'
 path = require 'path'
-conf = require '../app/conf/config'
-routes = require '../app/routes/api'
+conf = require './conf/config'
+routes = require './routes/api'
 server = require('http').createServer(app)
 
 port = process.env.PORT or conf.PORT or 3000
@@ -25,7 +25,7 @@ app.all '*', (req, res, next) ->
 
 # CONNECT TO DATABASE ====================================
 mongoose = require('mongoose')
-mongoose.connect 'mongodb://localhost:27017/foos-test'
+mongoose.connect conf.DB_ADDRESS
 
 # REGISTER ROUTES ========================================
 app.use '/api', routes.router
