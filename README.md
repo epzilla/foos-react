@@ -4,7 +4,7 @@ Foos React
 # Installation
 ### Prerequisites
 - NodeJS and npm
-- MongoDB (create a db named `foos`, and collections named `players`, `teams`, and `matches`)
+- MongoDB (create a db named `foos`, and collections named `players`, `teams`, `matches`, and `notifications`)
 - Bower `npm install -g bower`
 - Gulp `npm install -g gulp`
 
