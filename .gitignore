@@ -2,5 +2,7 @@ bower_components
 node_modules
 semantic
 dist
+build
+client/sounds
 .tmp
 todo
