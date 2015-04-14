@@ -13,7 +13,12 @@ Foos React
 - `cd` into the repo
 - `npm install`
 - `bower install`
-- `gulp` to start server
+- `gulp` to start server (make sure in `/server/conf/config.coffee`, that `ENVIRONMENT` is set to `"dev"`)
+
+### Production Build
+- Inside `/server/conf/config.coffee`, change `ENVIRONMENT` to either `"prod"` or `"production"`. 
+- Run `gulp build`
+- After build, everything you need should be in the `/dist` directory, and you can just run `node dist/server.js` to run.
 
 ## TODOs
 - Add ability to load profile pics
