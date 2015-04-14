@@ -17,6 +17,7 @@ componentsPath = "bower_components"
 runSequence = require "run-sequence"
 modulesPath = "node_modules"
 distPath = "dist"
+coffee = require "gulp-coffee"
 
 err = (x...) -> gutil.log(x...); gutil.beep(x...)
 
@@ -83,7 +84,13 @@ gulp.task "open", ->
 gulp.task "clean", ->
   rimraf.sync(distPath)
 
+gulp.task "server-js", ->
+  gulp.src("#{serverPath}/**/*.coffee")
+    .pipe(coffee())
+    .pipe(gulp.dest("#{distPath}/"))
+
 gulp.task "copy", ->
+  gulp.src(["#{serverPath}/**/*", "!#{serverPath}/**/*.coffee"]).pipe(gulp.dest("#{distPath}/"))
   gulp.src("#{clientPath}/*.html").pipe(gulp.dest(distPath))
   gulp.src("#{clientPath}/styles/*.css").pipe(gulp.dest("#{distPath}/styles/"))
   gulp.src("#{clientPath}/images/**").pipe(gulp.dest("#{distPath}/images/"))
@@ -91,7 +98,8 @@ gulp.task "copy", ->
   gulp.src("#{clientPath}/sounds/**").pipe(gulp.dest("#{distPath}/sounds/"))
   gulp.src("#{componentsPath}/**/*").pipe(gulp.dest("#{distPath}/#{componentsPath}"))
 
-gulp.task "build", ["clean", "copy", "css", "js"]
+gulp.task "build", ->
+  runSequence("clean", "server-js", ["copy", "css", "js"])
 
 server_main = "#{serverPath}/server.coffee"
 gulp.task "server", ->

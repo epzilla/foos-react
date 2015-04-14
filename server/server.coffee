@@ -8,6 +8,7 @@ routes = require './routes/api'
 server = require('http').createServer(app)
 
 port = process.env.PORT or conf.PORT or 3000
+env = conf.ENVIRONMENT or 'dev'
 
 # configure app
 app.use morgan('dev')
@@ -33,7 +34,10 @@ app.set 'port', port
 
 app.get '/*', (req, res) ->
   console.log 'loading index file'
-  res.render '../dist/index.html'
+  if env is 'prod' or env is 'production'
+    res.render './index.html'
+  else
+    res.render '../dist/index.html'
   return
 
 # SET UP SOCKETS AND SEED DATABASE IF EMPTY ==============
