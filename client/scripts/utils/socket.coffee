@@ -1,8 +1,9 @@
 io = require 'socket.io/node_modules/socket.io-client'
 ServerActionCreator = require 'scripts/actions/server-action-creator'
-conf = require './config'
+conf = require '../../../conf/config'
 
-socket = io(window.location.hostname.concat ':', conf.port)
+addr = window.location.hostname + ':' + conf.PORT
+socket = io(addr)
 online = true
 
 socket.on 'connect', ->

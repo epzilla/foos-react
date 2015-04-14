@@ -1,11 +1,15 @@
 fs = require 'fs'
 Utils = require './utils'
+conf = require '../../conf/config'
+env = conf.ENVIRONMENT
 SoundService = {}
 
+relPath = if env is 'prod' or env is 'production' then '' else './.tmp/'
+
 SoundService.getRandomGoalSound = (callback) ->
-  fs.readdir('./dist/sounds/goal', (err, files) ->
+  fs.readdir(relPath + 'sounds/goal', (err, files) ->
     if err
-      res.status(500).send(err)
+      callback(err)
     if files
       count = files.length
       fileNum = Utils.getRandomNum(0, count - 1)
@@ -15,9 +19,9 @@ SoundService.getRandomGoalSound = (callback) ->
   return
 
 SoundService.getRandomGamePointSound = (callback) ->
-  fs.readdir('./dist/sounds/gamePoint', (err, files) ->
+  fs.readdir(relPath + '/sounds/gamePoint', (err, files) ->
     if err
-      res.status(500).send(err)
+      callback(err)
     if files
       count = files.length
       fileNum = Utils.getRandomNum(0, count - 1)
@@ -27,9 +31,9 @@ SoundService.getRandomGamePointSound = (callback) ->
   return
 
 SoundService.getRandomTrashTalkSound = (callback) ->
-  fs.readdir('./dist/sounds/trashTalk', (err, files) ->
+  fs.readdir(relPath + '/sounds/trashTalk', (err, files) ->
     if err
-      res.status(500).send(err)
+      callback(err)
     if files
       count = files.length
       fileNum = Utils.getRandomNum(0, count - 1)
@@ -39,9 +43,9 @@ SoundService.getRandomTrashTalkSound = (callback) ->
   return
 
 SoundService.getRandomSquirrelSound = (callback) ->
-  fs.readdir('./dist/sounds/squirrel', (err, files) ->
+  fs.readdir(relPath + '/sounds/squirrel', (err, files) ->
     if err
-      res.status(500).send(err)
+      callback(err)
     if files
       count = files.length
       fileNum = Utils.getRandomNum(0, count - 1)
@@ -51,9 +55,9 @@ SoundService.getRandomSquirrelSound = (callback) ->
   return
 
 SoundService.getRandomStartGameSound = (callback) ->
-  fs.readdir('./dist/sounds/startGame', (err, files) ->
+  fs.readdir(relPath + '/sounds/startGame', (err, files) ->
     if err
-      res.status(500).send(err)
+      callback(err)
     if files
       count = files.length
       fileNum = Utils.getRandomNum(0, count - 1)
@@ -63,9 +67,9 @@ SoundService.getRandomStartGameSound = (callback) ->
   return
 
 SoundService.getRandomEndGameSound = (callback) ->
-  fs.readdir('./dist/sounds/endGame', (err, files) ->
+  fs.readdir('./sounds/endGame', (err, files) ->
     if err
-      res.status(500).send(err)
+      callback(err)
     if files
       count = files.length
       fileNum = Utils.getRandomNum(0, count - 1)
@@ -75,9 +79,9 @@ SoundService.getRandomEndGameSound = (callback) ->
   return
 
 SoundService.getRandomWelcomeGameSound = (callback) ->
-  fs.readdir('./dist/sounds/welcome', (err, files) ->
+  fs.readdir(relPath + '/sounds/welcome', (err, files) ->
     if err
-      res.status(500).send(err)
+      callback(err)
     if files
       count = files.length
       fileNum = Utils.getRandomNum(0, count)

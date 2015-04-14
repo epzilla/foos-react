@@ -1,8 +1,8 @@
-conf = require './config'
+conf = require '../../../conf/config'
 
 module.exports =
 
-  prefix: conf.localStoragePrefix or ''
+  prefix: conf.LOCAL_STORAGE_PREFIX or ''
 
   get: (key) ->
     self = this

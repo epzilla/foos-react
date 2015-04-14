@@ -7,7 +7,7 @@ module.exports =
     Player.count (err, count) ->
       if !err and count is 0
         obj = undefined
-        fs.readFile 'app/conf/players.csv', (err, data) ->
+        fs.readFile 'conf/players.csv', (err, data) ->
           if err
             throw err
           array = data.toString().split('\n')

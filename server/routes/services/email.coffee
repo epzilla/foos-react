@@ -1,6 +1,11 @@
 nodemailer = require 'nodemailer'
 Player = require '../../models/player'
 Notification = require '../../models/notification'
+conf = require '../../conf/config'
+env = conf.ENVIRONMENT
+address = conf.ADDRESS
+
+fullAddress = if (env is 'prod' or env is 'production') then address else (address + ':' + conf.PORT)
 
 transporter = nodemailer.createTransport(
   service: 'gmail'
@@ -14,14 +19,17 @@ module.exports =
     players.forEach (player) ->
       if player.email and player.email isnt ''
         firstName = player.name.split(' ')[0]
+
+        textString = 'You can click here for the score correction page, ' +
+          'though we hope you won\'t need it! ' +
+          '<a href="' + fullAddress + '/scoreCorrection?code=' + passcode + '">' + fullAddress +
+          '/scoreCorrection?code=' + passcode + '</a>'
+
         transporter.sendMail
           from: 'snappyfoos@gmail.com'
           to: player.email
           subject: firstName + ', Your Foosball Match Is Underway!'
-          html: 'You can click here for the score correction page, ' +
-                'though we hope you won\'t need it! ' +
-                '<a href="http://localhost:3000/scoreCorrection?code=' + passcode + '">' +
-                'http://localhost:3000/scoreCorrection?code=' + passcode + '</a>'
+          html: textString
 
   createNotificationByEmailAddress: (req, res) ->
     Notification.findOne {email: req.body.email}, (err, notification) ->
