@@ -84,7 +84,7 @@ module.exports =
         res.sendStatus 400
 
   fireNotifications: (match, teams) ->
-    match.endTime = moment(match.endTime).format('h:mm:ssa')
+    match.formattedEndTime = moment(match.endTime).format('h:mma')
     match.team1Name = teams[0].title
     match.team2Name = teams[1].title
 
@@ -101,7 +101,7 @@ module.exports =
           Notification.find().remove().exec()
 
   fireAbortNotifications: (match) ->
-    match.endTime = moment(match.endTime).format('h:mm:ssa')
+    match.formattedEndTime = moment(match.endTime).format('h:mma')
 
     emailTemplates 'templates', (err, template) ->
       if template
