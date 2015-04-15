@@ -1,6 +1,6 @@
 nodemailer = require 'nodemailer'
 emailTemplates = require 'email-templates'
-moment = require 'moment'
+moment = require 'moment-timezone'
 Player = require '../../models/player'
 Notification = require '../../models/notification'
 conf = require '../../conf/config'
@@ -84,7 +84,7 @@ module.exports =
         res.sendStatus 400
 
   fireNotifications: (match, teams) ->
-    match.formattedEndTime = moment(match.endTime).format('h:mma')
+    match.formattedEndTime = moment(match.endTime).tz('America/Chicago').format('h:mma')
     match.team1Name = teams[0].title
     match.team2Name = teams[1].title
 
@@ -101,7 +101,7 @@ module.exports =
           Notification.find().remove().exec()
 
   fireAbortNotifications: (match) ->
-    match.formattedEndTime = moment(match.endTime).format('h:mma')
+    match.formattedEndTime = moment(match.endTime).tz('America/Chicago').format('h:mma')
 
     emailTemplates 'templates', (err, template) ->
       if template
