@@ -133,6 +133,8 @@ gulp.task "copy", ->
   gulp.src("#{clientPath}/favicon.ico").pipe(gulp.dest(tmpPath))
   gulp.src("#{clientPath}/sounds/**").pipe(gulp.dest("#{tmpPath}/sounds/"))
   gulp.src(["package.json", "bower.json"]).pipe(gulp.dest("#{tmpPath}"))
+  gulp.src("templates/**").pipe(gulp.dest("#{tmpPath}/templates/"))
+  gulp.src(["conf/**", "!conf/**/*.coffee"]).pipe(gulp.dest("#{tmpPath}/conf/"))
   gulp.src("#{componentsPath}/**/*").pipe(gulp.dest("#{tmpPath}/#{componentsPath}"))
 
 gulp.task "copy-build", ->
@@ -143,6 +145,8 @@ gulp.task "copy-build", ->
   gulp.src("#{clientPath}/favicon.ico").pipe(gulp.dest(buildPath))
   gulp.src("#{clientPath}/sounds/**").pipe(gulp.dest("#{buildPath}/sounds/"))
   gulp.src(["package.json", "bower.json"]).pipe(gulp.dest("#{buildPath}"))
+  gulp.src("templates/**").pipe(gulp.dest("#{buildPath}/templates/"))
+  gulp.src(["conf/**", "!conf/**/*.coffee"]).pipe(gulp.dest("#{buildPath}/conf/"))
   gulp.src("#{componentsPath}/**/*").pipe(gulp.dest("#{buildPath}/#{componentsPath}"))
 
 gulp.task "build", ->

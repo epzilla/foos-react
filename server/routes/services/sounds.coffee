@@ -19,7 +19,7 @@ SoundService.getRandomGoalSound = (callback) ->
   return
 
 SoundService.getRandomGamePointSound = (callback) ->
-  fs.readdir(relPath + '/sounds/gamePoint', (err, files) ->
+  fs.readdir(relPath + 'sounds/gamePoint', (err, files) ->
     if err
       callback(err)
     if files
@@ -31,7 +31,7 @@ SoundService.getRandomGamePointSound = (callback) ->
   return
 
 SoundService.getRandomTrashTalkSound = (callback) ->
-  fs.readdir(relPath + '/sounds/trashTalk', (err, files) ->
+  fs.readdir(relPath + 'sounds/trashTalk', (err, files) ->
     if err
       callback(err)
     if files
@@ -43,7 +43,7 @@ SoundService.getRandomTrashTalkSound = (callback) ->
   return
 
 SoundService.getRandomSquirrelSound = (callback) ->
-  fs.readdir(relPath + '/sounds/squirrel', (err, files) ->
+  fs.readdir(relPath + 'sounds/squirrel', (err, files) ->
     if err
       callback(err)
     if files
@@ -55,7 +55,7 @@ SoundService.getRandomSquirrelSound = (callback) ->
   return
 
 SoundService.getRandomStartGameSound = (callback) ->
-  fs.readdir(relPath + '/sounds/startGame', (err, files) ->
+  fs.readdir(relPath + 'sounds/startGame', (err, files) ->
     if err
       callback(err)
     if files
@@ -67,7 +67,7 @@ SoundService.getRandomStartGameSound = (callback) ->
   return
 
 SoundService.getRandomEndGameSound = (callback) ->
-  fs.readdir('./sounds/endGame', (err, files) ->
+  fs.readdir(relPath + 'sounds/endGame', (err, files) ->
     if err
       callback(err)
     if files
@@ -79,7 +79,7 @@ SoundService.getRandomEndGameSound = (callback) ->
   return
 
 SoundService.getRandomWelcomeGameSound = (callback) ->
-  fs.readdir(relPath + '/sounds/welcome', (err, files) ->
+  fs.readdir(relPath + 'sounds/welcome', (err, files) ->
     if err
       callback(err)
     if files

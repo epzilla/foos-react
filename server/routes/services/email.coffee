@@ -1,4 +1,6 @@
 nodemailer = require 'nodemailer'
+emailTemplates = require 'email-templates'
+moment = require 'moment'
 Player = require '../../models/player'
 Notification = require '../../models/notification'
 conf = require '../../conf/config'
@@ -81,13 +83,36 @@ module.exports =
       else
         res.sendStatus 400
 
-  fireNotifications: ->
-    Notification.find (err, notes) ->
-      notes.forEach (note) ->
-        transporter.sendMail
-          from: 'snappyfoos@gmail.com'
-          to: note.email
-          subject: 'The Foosball Table Is Open!'
-          text: 'Better get while the gettin\'s good!'
+  fireNotifications: (match, teams) ->
+    match.endTime = moment(match.endTime).format('h:mm:ssa')
+    match.team1Name = teams[0].title
+    match.team2Name = teams[1].title
 
-      Notification.find().remove().exec()
+    emailTemplates 'templates', (err, template) ->
+      template 'finalscore', match, (err, html, text) ->
+        Notification.find (err, notes) ->
+          notes.forEach (note) ->
+            transporter.sendMail
+              from: 'snappyfoos@gmail.com'
+              to: note.email
+              subject: 'The Foosball Table Is Open!'
+              html: html
+
+          Notification.find().remove().exec()
+
+  fireAbortNotifications: (match) ->
+    match.endTime = moment(match.endTime).format('h:mm:ssa')
+
+    emailTemplates 'templates', (err, template) ->
+      if template
+        template 'finalscore', match, (err, html, text) ->
+          Notification.find (err, notes) ->
+            notes.forEach (note) ->
+              transporter.sendMail
+                from: 'snappyfoos@gmail.com'
+                to: note.email
+                subject: 'The Foosball Table Is Open!'
+                html: html
+
+            Notification.find().remove().exec()
+

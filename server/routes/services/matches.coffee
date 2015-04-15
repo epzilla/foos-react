@@ -311,11 +311,13 @@ MatchService.delete = (id) ->
       console.error err
     else
       match.active = false
-      EmailService.fireNotifications()
 
       MatchService.io.emit 'matchUpdate',
         status: 'aborted'
         updatedMatch: match
+
+      EmailService.fireAbortNotifications(match)
+      return
 
 MatchService.getRecentMatches = (req, res) ->
   Match.find(active: false).sort('endTime': 'desc').limit(req.param('num') or 10).populate('team1 team2').exec (err, matches) ->
@@ -383,7 +385,6 @@ MatchService.endMatch = (data) ->
             if !updatedMatch.active
               # Match is over
               code = ''
-              EmailService.fireNotifications()
 
               TeamService.updateTeamStats updatedMatch, statPack, (err, teams, winnerID) ->
                 if err
@@ -393,6 +394,7 @@ MatchService.endMatch = (data) ->
                       team: team
                       score: rollbackScore
                     err: err
+
                 PlayerService.updatePlayerStats updatedMatch, teams, statPack, (err) ->
                   if err
                     sock.emit 'matchError',
@@ -409,6 +411,9 @@ MatchService.endMatch = (data) ->
                         winner: w
                         sound: file
                         updatedMatch: updatedMatch
+                      EmailService.fireNotifications(updatedMatch, teams)
+                      return
+                    return
                   return
                 return
             else if match.scores[match.gameNum - 1].team1 is 9 or match.scores[match.gameNum - 1].team2 is 9
@@ -534,7 +539,7 @@ MatchService.changeScore = (sock, data) ->
         if !updatedMatch.active
           # Match is over
           code = ''
-          EmailService.fireNotifications()
+
 
           TeamService.updateTeamStats updatedMatch, statPack, (err, teams, winnerID) ->
             if err
@@ -544,6 +549,7 @@ MatchService.changeScore = (sock, data) ->
                   team: team
                   score: rollbackScore
                 err: err
+
             PlayerService.updatePlayerStats updatedMatch, teams, statPack, (err) ->
               if err
                 sock.emit 'matchError',
@@ -560,6 +566,9 @@ MatchService.changeScore = (sock, data) ->
                     winner: w
                     sound: file
                     updatedMatch: updatedMatch
+                  EmailService.fireNotifications(updatedMatch, teams)
+                  return
+                return
               return
             return
         else if match.scores[match.gameNum - 1].team1 is 9 or match.scores[match.gameNum - 1].team2 is 9
