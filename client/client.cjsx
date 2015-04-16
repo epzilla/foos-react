@@ -46,10 +46,14 @@ $ ->
   sound = document.querySelector 'audio'
 
   sndInit = ->
+    document.getElementById('init').style.display = 'none'
     sound = document.querySelector 'audio'
     sound.play()
     sound.pause()
-    document.getElementById('init').style.display = 'none'
+    if window.speechSynthesis
+      words = ' '
+      msg = new SpeechSynthesisUtterance words
+      window.speechSynthesis.speak msg
 
   `if ('ontouchstart' in window) {
     document.getElementById('init').addEventListener('touchstart', sndInit);

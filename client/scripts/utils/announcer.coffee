@@ -1,5 +1,11 @@
 Random = require './random'
 
+announce = (words) ->
+  msg = new SpeechSynthesisUtterance words
+  msg.rate = 0.3
+  window.speechSynthesis.speak msg
+  return
+
 getWelcomePhrase = (name) ->
   phrases = [
     'Welcome, ' + name + '.',
@@ -52,8 +58,7 @@ module.exports =
     if window.speechSynthesis
       firstName = name.split(' ')[0]
       words = getWelcomePhrase firstName
-      msg = new SpeechSynthesisUtterance words
-      window.speechSynthesis.speak msg
+      announce words
       return
 
   giveNewMatchInstructions: (match, nextSound) ->
@@ -66,7 +71,7 @@ module.exports =
       totalMsg = startMsg + ' ' + ins
 
       msg = new SpeechSynthesisUtterance totalMsg
-
+      msg.rate = 0.3
       msg.onend = (e) ->
         sound.play()
 
@@ -80,13 +85,11 @@ module.exports =
   announceSwitch: () ->
     if window.speechSynthesis
       words = getSwitchMessage()
-      msg = new SpeechSynthesisUtterance words
-      window.speechSynthesis.speak msg
+      announce words
       return
 
   unrecognizedTag: () ->
     if window.speechSynthesis
       words = 'I don\'t recognize that tag. Tell me who you are, and I\'ll get you set up to play.'
-      msg = new SpeechSynthesisUtterance words
-      window.speechSynthesis.speak msg
+      announce words
       return
