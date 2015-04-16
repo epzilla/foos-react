@@ -42,6 +42,7 @@ module.exports =
       if not notification
         note = new Notification(
           email: req.body.email
+          type: req.body.type or 'email'
         )
 
         note.save (err, newNote) ->
@@ -67,10 +68,8 @@ module.exports =
 
           if not notification
             note = new Notification(
-              email: req.params.email
-            )
-            note = new Notification(
               email: player.email
+              type: 'email'
             )
 
             note.save (err, newNote) ->
@@ -92,11 +91,18 @@ module.exports =
       template 'finalscore', match, (err, html, text) ->
         Notification.find (err, notes) ->
           notes.forEach (note) ->
-            transporter.sendMail
-              from: 'snappyfoos@gmail.com'
-              to: note.email
-              subject: 'The Foosball Table Is Open!'
-              html: html
+            if not note.type or note.type is 'email'
+              transporter.sendMail
+                from: 'snappyfoos@gmail.com'
+                to: note.email
+                subject: 'The Foosball Table Is Open!'
+                html: html
+            else
+              transporter.sendMail
+                from: 'snappyfoos@gmail.com'
+                to: note.email
+                text: 'The Foosball Table Is Open!\n' + match.summary
+
 
           Notification.find().remove().exec()
 

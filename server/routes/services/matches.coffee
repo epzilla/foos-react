@@ -560,7 +560,23 @@ MatchService.changeScore = (sock, data) ->
                   err: err
               else
                 w = if teams[0]._id.equals(winnerID) then teams[0] else teams[1]
+                l = if teams[0]._id.equals(winnerID) then teams[1] else teams[0]
+                winnerName = w.title
+                loserName = l.title
+                t1wins = statPack.team1.gameWins
+                t2wins = statPack.team2.gameWins
+
+                if updatedMatch.winner is updatedMatch.team1
+                  updatedMatch.summary = winnerName + ' defeated ' + loserName + ' ' +
+                                         t1wins + ' games to ' + t2wins + '.'
+                else if updatedMatch.winner is updatedMatch.team2
+                  updatedMatch.summary = winnerName + ' defeated ' + loserName + ' ' +
+                                         t2wins + ' games to ' + t1wins + '.'
+                else
+                  updatedMatch.summary = teams[0].title + ' and ' + teams[1].title + ' played to a draw.'
+
                 SoundService.getRandomEndGameSound (err, file) ->
+
                   MatchService.io.emit 'matchUpdate',
                     status: 'finished'
                     winner: w
