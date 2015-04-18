@@ -7,6 +7,7 @@ gwebpack = require "gulp-webpack"
 stylus = require "gulp-stylus"
 postcss = require "gulp-postcss"
 open = require "gulp-open"
+run = require "gulp-run"
 autoprefixer = require "autoprefixer-core"
 del = require "del"
 clientPath = "client"
@@ -149,24 +150,28 @@ gulp.task "copy-build", ->
   gulp.src(["conf/**", "!conf/**/*.coffee"]).pipe(gulp.dest("#{buildPath}/conf/"))
   gulp.src("#{componentsPath}/**/*").pipe(gulp.dest("#{buildPath}/#{componentsPath}"))
 
+gulp.task "no-livereload", ->
+  run('sed -i".bak" "/livereload/d" build/index.html').exec()
+  run('rm build/index.html.bak').exec()
+
 gulp.task "build", ->
-  runSequence("clean-build", "server-js-build", ["copy-build", "css-build", "js"])
+  runSequence("clean-build", "server-js-build", ["copy-build", "css-build", "js"], "no-livereload")
 
 server_main = "#{tmpPath}/server.js"
 gulp.task "server", ["server-js", "copy", "css"], ->
   setTimeout(->
     nodemon
       script: server_main
-      watch: [server_main]
+      watch: [server_main, "#{serverPath}/**/*"]
       nodeArgs: ['--debug']
       env:
         PORT: process.env.PORT or 3000
   , 5000)
 
 gulp.task "default", ->
-  runSequence("clean", ["server-js", "copy", "css"], "server", "js-dev", "usemin", "watch", "open")
+  runSequence("clean", ["server-js", "copy", "css"], "server", "watch", "js-dev", "usemin", "open")
 
-gulp.task "watch", ["copy"], ->
+gulp.task "watch", ->
   livereload.listen()
   gulp.watch(["#{tmpPath}/**/*"]).on("change", livereload.changed)
   gulp.watch ["#{clientPath}/**/*.styl"], ["css"]

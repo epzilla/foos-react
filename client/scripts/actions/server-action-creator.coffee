@@ -63,6 +63,13 @@ module.exports =
     )
     return
 
+  receivePlayerNames: (data) ->
+    Dispatcher.handleServerAction(
+      type: ActionTypes.RECEIVE_PLAYER_NAMES
+      data: data
+    )
+    return
+
   receiveTeams: (data) ->
     Dispatcher.handleServerAction(
       type: ActionTypes.RECEIVE_TEAMS
@@ -88,6 +95,13 @@ module.exports =
   receiveNewPlayer: (data) ->
     Dispatcher.handleServerAction(
       type: ActionTypes.RECEIVE_NEW_PLAYER
+      data: data
+    )
+    return
+
+  receiveCarriers: (data) ->
+    Dispatcher.handleServerAction(
+      type: ActionTypes.RECEIVE_CARRIERS
       data: data
     )
     return

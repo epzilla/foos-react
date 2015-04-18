@@ -6,6 +6,11 @@ announce = (words) ->
   window.speechSynthesis.speak msg
   return
 
+getRandomPlayer = (playerNames) ->
+  if playerNames and playerNames.length > 0
+    pNum = Random.getRandomNum(0, playerNames.length - 1)
+    playerNames[pNum]
+
 getWelcomePhrase = (name) ->
   phrases = [
     'Welcome, ' + name + '.',
@@ -53,6 +58,21 @@ getSwitchMessage = ->
   phraseNum = Random.getRandomNum(0, phrases.length - 1)
   phrases[phraseNum]
 
+getPlayerHeckleMessage = (player) ->
+  phrases = [
+    'Hey ' + player + ', nice shot! Does your husband play?',
+    player + ', yours is less of a snake shot, more of a dead worm shot.'
+  ]
+  phraseNum = Random.getRandomNum(0, phrases.length - 1)
+  phrases[phraseNum]
+
+getGenericHeckleMessage = (player) ->
+  phrases = [
+    'Man, this is some world class foosball here... In case you can\'t tell, that was sarcasm.'
+  ]
+  phraseNum = Random.getRandomNum(0, phrases.length - 1)
+  phrases[phraseNum]
+
 module.exports =
   announcePlayer: (name) ->
     if window.speechSynthesis
@@ -82,14 +102,24 @@ module.exports =
         sound.play()
       , 1000)
 
-  announceSwitch: () ->
+  announceSwitch: ->
     if window.speechSynthesis
       words = getSwitchMessage()
       announce words
       return
 
-  unrecognizedTag: () ->
+  unrecognizedTag: ->
     if window.speechSynthesis
       words = 'I don\'t recognize that tag. Tell me who you are, and I\'ll get you set up to play.'
+      announce words
+      return
+
+  heckle: (player) ->
+    if window.speechSynthesis
+      if player
+        words = getPlayerHeckleMessage(player)
+      else
+        words = getGenericHeckleMessage()
+
       announce words
       return

@@ -6,7 +6,11 @@ PlayerStore = require 'scripts/stores/player-store'
 Recents = require 'scripts/components/recents'
 SeriesHistory = require 'scripts/components/series'
 Scoreboard = require 'scripts/components/scoreboard'
+HeckleBox = require 'scripts/components/heckle-box'
+Announcer = require 'scripts/utils/announcer'
 API = require 'scripts/utils/api'
+
+heckleBox = undefined
 
 getMatchState = ->
   {
@@ -15,11 +19,26 @@ getMatchState = ->
     seriesHistory: MatchStore.getSeriesHistory()
     winner: MatchStore.getWinner()
     newPlayerInfo: PlayerStore.getNewPlayerInfo()
+    playerNames: PlayerStore.getPlayerNames()
     unrecognizedNFC: PlayerStore.getUnrecognizedNFC()
   }
 
 Home = React.createClass
   mixins: [Navigation]
+
+  secretCode: '38,38,40,40,37,39,37,39,66,65'
+  pressedKeys: []
+
+  _keyUpHandler: (e) ->
+    key = e.keyCode
+    @pressedKeys.push key
+
+    if @pressedKeys.toString().indexOf(@secretCode) >= 0
+      @pressedKeys = []
+      heckleBox = document.querySelector '.heckle-box'
+      heckleBox.classList.add 'revealed'
+    else if @pressedKeys.length > 100
+      @pressedKeys = []
 
   getInitialState: ->
     getMatchState()
@@ -27,10 +46,12 @@ Home = React.createClass
   componentDidMount:  ->
     MatchStore.addChangeListener @_onChange
     PlayerStore.addChangeListener @_onChange
+    document.addEventListener 'keyup', @_keyUpHandler
 
   componentWillUnmount: ->
     MatchStore.removeChangeListener @_onChange
     PlayerStore.removeChangeListener @_onChange
+    document.removeEventListener 'keyup', @_keyUpHandler
 
   render: ->
     match = if @state.currentMatch and @state.currentMatch.active then @state.currentMatch else null
@@ -66,10 +87,13 @@ Home = React.createClass
       <hr />
       {series}
       <Recents recents={@state.recentMatches}/>
+      <HeckleBox players={@state.playerNames} />
     </div>
 
   _onChange: ->
     @setState getMatchState()
+    document.removeEventListener 'keyup', @_keyUpHandler
+    document.addEventListener 'keyup', @_keyUpHandler
     if @state.newPlayerInfo
       @transitionTo '/playerRegistration'
     else if @state.unrecognizedNFC

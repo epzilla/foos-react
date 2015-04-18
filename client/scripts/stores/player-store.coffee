@@ -60,6 +60,7 @@ PlayerStore.dispatchToken = Dispatcher.register( (payload) ->
     when ActionTypes.RECEIVE_PLAYERS
       _players = action.data
       _playerEmails = _.uniq(_.pluck _players, 'email')
+      _playerNames = _.pluck _players, 'name'
     when ActionTypes.RECEIVE_HOME_DATA
       _playerNames = action.data.playersInPool
       if _playerNames.length > 0
@@ -69,6 +70,8 @@ PlayerStore.dispatchToken = Dispatcher.register( (payload) ->
       _playerNames = action.data.allPlayers
       if _newPlayer
         Announcer.announcePlayer _newPlayer
+    when ActionTypes.RECEIVE_PLAYER_NAMES
+      _playerNames = action.data.playerNames
     when ActionTypes.RECEIVE_NEW_PLAYER
       _createdPlayer = action.data
       _newPlayer = action.data.name
@@ -76,7 +79,6 @@ PlayerStore.dispatchToken = Dispatcher.register( (payload) ->
       _unrecognized = undefined
     when ActionTypes.RECEIVE_SCORE_UPDATE
       _newPlayer = undefined
-      _playerNames = []
     when ActionTypes.RECEIVE_MATCH_ERROR
       if action.data.status is 'timeout'
         _newPlayer = undefined

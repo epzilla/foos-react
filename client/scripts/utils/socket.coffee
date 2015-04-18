@@ -27,6 +27,9 @@ socket.on 'connect', ->
   socket.on 'nfcError', (data) ->
     ServerActionCreator.receiveNFCError data
 
+  socket.on 'playerNames', (data) ->
+    ServerActionCreator.receivePlayerNames data
+
   socket.on 'disconnect', ->
     console.warn 'Socket disconnected.'
     online = false

@@ -1,5 +1,6 @@
 mongoose = require('mongoose')
 Schema = mongoose.Schema
+deepPopulate = require 'mongoose-deep-populate'
 
 MatchSchema = new Schema(
   team1:
@@ -21,4 +22,5 @@ MatchSchema = new Schema(
   gameNum: Number
   active: Boolean)
 
+MatchSchema.plugin(deepPopulate)
 module.exports = mongoose.model('Match', MatchSchema)

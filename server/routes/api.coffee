@@ -4,10 +4,12 @@ matches = require './services/matches'
 teams = require './services/teams'
 sounds = require './services/sounds'
 email = require './services/email'
+carriers = require './services/carriers'
 
 init = (socket) ->
   matches.init socket
   players.init()
+  carriers.init()
   return
 
 # middleware to use for all requests
@@ -50,6 +52,10 @@ router.get '/teams/:teamId', teams.find
 # Email Notifications
 router.post '/notificationByEmailAddress', email.createNotificationByEmailAddress
 router.post '/notificationByPlayerId', email.createNotificationByPlayerId
+router.post '/notificationBySMS', email.createNotificationBySMS
+
+# Carriers
+router.get '/carriers', carriers.findAll
 
 # Sounds
 # router.get '/sounds/random', sounds.getRandomSound

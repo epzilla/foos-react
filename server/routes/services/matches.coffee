@@ -9,6 +9,7 @@ Utils = require './utils'
 moment = require 'moment'
 _ = require 'lodash'
 mongoose = require 'mongoose'
+deepPopulate = require 'mongoose-deep-populate'
 ObjectId = mongoose.Types.ObjectId
 
 MatchService = {}
@@ -118,6 +119,9 @@ MatchService.addPlayerToPool = (data) ->
             if playerIdPool.length is 4
               console.info('Start Match With: ' + playerNames.toString())
               # Start new match with those players
+              MatchService.io.emit 'playerNames',
+                playerNames: playerNames
+
               MatchService.createRandomWithPlayers playerIdPool, (err, match) ->
                 if err
                   console.error err
@@ -328,10 +332,20 @@ MatchService.getRecentMatches = (req, res) ->
   return
 
 MatchService.getCurrentMatch = (req, res) ->
-  Match.find(active: true).populate('team1 team2').exec (err, match) ->
+  Match.findOne(active: true).populate('team1 team2').exec (err, match) ->
     if err
       res.send err
-    res.json match
+
+    Match.deepPopulate(match, 'team1.players team2.players', (err, populatedMatch) ->
+      currentPlayers = populatedMatch.team1.players
+      Array.prototype.push.apply currentPlayers, populatedMatch.team2.players
+      pNames = _.pluck currentPlayers, 'name'
+      playerNames = pNames.map (pl) ->
+        pl = pl.split(' ')[0]
+      MatchService.io.emit 'playerNames',
+        playerNames: playerNames
+      res.json populatedMatch
+    )
     return
   return
 

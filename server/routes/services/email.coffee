@@ -56,6 +56,29 @@ module.exports =
         return
     return
 
+  createNotificationBySMS: (req, res) ->
+    Notification.findOne {email: req.body.email}, (err, notification) ->
+      if err
+        res.status(500).send err
+        return
+
+      if not notification
+        note = new Notification(
+          email: req.body.email
+          type: 'sms'
+        )
+
+        note.save (err, newNote) ->
+          if err
+            res.status(500).send err
+
+          res.json newNote
+          return
+      else
+        res.sendStatus 400
+        return
+    return
+
   createNotificationByPlayerId: (req, res) ->
     Player.findById req.body.id, (err, player) ->
       if err

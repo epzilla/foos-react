@@ -53,7 +53,7 @@ module.exports =
     self = this
     Promise.all [Rest.get('/api/matches/current'), Rest.get('/api/matches/recent'), Rest.get('/api/matches/playersInPool')]
       .then (res) ->
-        currentMatch = if res[0].length > 0 then res[0][0] else null
+        currentMatch = res[0]
         recentMatches = if res[1].length > 0 then res[1] else []
         playersInPool = if res[2].length > 0 then res[2] else []
         ServerActionCreator.receiveHomeData(
@@ -85,14 +85,34 @@ module.exports =
       .then (res) ->
         socket.emit 'playerNFC', {nfc: res.nfc}
 
+  getCarriers: ->
+    Rest.get('/api/carriers')
+      .then (res) ->
+        ServerActionCreator.receiveCarriers res
+
   registerEmailNotification: (email) ->
     Rest.post('/api/notificationByEmailAddress/', {email: email})
       .then (res) ->
-        console.log res.email
         ServerActionCreator.sendAlert(
           type: 'success'
           persistent: false
           text: 'OK. An email will be sent to <strong>' + res.email + '</strong> when this match ends!')
+      .catch (err) ->
+        if err.includes '400'
+          ServerActionCreator.sendAlert(
+            type: 'warn'
+            persistent: false
+            text: 'We already had you down for a notification. No worries!')
+
+  registerSMSNotification: (email) ->
+    Rest.post('/api/notificationBySMS/', {email: email})
+      .then (res) ->
+        rawNum = res.email.split('@')[0]
+        num = rawNum.slice(0, 3) + '-' + rawNum.slice(3, 6) + '-' + rawNum.slice(6, 10)
+        ServerActionCreator.sendAlert(
+          type: 'success'
+          persistent: false
+          text: 'OK. A text will be sent to <strong>' + num + '</strong> when this match ends!')
       .catch (err) ->
         if err.includes '400'
           ServerActionCreator.sendAlert(

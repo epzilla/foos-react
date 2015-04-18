@@ -38,3 +38,7 @@ module.exports =
   submitEmail: (email) ->
     API.registerEmailNotification(email)
     return
+
+  submitSMS: (email) ->
+    API.registerSMSNotification(email)
+    return

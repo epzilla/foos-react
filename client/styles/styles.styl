@@ -347,5 +347,63 @@ ul.player-list
   width 300px
   height 45px
   padding 10px
+  vertical-align middle
   border-radius 5px
   border 1px solid snappyBlue
+
+.notify-form
+  width 500px
+  margin 0 auto
+  &.sms-form
+    min-height 500px
+  label, input, button, .Select
+    margin-bottom 5px
+  label, input, .Select
+    width 100%
+  button.btn
+    height 45px
+    min-width 105px
+
+@media (max-width 600px)
+  .notify-form
+    width 95%
+
+.heckle-box
+  display flex
+  justify-content space-around
+  align-items center
+  text-align center
+  flex-wrap wrap
+  min-height 25%
+  width 100%
+  left 0
+  bottom -10000px
+  position fixed
+  background rgba(150, 150, 150, 0.9)
+  transition all 0.3s ease-out
+  &.revealed
+    bottom 0
+    transition all 0.3s ease-out
+  div
+    width 100%
+    button
+      margin 1em
+      width 150px
+      height 50px
+      flex-shrink
+      &.rando
+        background green
+  .close
+    position absolute
+    right 10px
+    top 10px
+    width 25px
+    height 25px
+    border 1px solid white
+    border-radius 13px
+    background #676767
+    color white
+    text-shadow none
+    opacity 1
+    &:before
+      content: '\00D7'
