@@ -58,7 +58,6 @@ module.exports = React.createClass
         value: el.suffix
         label: el.name
       options.push carrier
-      return
     )
 
     <section className="container">

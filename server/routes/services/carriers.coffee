@@ -19,19 +19,13 @@ module.exports =
               carriers.push
                 'name': name
                 'suffix': suffix
-            return
           Carrier.collection.insert carriers, (err, carrierList) ->
             if err
               throw err
             console.info 'Seeded list of carriers'
-          return
-        return
-      return
 
   findAll: (req, res) ->
     Carrier.find (err, carriers) ->
       if err
         res.send err
       res.json carriers
-      return
-    return

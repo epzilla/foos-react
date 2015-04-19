@@ -38,14 +38,11 @@ module.exports =
                 'name': name
                 'pct': 0
                 'ptsAgainst': 0
-            return
+
           Player.collection.insert players, (err, playerList) ->
             if err
               throw err
             console.info 'Seeded list of players'
-          return
-        return
-      return
 
   create: (req, res) ->
     player = new Player(
@@ -63,24 +60,18 @@ module.exports =
       if err
         res.send err
       res.json message: 'Player created!'
-      return
-    return
 
   findAll: (req, res) ->
     Player.find().sort('name': 'asc').exec (err, players) ->
       if err
         res.send err
       res.json players
-      return
-    return
 
   find: (req, res) ->
     Player.findById req.params.playerId, (err, player) ->
       if err
         res.send err
       res.json player
-      return
-    return
 
   findByNFC: (nfc, cb) ->
     Player.findOne {nfc: nfc}, (err, player) ->
@@ -88,7 +79,6 @@ module.exports =
         console.error err
         cb err
       cb(null, player)
-    return
 
   update: (req, res) ->
     Player.findById req.params.playerId, (err, player) ->
@@ -102,9 +92,6 @@ module.exports =
         if err
           res.send err
         res.json updatedPlayer
-        return
-      return
-    return
 
   updateByName: (req, res) ->
     Player.findOne {name: req.params.name}, (err, player) ->
@@ -118,9 +105,6 @@ module.exports =
         if err
           res.send err
         res.json message: 'Player updated!'
-        return
-      return
-    return
 
   updatePlayerStats: (match, teams, statPack, cb) ->
     team1 = undefined
@@ -130,7 +114,7 @@ module.exports =
     teams0StringIDList = []
     playerIdList.forEach (objId) ->
       teams0StringIDList.push objId.toString()
-      return
+
     playerIdList.push.apply playerIdList, teams[1].players
     #Match up the teams
     if teams[0]._id.equals(match.team1)
@@ -142,7 +126,6 @@ module.exports =
     Player.find { _id: $in: playerIdList }, (err, players) ->
       if err
         cb err, null
-        return
       players.forEach (player) ->
         plTeam = undefined
         oppTeam = undefined
@@ -166,7 +149,6 @@ module.exports =
         player.pct = parseFloat((player.matchesWon / player.matches).toFixed(3))
         player.avgPtsFor = parseFloat((player.ptsFor / player.games).toFixed(2))
         player.avgPtsAgainst = parseFloat((player.ptsAgainst / player.games).toFixed(2))
-        return
       # Hack for now, because mongoose doesn't support batch updates
       # We know there are 4 players, so we're just going to
       # hard-code a pyramid of doom
@@ -184,12 +166,6 @@ module.exports =
                 if err
                   cb err, null
                 cb()
-                return
-              return
-            return
-          return
-      return
-    return
 
   resetOneByName: (req, res) ->
     Player.findOne {'name': req.params.name}, (err, player) ->
@@ -214,8 +190,6 @@ module.exports =
           res.status(500).send()
 
         res.status(200).json updatedPlayer
-      return
-    return
 
   resetOneById: (req, res) ->
     Player.findOne {_id: req.params.id}, (err, player) ->
@@ -238,8 +212,6 @@ module.exports =
           res.status(500).send()
 
         res.status(200).send()
-      return
-    return
 
   resetAll: (req, res) ->
     Player.find (err, players) ->
@@ -265,7 +237,3 @@ module.exports =
           plNum++
           if plNum == numPlayers
             res.status(200).send()
-          return
-        return
-      return
-    return

@@ -43,6 +43,15 @@ checkMatchInProgress = (cb) ->
     else
       cb(null, false)
 
+sendPlayerNames = (match) ->
+  currentPlayers = match.team1.players
+  Array.prototype.push.apply currentPlayers, match.team2.players
+  pNames = _.pluck currentPlayers, 'name'
+  playerNames = pNames.map (pl) ->
+    pl = pl.split(' ')[0]
+  MatchService.io.emit 'playerNames',
+    playerNames: playerNames
+
 MatchService.init = (sock) ->
   MatchService.io = sock
   MatchService.io.on 'connection', (socket) ->
@@ -52,33 +61,24 @@ MatchService.init = (sock) ->
 
     socket.on 'scoreChange', (data) ->
       MatchService.changeScore socket, data
-      return
 
     socket.on 'changeScoreUsingCode', (data) ->
       MatchService.changeScoreUsingCode socket, data
-      return
 
     socket.on 'scoreBatchUpdate', (data) ->
       MatchService.update socket, data
-      return
 
     socket.on 'playerNFC', (data) ->
       MatchService.addPlayerToPool data
-      return
 
     socket.on 'endMatch', (data) ->
       MatchService.endMatch data
-      return
 
     socket.on 'disconnect', ->
       console.info 'Socket disconnected : ' + clientIp + ':' + clientPort
-      return
-    return
-  return
 
 MatchService.getPlayersInPool = (req, res) ->
   res.json playerNames
-  return
 
 MatchService.addPlayerToPool = (data) ->
   ###
@@ -163,7 +163,6 @@ MatchService.addPlayerToPool = (data) ->
             status: 'playerNotFound'
             nfc: data.nfc
             err: 'Could not find player by NFC ID'
-      return
 
 MatchService.create = (req, res) ->
   now = moment()
@@ -208,20 +207,17 @@ MatchService.create = (req, res) ->
               EmailService.sendStartMatchEmail players, code
 
           res.json match
-          return
-        return
-      return
-    return
-  return
 
 MatchService.createRandomWithPlayers = (playerList, cb) ->
   now = moment()
   teams = getRandomTeamsFromPlayers playerList
+
   TeamService.getOrCreate teams[0], (err, team1) ->
     if err
       MatchService.io.emit 'matchError',
         status: 'teamNotFound'
         err: err
+
     TeamService.getOrCreate teams[1], (err, team2) ->
       if err
         MatchService.io.emit 'matchError',
@@ -248,7 +244,7 @@ MatchService.createRandomWithPlayers = (playerList, cb) ->
             status: 'matchSaveError'
             err: err
 
-        Match.findById(newMatch._id).populate('team1 team2').exec (err, match) ->
+        Match.deepPopulate newMatch, 'team1.players team2.players', (err, populatedMatch) ->
           if err
             MatchService.io.emit 'matchError',
               status: 'matchSaveError'
@@ -258,31 +254,24 @@ MatchService.createRandomWithPlayers = (playerList, cb) ->
             MatchService.io.emit 'matchUpdate',
               status: 'new'
               sound: file
-              updatedMatch: match
+              updatedMatch: populatedMatch
+
+            sendPlayerNames populatedMatch
+
             code = getRandomCode()
             cb(null, match)
-            return
-          return
-        return
-      return
-    return
-  return
 
 MatchService.findAll = (req, res) ->
   Match.find().populate('team1 team2').exec (err, matches) ->
     if err
       res.send err
     res.json matches
-    return
-  return
 
 MatchService.find = (req, res) ->
   Match.findById(req.params.matchId).populate('team1 team2').exec (err, match) ->
     if err
       res.send err
     res.json match
-    return
-  return
 
 MatchService.update = (sock, data) ->
   Match.findById data._id, (err, match) ->
@@ -305,9 +294,6 @@ MatchService.update = (sock, data) ->
           MatchService.io.emit 'matchUpdate',
             status: 'ok'
             updatedMatch: updatedMatch
-        return
-    return
-  return
 
 MatchService.delete = (id) ->
   Match.findByIdAndRemove id, (err, match) ->
@@ -321,33 +307,26 @@ MatchService.delete = (id) ->
         updatedMatch: match
 
       EmailService.fireAbortNotifications(match)
-      return
 
 MatchService.getRecentMatches = (req, res) ->
-  Match.find(active: false).sort('endTime': 'desc').limit(req.param('num') or 10).populate('team1 team2').exec (err, matches) ->
-    if err
-      res.send err
-    res.json matches
-    return
-  return
+  Match.find(active: false)
+    .sort('endTime': 'desc')
+    .limit(req.param('num') or 10)
+    .populate('team1 team2').exec (err, matches) ->
+      if err
+        res.send err
+      res.json matches
 
 MatchService.getCurrentMatch = (req, res) ->
   Match.findOne(active: true).populate('team1 team2').exec (err, match) ->
     if err
       res.send err
-
-    Match.deepPopulate(match, 'team1.players team2.players', (err, populatedMatch) ->
-      currentPlayers = populatedMatch.team1.players
-      Array.prototype.push.apply currentPlayers, populatedMatch.team2.players
-      pNames = _.pluck currentPlayers, 'name'
-      playerNames = pNames.map (pl) ->
-        pl = pl.split(' ')[0]
-      MatchService.io.emit 'playerNames',
-        playerNames: playerNames
-      res.json populatedMatch
-    )
-    return
-  return
+    if match
+      Match.deepPopulate match, 'team1.players team2.players', (err, populatedMatch) ->
+        sendPlayerNames populatedMatch
+        res.json populatedMatch
+    else
+      res.json null
 
 MatchService.endMatch = (data) ->
   if data.code is code
@@ -378,7 +357,6 @@ MatchService.endMatch = (data) ->
 
           statPack.team1.pts += score.team1
           statPack.team2.pts += score.team2
-          return
 
         if statPack.team1.gameWins > 1
           match.winner = match.team1
@@ -426,10 +404,7 @@ MatchService.endMatch = (data) ->
                         sound: file
                         updatedMatch: updatedMatch
                       EmailService.fireNotifications(updatedMatch, teams)
-                      return
-                    return
-                  return
-                return
+
             else if match.scores[match.gameNum - 1].team1 is 9 or match.scores[match.gameNum - 1].team2 is 9
               # Game Point
               SoundService.getRandomGamePointSound( (err, file) ->
@@ -441,7 +416,6 @@ MatchService.endMatch = (data) ->
                     team: team[0]
                     plusMinus: data.plusMinus
                     gameOver: gameOver
-                return
               )
             else
               # Match continues
@@ -454,13 +428,9 @@ MatchService.endMatch = (data) ->
                     team: team[0]
                     plusMinus: data.plusMinus
                     gameOver: gameOver
-                return
               )
-            return
-          return
         else
           MatchService.delete match._id
-          return
 
 # Increment or decrement the score from the UI
 MatchService.changeScoreUsingCode = (sock, data) ->
@@ -524,7 +494,6 @@ MatchService.changeScore = (sock, data) ->
 
             statPack.team1.pts += score.team1
             statPack.team2.pts += score.team2
-            return
 
           # Determine the winner
           if statPack.team1.gameWins > statPack.team2.gameWins
@@ -597,10 +566,7 @@ MatchService.changeScore = (sock, data) ->
                     sound: file
                     updatedMatch: updatedMatch
                   EmailService.fireNotifications(updatedMatch, teams)
-                  return
-                return
-              return
-            return
+
         else if match.scores[match.gameNum - 1].team1 is 9 or match.scores[match.gameNum - 1].team2 is 9
           # Game Point
           SoundService.getRandomGamePointSound( (err, file) ->
@@ -612,7 +578,6 @@ MatchService.changeScore = (sock, data) ->
                 team: team[0]
                 plusMinus: data.plusMinus
                 gameOver: gameOver
-            return
           )
         else
           # Match continues
@@ -625,11 +590,7 @@ MatchService.changeScore = (sock, data) ->
                 team: team[0]
                 plusMinus: data.plusMinus
                 gameOver: gameOver
-            return
           )
-        return
-      return
-  return
 
 MatchService.getSeriesHistory = (req, res) ->
   team1 = req.param('team1')
@@ -686,7 +647,7 @@ MatchService.getSeriesHistory = (req, res) ->
               team1agg += score.team1
               team2agg += score.team2
               numGames++
-              return
+
           else if match.team1._id.equals(t2._id)
             if match.winner.equals(match.team1._id)
               team2wins++
@@ -704,8 +665,7 @@ MatchService.getSeriesHistory = (req, res) ->
               team2agg += score.team1
               team1agg += score.team2
               numGames++
-              return
-          return
+
         team1avg = team1agg / numGames
         team2avg = team2agg / numGames
         if team1wins > team2wins
@@ -745,9 +705,5 @@ MatchService.getSeriesHistory = (req, res) ->
               avgScore: team2avg
           quickStats: quickStats
         res.json payload
-        return
-      return
-    return
-  return
 
 module.exports = MatchService

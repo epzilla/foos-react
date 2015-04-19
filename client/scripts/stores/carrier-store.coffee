@@ -11,15 +11,12 @@ _carriers = []
 CarrierStore = assign({}, EventEmitter.prototype,
   emitChange: ->
     @emit CHANGE_EVENT
-    return
 
   addChangeListener: (callback) ->
     @on CHANGE_EVENT, callback
-    return
 
   removeChangeListener: (callback) ->
     @removeListener CHANGE_EVENT, callback
-    return
 
   getCarriers: ->
     _carriers
@@ -31,7 +28,6 @@ CarrierStore.dispatchToken = Dispatcher.register( (payload) ->
     when ActionTypes.RECEIVE_CARRIERS
       _carriers = action.data
   CarrierStore.emitChange()
-  return
 )
 
 module.exports = CarrierStore

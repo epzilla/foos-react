@@ -28,8 +28,6 @@ createNewTeam = (playerIDs, cb) ->
       avgPtsFor: 0
       avgPtsAgainst: 0)
     cb null, team
-    return
-  return
 
 ###
 # This function would be used to update stats from a match if
@@ -48,7 +46,6 @@ updateStatsFromMatch = (match, teams, cb) ->
   teams.forEach (team) ->
     team.games++
     team.matches++
-    return
   if teams[0]._id.equals(match.team1)
     team1 = teams[0]
     team2 = teams[1]
@@ -62,7 +59,6 @@ updateStatsFromMatch = (match, teams, cb) ->
       team2wins++
     team1pts += score.team1
     team2pts += score.team2
-    return
   if team1wins > team2wins
     match.winner = match.team1
     team1.matchesWon++
@@ -89,9 +85,6 @@ updateStatsFromMatch = (match, teams, cb) ->
         cb err, null
       else
         cb()
-      return
-    return
-  return
 
 ###
 # This function is the one currently in use, being called from the
@@ -147,9 +140,6 @@ updateUsingStatPack = (match, teams, statPack, cb) ->
           updatedTeam1
           updatedTeam2
         ], winnerID
-      return
-    return
-  return
 
 module.exports =
   create: (req, res) ->
@@ -158,22 +148,19 @@ module.exports =
       if err
         res.send err
       res.json message: 'Team created!'
-      return
-    return
+
   findAll: (req, res) ->
     Team.find (err, teams) ->
       if err
         res.send err
       res.json teams
-      return
-    return
+
   find: (req, res) ->
     Team.findById req.params.teamId, (err, team) ->
       if err
         res.send err
       res.json team
-      return
-    return
+
   update: (req, res) ->
     Team.findById req.params.teamId, (err, team) ->
       if err
@@ -187,9 +174,7 @@ module.exports =
         if err
           res.send err
         res.json message: 'Team updated!'
-        return
-      return
-    return
+
   getOrCreate: (info, cb) ->
     Team.find(players: $all: info).populate('players').exec (err, team) ->
       if err
@@ -207,11 +192,7 @@ module.exports =
               if err
                 cb err, null
               cb null, finalTeam
-              return
-            return
-          return
-      return
-    return
+
   updateTeamStats: (match, statPack, cb) ->
     args = arguments
     Team.find { _id: $in: [
@@ -224,5 +205,3 @@ module.exports =
         updateStatsFromMatch match, teams, cb
       else
         updateUsingStatPack match, teams, statPack, cb
-      return
-    return

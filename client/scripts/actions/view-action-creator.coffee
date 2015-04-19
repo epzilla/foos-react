@@ -9,36 +9,27 @@ module.exports =
       type: ActionTypes.CHANGE_SCORE
       data: info
     )
-    return
 
   getPlayers: () ->
     API.getPlayers()
-    return
 
   getTeams: () ->
     API.getTeams()
-    return
 
   getRecentMatches: () ->
     API.getRecentMatches()
-    return
 
   startMatch: (players) ->
     API.startMatch(players)
-    return
 
   registerPlayerNFC: (nfc, player) ->
     API.registerPlayerNFC(nfc, player)
-    return
 
   endMatch: (code) ->
     API.endMatch(code)
-    return
 
   submitEmail: (email) ->
     API.registerEmailNotification(email)
-    return
 
   submitSMS: (email) ->
     API.registerSMSNotification(email)
-    return

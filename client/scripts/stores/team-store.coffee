@@ -11,15 +11,12 @@ _teams = []
 TeamStore = assign({}, EventEmitter.prototype,
   emitChange: ->
     @emit CHANGE_EVENT
-    return
 
   addChangeListener: (callback) ->
     @on CHANGE_EVENT, callback
-    return
 
   removeChangeListener: (callback) ->
     @removeListener CHANGE_EVENT, callback
-    return
 
   getTeams: ->
     _teams
@@ -31,7 +28,6 @@ TeamStore.dispatchToken = Dispatcher.register( (payload) ->
     when ActionTypes.RECEIVE_TEAMS
       _teams = action.data
   TeamStore.emitChange()
-  return
 )
 
 module.exports = TeamStore

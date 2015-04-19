@@ -10,7 +10,6 @@ AppDispatcher = assign(new Dispatcher, {
       action: action
 
     @dispatch payload
-    return
 
   handleViewAction: (action) ->
     payload =
@@ -18,7 +17,6 @@ AppDispatcher = assign(new Dispatcher, {
       action: action
 
     @dispatch payload
-    return
 
   handleRequestAction: (action) ->
     payload =
@@ -26,7 +24,6 @@ AppDispatcher = assign(new Dispatcher, {
       action: action
 
     @dispatch payload
-    return
 })
 
 module.exports = AppDispatcher

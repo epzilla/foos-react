@@ -9,21 +9,18 @@ module.exports =
       type: ActionTypes.RECEIVE_HOME_DATA
       data: data
     )
-    return
 
   receiveCurrentMatch: (data) ->
     Dispatcher.handleServerAction(
       type: ActionTypes.RECEIVE_CURRENT_MATCH
       data: data
     )
-    return
 
   receiveSeriesHistory: (data) ->
     Dispatcher.handleServerAction(
       type: ActionTypes.RECEIVE_SERIES_HISTORY
       data: data
     )
-    return
 
   receiveScoreUpdate: (data) ->
     Dispatcher.handleServerAction(
@@ -41,14 +38,12 @@ module.exports =
         sound.addEventListener 'ended', listener = () ->
           Announcer.announceSwitch()
           sound.removeEventListener 'ended', listener
-    return
 
   receiveRecentMatches: (data) ->
     Dispatcher.handleServerAction(
       type: ActionTypes.RECEIVE_RECENT_MATCHES
       data: data
     )
-    return
 
   receiveRegisteredPlayer: (data) ->
     Dispatcher.handleServerAction(
@@ -61,28 +56,24 @@ module.exports =
       type: ActionTypes.RECEIVE_PLAYERS
       data: data
     )
-    return
 
   receivePlayerNames: (data) ->
     Dispatcher.handleServerAction(
       type: ActionTypes.RECEIVE_PLAYER_NAMES
       data: data
     )
-    return
 
   receiveTeams: (data) ->
     Dispatcher.handleServerAction(
       type: ActionTypes.RECEIVE_TEAMS
       data: data
     )
-    return
 
   receiveMatchError: (data) ->
     Dispatcher.handleServerAction(
       type: ActionTypes.RECEIVE_MATCH_ERROR
       data: data
     )
-    return
 
   receiveNFCError: (data) ->
     Dispatcher.handleServerAction(
@@ -90,28 +81,24 @@ module.exports =
       data: data
     )
     Announcer.unrecognizedTag()
-    return
 
   receiveNewPlayer: (data) ->
     Dispatcher.handleServerAction(
       type: ActionTypes.RECEIVE_NEW_PLAYER
       data: data
     )
-    return
 
   receiveCarriers: (data) ->
     Dispatcher.handleServerAction(
       type: ActionTypes.RECEIVE_CARRIERS
       data: data
     )
-    return
 
   offlineScoreUpdate: (data) ->
     Dispatcher.handleServerAction(
       type: ActionTypes.OFFLINE_SCORE_UPDATE
       data: data
     )
-    return
 
   sendAlert: (data) ->
     Dispatcher.handleServerAction(
@@ -121,13 +108,9 @@ module.exports =
     if !data.persistent
       window.setTimeout(=>
         @clearAlerts()
-        return
       , 5000)
-      return
-    return
 
   clearAlerts: () ->
     Dispatcher.handleServerAction(
       type: ActionTypes.CLEAR_ALERTS
     )
-    return

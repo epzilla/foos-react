@@ -78,7 +78,6 @@ module.exports =
       .then (res) ->
         ls.set 'matchID', res._id
         self.getHomeData()
-    return
 
   registerPlayerNFC: (nfc, player) ->
     Rest.put('/api/players/' + player, {nfc: nfc})

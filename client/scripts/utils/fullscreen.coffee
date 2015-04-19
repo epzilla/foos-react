@@ -8,7 +8,6 @@ module.exports =
       element.webkitRequestFullscreen()
     else if element.msRequestFullscreen
       element.msRequestFullscreen()
-    return
 
   exitFullscreen: ->
     if document.exitFullscreen
@@ -17,4 +16,3 @@ module.exports =
       document.mozCancelFullScreen()
     else if document.webkitExitFullscreen
       document.webkitExitFullscreen()
-    return

@@ -43,7 +43,6 @@ TeamGameScore = React.createClass
       window.setTimeout(->
         self.state.flash = false
         self.getDOMNode().classList.remove 'score-flash'
-        return
       , 5000)
 
   render: ->

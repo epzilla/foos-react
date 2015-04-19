@@ -1,6 +1,6 @@
 ### The equivalent to jQuery.timeago for react.
 #
-# TimeAgo returns a span containing the amount of time (in English) that has
+# TimeAgos a span containing the amount of time (in English) that has
 # passed since `time`.
 #
 # Takes:
@@ -9,7 +9,7 @@
 #
 # Example:
 #
-#     return <a href={khanAcademy}><TimeAgo time={date} /></a>
+# <a href={khanAcademy}><TimeAgo time={date} /></a>
 ###
 
 React = require('react')
@@ -24,6 +24,5 @@ TimeAgo = React.createClass(
     interval = @props.refreshMillis or 60000
     # TODO(joel) why did I have to bind forceUpdate?
     @setInterval @forceUpdate.bind(this), interval
-    return
 )
 module.exports = TimeAgo

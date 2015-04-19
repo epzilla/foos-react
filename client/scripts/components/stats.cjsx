@@ -130,7 +130,6 @@ module.exports = React.createClass
     TeamStore.addChangeListener @_onChange
     Actions.getTeams()
     Actions.getPlayers()
-    return
 
   componentWillUnmount: ->
     PlayerStore.removeChangeListener @_onChange

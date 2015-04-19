@@ -22,15 +22,12 @@ _playerEmails = []
 PlayerStore = assign({}, EventEmitter.prototype,
   emitChange: ->
     @emit CHANGE_EVENT
-    return
 
   addChangeListener: (callback) ->
     @on CHANGE_EVENT, callback
-    return
 
   removeChangeListener: (callback) ->
     @removeListener CHANGE_EVENT, callback
-    return
 
   getPlayers: ->
     _players
@@ -60,9 +57,9 @@ PlayerStore.dispatchToken = Dispatcher.register( (payload) ->
     when ActionTypes.RECEIVE_PLAYERS
       _players = action.data
       _playerEmails = _.uniq(_.pluck _players, 'email')
-      _playerNames = _.pluck _players, 'name'
     when ActionTypes.RECEIVE_HOME_DATA
-      _playerNames = action.data.playersInPool
+      if action.data.playersInPool
+        _playerNames = action.data.playersInPool
       if _playerNames.length > 0
         _newPlayer = _playerNames[_playerNames.length - 1]
     when ActionTypes.RECEIVE_REGISTERED_PLAYER
@@ -87,7 +84,6 @@ PlayerStore.dispatchToken = Dispatcher.register( (payload) ->
     when ActionTypes.RECEIVE_NFC_ERROR
       _unrecognized = action.data.nfc
   PlayerStore.emitChange()
-  return
 )
 
 module.exports = PlayerStore

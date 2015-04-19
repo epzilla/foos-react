@@ -22,24 +22,19 @@ module.exports = React.createClass
 
   selectHeadsOne: (val, selectedOptions)->
     @state.selectedPlayers.team1[0] = val
-    return
 
   selectHeadsTwo: (val, selectedOptions)->
     @state.selectedPlayers.team1[1] = val
-    return
 
   selectTailsOne: (val, selectedOptions)->
     @state.selectedPlayers.team2[0] = val
-    return
 
   selectTailsTwo: (val, selectedOptions)->
     @state.selectedPlayers.team2[1] = val
-    return
 
   startMatch: (e) ->
     e.preventDefault()
     Actions.startMatch(@state.selectedPlayers)
-    return
 
   getInitialState: ->
     players: []
@@ -58,7 +53,6 @@ module.exports = React.createClass
     PlayerStore.addChangeListener @_onChange
     MatchStore.addChangeListener @_onMatchChange
     Actions.getPlayers()
-    return
 
   componentWillUnmount: ->
     PlayerStore.removeChangeListener @_onChange
@@ -72,7 +66,6 @@ module.exports = React.createClass
         value: el._id
         label: el.name
       options.push player
-      return
     )
 
     <section className="text-center container">

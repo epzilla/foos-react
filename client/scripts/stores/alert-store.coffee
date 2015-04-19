@@ -11,15 +11,12 @@ _alerts = []
 AlertStore = assign({}, EventEmitter.prototype,
   emitChange: ->
     @emit CHANGE_EVENT
-    return
 
   addChangeListener: (callback) ->
     @on CHANGE_EVENT, callback
-    return
 
   removeChangeListener: (callback) ->
     @removeListener CHANGE_EVENT, callback
-    return
 
   getAlerts: ->
     _alerts
@@ -33,7 +30,6 @@ AlertStore.dispatchToken = Dispatcher.register( (payload) ->
     when ActionTypes.CLEAR_ALERTS
       _alerts.pop()
   AlertStore.emitChange()
-  return
 )
 
 module.exports = AlertStore

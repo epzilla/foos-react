@@ -4,7 +4,6 @@ announce = (words) ->
   msg = new SpeechSynthesisUtterance words
   msg.rate = 0.3
   window.speechSynthesis.speak msg
-  return
 
 getRandomPlayer = (playerNames) ->
   if playerNames and playerNames.length > 0
@@ -61,14 +60,24 @@ getSwitchMessage = ->
 getPlayerHeckleMessage = (player) ->
   phrases = [
     'Hey ' + player + ', nice shot! Does your husband play?',
-    player + ', yours is less of a snake shot, more of a dead worm shot.'
+    player + ', yours is less of a snake shot, more of a dead worm shot.',
+    'Oh no, is ' + player + ' playing? I was hoping to see some good foosball for once. Oh well...',
+    'So ' + player + ', if you had to describe your foosball skills on a scale from ' +
+      'embarrassing to complete dumpster fire, what would you go with?',
+    'I once saw ' + player + ' lose a game by foosing himself 10 times in a row... True story.',
+    'Hey ' + player + ', do you come here often? Because based on your playing, I\'m guessing no.',
+    'Haha, holy crap ' + player + ', what are you even doing? Just stop. Please.'
   ]
   phraseNum = Random.getRandomNum(0, phrases.length - 1)
   phrases[phraseNum]
 
 getGenericHeckleMessage = (player) ->
   phrases = [
-    'Man, this is some world class foosball here... In case you can\'t tell, that was sarcasm.'
+    'Man, this is some world class foosball here... In case you can\'t tell, that was sarcasm.',
+    'Your mom!',
+    'Back to work, slackers!',
+    'What am I watching here? To call this foosball seems like an insult to the sport.',
+    'Hey have you guys heard about goals? You should try scoring them sometime.'
   ]
   phraseNum = Random.getRandomNum(0, phrases.length - 1)
   phrases[phraseNum]
@@ -79,7 +88,6 @@ module.exports =
       firstName = name.split(' ')[0]
       words = getWelcomePhrase firstName
       announce words
-      return
 
   giveNewMatchInstructions: (match, nextSound) ->
     sound = document.querySelector 'audio'
@@ -96,7 +104,6 @@ module.exports =
         sound.play()
 
       window.speechSynthesis.speak msg
-      return
     else
       window.setTimeout(->
         sound.play()
@@ -106,13 +113,11 @@ module.exports =
     if window.speechSynthesis
       words = getSwitchMessage()
       announce words
-      return
 
   unrecognizedTag: ->
     if window.speechSynthesis
       words = 'I don\'t recognize that tag. Tell me who you are, and I\'ll get you set up to play.'
       announce words
-      return
 
   heckle: (player) ->
     if window.speechSynthesis
@@ -122,4 +127,3 @@ module.exports =
         words = getGenericHeckleMessage()
 
       announce words
-      return

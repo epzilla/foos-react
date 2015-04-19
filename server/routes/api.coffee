@@ -10,7 +10,6 @@ init = (socket) ->
   matches.init socket
   players.init()
   carriers.init()
-  return
 
 # middleware to use for all requests
 router.use (req, res, next) ->
@@ -19,7 +18,6 @@ router.use (req, res, next) ->
   res.header 'Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE'
   res.header 'Access-Control-Allow-Origin', '*'
   next()
-  return
 
 # Players
 router.post '/players', players.create

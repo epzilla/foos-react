@@ -14,9 +14,7 @@ SoundService.getRandomGoalSound = (callback) ->
       count = files.length
       fileNum = Utils.getRandomNum(0, count - 1)
       callback(null, '/sounds/goal/' + files[fileNum])
-      return
   )
-  return
 
 SoundService.getRandomGamePointSound = (callback) ->
   fs.readdir(relPath + 'sounds/gamePoint', (err, files) ->
@@ -26,9 +24,7 @@ SoundService.getRandomGamePointSound = (callback) ->
       count = files.length
       fileNum = Utils.getRandomNum(0, count - 1)
       callback(null, '/sounds/gamePoint/' + files[fileNum])
-      return
   )
-  return
 
 SoundService.getRandomTrashTalkSound = (callback) ->
   fs.readdir(relPath + 'sounds/trashTalk', (err, files) ->
@@ -38,9 +34,7 @@ SoundService.getRandomTrashTalkSound = (callback) ->
       count = files.length
       fileNum = Utils.getRandomNum(0, count - 1)
       callback(null, '/sounds/trashTalk/' + files[fileNum])
-      return
   )
-  return
 
 SoundService.getRandomSquirrelSound = (callback) ->
   fs.readdir(relPath + 'sounds/squirrel', (err, files) ->
@@ -50,9 +44,7 @@ SoundService.getRandomSquirrelSound = (callback) ->
       count = files.length
       fileNum = Utils.getRandomNum(0, count - 1)
       callback(null, '/sounds/squirrel/' + files[fileNum])
-      return
   )
-  return
 
 SoundService.getRandomStartGameSound = (callback) ->
   fs.readdir(relPath + 'sounds/startGame', (err, files) ->
@@ -62,9 +54,7 @@ SoundService.getRandomStartGameSound = (callback) ->
       count = files.length
       fileNum = Utils.getRandomNum(0, count - 1)
       callback(null, '/sounds/startGame/' + files[fileNum])
-      return
   )
-  return
 
 SoundService.getRandomEndGameSound = (callback) ->
   fs.readdir(relPath + 'sounds/endGame', (err, files) ->
@@ -74,9 +64,7 @@ SoundService.getRandomEndGameSound = (callback) ->
       count = files.length
       fileNum = Utils.getRandomNum(0, count - 1)
       callback(null, '/sounds/endGame/' + files[fileNum])
-      return
   )
-  return
 
 SoundService.getRandomWelcomeGameSound = (callback) ->
   fs.readdir(relPath + 'sounds/welcome', (err, files) ->
@@ -86,8 +74,6 @@ SoundService.getRandomWelcomeGameSound = (callback) ->
       count = files.length
       fileNum = Utils.getRandomNum(0, count)
       callback(null, '/sounds/welcome/' + files[fileNum])
-      return
   )
-  return
 
 module.exports = SoundService

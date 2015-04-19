@@ -19,11 +19,8 @@
 SetIntervalMixin =
   componentWillMount: ->
     @intervals = []
-    return
   setInterval: (fn, ms) ->
     @intervals.push setInterval(fn, ms)
-    return
   componentWillUnmount: ->
     @intervals.forEach clearInterval
-    return
 module.exports = SetIntervalMixin

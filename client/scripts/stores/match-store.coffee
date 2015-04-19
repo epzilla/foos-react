@@ -30,15 +30,12 @@ _updateOfflineScore = (info) ->
 MatchStore = assign({}, EventEmitter.prototype,
   emitChange: ->
     @emit CHANGE_EVENT
-    return
 
   addChangeListener: (callback) ->
     @on CHANGE_EVENT, callback
-    return
 
   removeChangeListener: (callback) ->
     @removeListener CHANGE_EVENT, callback
-    return
 
   getRecentMatches: ->
     _recentMatches
@@ -98,7 +95,6 @@ MatchStore.dispatchToken = Dispatcher.register( (payload) ->
     when ActionTypes.OFFLINE_SCORE_UPDATE
       _updateOfflineScore action.data
       MatchStore.emitChange()
-  return
 )
 
 module.exports = MatchStore

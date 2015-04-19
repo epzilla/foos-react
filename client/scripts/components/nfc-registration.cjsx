@@ -30,7 +30,6 @@ module.exports = React.createClass
     console.log('NFC: ' + @state.nfc)
     console.log('Player: ' + @state.selectedPlayer)
     Actions.registerPlayerNFC @state.nfc, @state.selectedPlayer
-    return
 
   componentDidMount: ->
     PlayerStore.addChangeListener @_onPlayerChange
@@ -49,7 +48,6 @@ module.exports = React.createClass
         value: el._id
         label: el.name
       options.push player
-      return
     )
 
     <section className="text-center container">
