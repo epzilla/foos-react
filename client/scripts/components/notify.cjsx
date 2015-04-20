@@ -75,7 +75,7 @@ module.exports = React.createClass
               <label htmlFor="email-notify">Via Email:</label>
               <input className="email-notify" name="email-notify"
                        autoFocus="true" type="email" ref="emailField"
-                       placeholder="snappy.cat@synapse-wireless.com" />
+                       placeholder="snappy.cat@synapse-wireless.com" required="required"/>
               <button type="submit" className="btn btn-primary submit"><i className="fa fa-envelope"></i>Email Me</button>
             </div>
           </form>
