@@ -62,7 +62,8 @@ module.exports =
           playersInPool: playersInPool
         )
         if currentMatch
-          self.getSeriesHistory currentMatch.team1._id, currentMatch.team2._id
+          if currentMatch.team1 and currentMatch.team2
+            self.getSeriesHistory currentMatch.team1._id, currentMatch.team2._id
       .catch (err) ->
         console.error err.stack
 
