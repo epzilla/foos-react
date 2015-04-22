@@ -30,6 +30,9 @@ socket.on 'connect', ->
   socket.on 'playerNames', (data) ->
     ServerActionCreator.receivePlayerNames data
 
+  socket.on 'prediction', (data) ->
+    ServerActionCreator.receivePrediction data
+
   socket.on 'disconnect', ->
     console.warn 'Socket disconnected.'
     online = false

@@ -20,6 +20,9 @@ TeamStore = assign({}, EventEmitter.prototype,
 
   getTeams: ->
     _teams
+
+  getTeamInfo: (id) ->
+    _.find(_teams, {_id: id})
 )
 
 TeamStore.dispatchToken = Dispatcher.register( (payload) ->

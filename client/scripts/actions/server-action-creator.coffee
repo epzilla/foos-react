@@ -2,6 +2,8 @@ Dispatcher = require 'scripts/dispatcher/app-dispatcher'
 ActionTypes = require('scripts/constants/constants').ActionTypes
 Announcer = require 'scripts/utils/announcer'
 
+announcementQueued = false
+
 module.exports =
 
   receiveHomeData: (data) ->
@@ -35,9 +37,12 @@ module.exports =
       thisGame = match.scores[match.gameNum - 1]
       totalPoints = thisGame.team1 + thisGame.team2
       if totalPoints % 5 is 0 and totalPoints isnt 0 and data.status isnt 'finished'
-        sound.addEventListener 'ended', listener = () ->
-          Announcer.announceSwitch()
-          sound.removeEventListener 'ended', listener
+        if not announcementQueued
+          sound.addEventListener 'ended', listener = () ->
+            Announcer.announceSwitch()
+            sound.removeEventListener 'ended', listener
+            announcementQueued = false
+          announcementQueued = true
 
   receiveRecentMatches: (data) ->
     Dispatcher.handleServerAction(
@@ -62,6 +67,13 @@ module.exports =
       type: ActionTypes.RECEIVE_PLAYER_NAMES
       data: data
     )
+
+  receivePrediction: (data) ->
+    Dispatcher.handleServerAction(
+      type: ActionTypes.RECEIVE_PREDICTION
+      data: data
+    )
+    Announcer.queuePrediction data.prediction
 
   receiveTeams: (data) ->
     Dispatcher.handleServerAction(

@@ -1,70 +1,81 @@
 React = require 'react/addons'
+Reactable = require 'reactable'
 Router = require 'react-router'
-{Link, Navigation} = Router
-Table = require('reactable').Table
+Table = Reactable.Table
+Tr = Reactable.Tr
+Td = Reactable.Td
+{Link} = Router
 Actions = require 'scripts/actions/view-action-creator'
 PlayerStore = require 'scripts/stores/player-store'
 TeamStore = require 'scripts/stores/team-store'
 _ = require 'lodash'
 
-recordSort = (a, b) ->
-  aParts = a.split '-'
-  bParts = b.split '-'
-  aWins = parseInt(aParts[0])
-  aLosses = parseInt(aParts[1])
-  bWins = parseInt(bParts[0])
-  bLosses = parseInt(bParts[1])
-  aPct = aWins / (aWins + aLosses)
-  bPct = bWins / (bWins + bLosses)
-  if aPct is bPct
-    if aWins is bWins
-      bLosses - aLosses
-    else
-      aWins - bWins
-  else
-    aPct - bPct
+recordSort = (record) ->
+  recordParts = record.split '-'
+  wins = parseInt recordParts[0]
+  losses = parseInt recordParts[1]
+  pct = wins / (wins + losses)
+  if pct > 0 then pct else wins - losses
 
 TableView = React.createClass
   render: ->
+    data = @props.data
+    which = @props.which
+    rows = []
+    data.forEach( (record) ->
+      sortableMatchRecord = recordSort record.matchRecord
+      sortableGameRecord = recordSort record.gameRecord
+      avgMargin = parseInt record.avgMargin
+      rating = parseInt record.rating
+      if which is 'players'
+        rows.push(
+          <Tr>
+            <Td column='Player'>
+              <Link to="players" params={{playerID: record.id}}>
+                {record.name}
+              </Link>
+            </Td>
+            <Td column='Match Record' value={sortableMatchRecord} >{record.matchRecord}</Td>
+            <Td column='Game Record' value={sortableGameRecord} >{record.gameRecord}</Td>
+            <Td column='Avg. Score (Margin)' value={avgMargin} >{record.avg}</Td>
+            <Td column='Rating' value={rating} >{record.rating}</Td>
+          </Tr>
+        )
+      else
+        rows.push(
+          <Tr>
+            <Td column='Team'>
+              <Link to="teams" params={{teamID: record.id}}>
+                {record.name}
+              </Link>
+            </Td>
+            <Td column='Match Record' value={sortableMatchRecord} >{record.matchRecord}</Td>
+            <Td column='Game Record' value={sortableGameRecord} >{record.gameRecord}</Td>
+            <Td column='Avg. Score (Margin)' value={avgMargin} >{record.avg}</Td>
+            <Td column='Rating' value={rating} >{record.rating}</Td>
+          </Tr>
+        )
+    )
+
     <section className="row">
       <div className="col-md-12">
         <Table className="table table-hover table-responsive text-center table-bordered"
-          data={@props.data}
-          sortable={[
-            'Team',
-            'Player',
-            {
-              column: 'Match Record',
-              sortFunction: recordSort
-            },
-            {
-              column: 'Game Record',
-              sortFunction: recordSort
-            },
-            {
-              column: 'Avg. Score (Margin)',
-              sortFunction: (a, b) ->
-                aParts = a.split '-'
-                bParts = b.split '-'
-                aFor = parseFloat(aParts[0])
-                aSecondPart = aParts[1].split ' '
-                aAgainst = parseFloat(aSecondPart[0])
-                bFor = parseFloat(bParts[0])
-                bSecondPart = bParts[1].split ' '
-                bAgainst = parseFloat(bSecondPart[0])
-                aMargin = aFor - aAgainst
-                bMargin = bFor - bAgainst
-                aMargin - bMargin
-            },
-          ]}
           defaultSort={@props.sorting}
-        />
+          sortable={[
+            'Teams',
+            'Players',
+            'Match Record',
+            'Game Record',
+            'Avg. Score (Margin)',
+            'Rating'
+          ]}
+          >
+        {rows}
+        </Table>
       </div>
     </section>
 
 module.exports = React.createClass
-  mixins: [Navigation]
-
   _getTeamsAndPlayers: ->
     players = PlayerStore.getPlayers()
     teams = TeamStore.getTeams()
@@ -84,10 +95,13 @@ module.exports = React.createClass
         if formattedGamePct is '1.00'
           formattedGamePct = '1.000'
         formattedPlayers.push
-          'Player': player.name
-          'Match Record': player.matchesWon + '-' + player.matchesLost
-          'Game Record': player.gamesWon + '-' + player.gamesLost
-          'Avg. Score (Margin)': player.avgPtsFor + '-' + player.avgPtsAgainst + ' ' + avgMargin
+          id: player._id
+          name: player.name
+          matchRecord: player.matchesWon + '-' + player.matchesLost
+          gameRecord: player.gamesWon + '-' + player.gamesLost
+          avg: player.avgPtsFor + '-' + player.avgPtsAgainst + ' ' + avgMargin
+          avgMargin: rawAvgMargin
+          rating: Math.round(player.rating)
 
     _.forEach teams, (team) ->
       if team.matches isnt 0
@@ -102,25 +116,22 @@ module.exports = React.createClass
         if formattedGamePct is '1.00'
           formattedGamePct = '1.000'
         formattedTeams.push
-          'Team': team.title
-          'Match Record': team.matchesWon + '-' + team.matchesLost
-          'Game Record': team.gamesWon + '-' + team.gamesLost
-          'Avg. Score (Margin)': team.avgPtsFor + '-' + team.avgPtsAgainst + ' ' + avgMargin
+          id: team._id
+          name: team.title
+          matchRecord: team.matchesWon + '-' + team.matchesLost
+          gameRecord: team.gamesWon + '-' + team.gamesLost
+          avg: team.avgPtsFor + '-' + team.avgPtsAgainst + ' ' + avgMargin
+          avgMargin: rawAvgMargin
+          rating: Math.round(team.rating)
 
     {
       players: formattedPlayers
       teams: formattedTeams
-      newPlayerInfo: PlayerStore.getNewPlayerInfo()
-      unrecognizedNFC: PlayerStore.getUnrecognizedNFC()
       selectedTab: 'players'
     }
 
   _onChange: ->
     @setState @_getTeamsAndPlayers()
-    if @state.newPlayerInfo
-      @transitionTo '/playerRegistration'
-    else if @state.unrecognizedNFC
-      @transitionTo '/nfcRegistration'
 
   getInitialState: ->
     @_getTeamsAndPlayers()
@@ -130,6 +141,7 @@ module.exports = React.createClass
     TeamStore.addChangeListener @_onChange
     Actions.getTeams()
     Actions.getPlayers()
+    return
 
   componentWillUnmount: ->
     PlayerStore.removeChangeListener @_onChange
@@ -142,9 +154,9 @@ module.exports = React.createClass
   render: ->
     table = undefined
     if @state.selectedTab is 'players'
-      table = <TableView data={@state.players} sorting={{column: 'Match Record', direction: 'desc' }}/>
+      table = <TableView which={'players'} data={@state.players} sorting={{column: 'Rating', direction: 'desc' }}/>
     else
-      table = <TableView data={@state.teams} sorting={{column: 'Match Record', direction: 'desc' }}/>
+      table = <TableView which={'teams'} data={@state.teams} sorting={{column: 'Rating', direction: 'desc' }}/>
 
     <div>
       <section className="row">

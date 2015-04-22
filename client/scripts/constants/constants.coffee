@@ -12,6 +12,7 @@ module.exports =
     RECEIVE_NEW_PLAYER: null
     RECEIVE_PLAYERS: null
     RECEIVE_PLAYER_NAMES: null
+    RECEIVE_PREDICTION: null
     RECEIVE_TEAMS: null
     RECEIVE_MATCH_ERROR: null
     RECEIVE_NFC_ERROR: null

@@ -49,6 +49,9 @@ PlayerStore = assign({}, EventEmitter.prototype,
 
   getCreatedPlayer: ->
     _createdPlayer
+
+  getPlayerInfo: (id) ->
+    _.find(_players, {_id: id})
 )
 
 PlayerStore.dispatchToken = Dispatcher.register( (payload) ->
@@ -57,9 +60,13 @@ PlayerStore.dispatchToken = Dispatcher.register( (payload) ->
     when ActionTypes.RECEIVE_PLAYERS
       _players = action.data
       _playerEmails = _.uniq(_.pluck _players, 'email')
+      _newPlayer = undefined
     when ActionTypes.RECEIVE_HOME_DATA
       if action.data.playersInPool
         _playerNames = action.data.playersInPool
+      else
+        _newPlayer = undefined
+
       if _playerNames.length > 0
         _newPlayer = _playerNames[_playerNames.length - 1]
     when ActionTypes.RECEIVE_REGISTERED_PLAYER
@@ -69,6 +76,8 @@ PlayerStore.dispatchToken = Dispatcher.register( (payload) ->
         Announcer.announcePlayer _newPlayer
     when ActionTypes.RECEIVE_PLAYER_NAMES
       _playerNames = action.data.playerNames
+      if _playerNames.length is 4
+        _newPlayer = undefined
     when ActionTypes.RECEIVE_NEW_PLAYER
       _createdPlayer = action.data
       _newPlayer = action.data.name

@@ -1,5 +1,7 @@
 Random = require './random'
 
+_prediction = undefined
+
 announce = (words) ->
   msg = new SpeechSynthesisUtterance words
   msg.rate = 0.3
@@ -9,6 +11,42 @@ getRandomPlayer = (playerNames) ->
   if playerNames and playerNames.length > 0
     pNum = Random.getRandomNum(0, playerNames.length - 1)
     playerNames[pNum]
+
+getPredictionPhrase = (prediction) ->
+  w = undefined
+  l = undefined
+
+  if prediction.winner
+    w = prediction.winner.title
+    l = prediction.loser.title
+
+  sweepPhrases = [
+    'Oh boy! I don\'t like the looks of this! The predict-o-matic ' + 'says we\'re in for a blowout! I expect to see ' + w + ' take all 3 games vs. ' + l,
+    'Good luck, ' + l + '. Looks like you may need it!',
+    'I have to admit, I really like ' + w +  '\'s chances in this one.'
+  ]
+
+  tiePhrases = [
+    'We could be in for a treat here. This one looks too close to call!',
+    'I just can\'t quite decide on who I think will win this. Let\'s find out!',
+    'I can\'t wait to see who wins. I sure can\'t predict this one.'
+  ]
+
+  twoOfThreePhrases = [
+    'By the way, our computer predicts that ' + w + ' will ' + prediction.action + ' ' + l,
+    'Just to add some fuel to the fire, the experts expect ' + w + ' to ' + prediction.action + ' ' + l,
+    'Looks like there may be a slight edge in this one. According to my rating system, ' + 'I look for ' + w + ' to ' + prediction.action + ' ' + l
+  ]
+
+  if prediction.action is 'sweep'
+    phraseNum = Random.getRandomNum(0, sweepPhrases.length - 1)
+    sweepPhrases[phraseNum]
+  else if prediction.action is 'tie'
+    phraseNum = Random.getRandomNum(0, tiePhrases.length - 1)
+    tiePhrases[phraseNum]
+  else
+    phraseNum = Random.getRandomNum(0, twoOfThreePhrases.length - 1)
+    twoOfThreePhrases[phraseNum]
 
 getWelcomePhrase = (name) ->
   phrases = [
@@ -101,7 +139,14 @@ module.exports =
       msg = new SpeechSynthesisUtterance totalMsg
       msg.rate = 0.3
       msg.onend = (e) ->
-        sound.play()
+        if _prediction
+          pred = new SpeechSynthesisUtterance _prediction
+          pred.onend = (e) ->
+            sound.play()
+
+          window.speechSynthesis.speak pred
+        else
+          sound.play()
 
       window.speechSynthesis.speak msg
     else
@@ -118,6 +163,9 @@ module.exports =
     if window.speechSynthesis
       words = 'I don\'t recognize that tag. Tell me who you are, and I\'ll get you set up to play.'
       announce words
+
+  queuePrediction: (prediction) ->
+    _prediction = getPredictionPhrase prediction
 
   heckle: (player) ->
     if window.speechSynthesis

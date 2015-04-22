@@ -12,6 +12,7 @@ _currentMatch = {}
 _seriesHistory = {}
 _soundToPlay = ''
 _winner = undefined
+_prediction = undefined
 
 _updateOfflineScore = (info) ->
   if info.plusMinus is 'plus'
@@ -69,9 +70,13 @@ MatchStore.dispatchToken = Dispatcher.register( (payload) ->
     when ActionTypes.RECEIVE_RECENT_MATCHES
       _recentMatches = action.data
       MatchStore.emitChange()
+    when ActionTypes.RECEIVE_PREDICTION
+      _prediction = action.data.prediction
+      MatchStore.emitChange()
     when ActionTypes.RECEIVE_SCORE_UPDATE
       if action.data.status is 'new'
         _currentMatch = action.data.updatedMatch
+        ViewActionCreator.getSeriesHistory(_currentMatch.team1._id, _currentMatch.team2._id)
         Announcer.giveNewMatchInstructions(_currentMatch, action.data.sound)
         MatchStore.emitChange()
       else if action.data.status is 'aborted'
