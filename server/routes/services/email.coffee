@@ -17,7 +17,7 @@ transporter = nodemailer.createTransport(
 
 module.exports =
 
-  sendStartMatchEmail: (players, passcode) ->
+  sendStartMatchEmail: (players, passcode, callback) ->
     players.forEach (player) ->
       if player.email and player.email isnt ''
         firstName = player.name.split(' ')[0]
@@ -32,6 +32,8 @@ module.exports =
           to: player.email
           subject: firstName + ', Your Foosball Match Is Underway!'
           html: textString
+
+    callback(null, players)
 
   createNotificationByEmailAddress: (req, res) ->
     Notification.findOne {email: req.body.email}, (err, notification) ->

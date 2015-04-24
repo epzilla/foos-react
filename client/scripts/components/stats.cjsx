@@ -29,7 +29,8 @@ TableView = React.createClass
       rating = parseInt record.rating
       if which is 'players'
         rows.push(
-          <Tr>
+          <Tr key={record.id}>
+            <Td column='Rank' value={record.rank} >{record.rank}</Td>
             <Td column='Player'>
               <Link to="players" params={{playerID: record.id}}>
                 {record.name}
@@ -43,7 +44,8 @@ TableView = React.createClass
         )
       else
         rows.push(
-          <Tr>
+          <Tr key={record.id}>
+            <Td column='Rank' value={record.rank} >{record.rank}</Td>
             <Td column='Team'>
               <Link to="teams" params={{teamID: record.id}}>
                 {record.name}
@@ -62,6 +64,7 @@ TableView = React.createClass
         <Table className="table table-hover table-responsive text-center table-bordered"
           defaultSort={@props.sorting}
           sortable={[
+            'Rank',
             'Teams',
             'Players',
             'Match Record',
@@ -101,6 +104,7 @@ module.exports = React.createClass
           gameRecord: player.gamesWon + '-' + player.gamesLost
           avg: player.avgPtsFor + '-' + player.avgPtsAgainst + ' ' + avgMargin
           avgMargin: rawAvgMargin
+          rank: player.rank
           rating: Math.round(player.rating)
 
     _.forEach teams, (team) ->
@@ -122,6 +126,7 @@ module.exports = React.createClass
           gameRecord: team.gamesWon + '-' + team.gamesLost
           avg: team.avgPtsFor + '-' + team.avgPtsAgainst + ' ' + avgMargin
           avgMargin: rawAvgMargin
+          rank: team.rank
           rating: Math.round(team.rating)
 
     {
@@ -154,9 +159,9 @@ module.exports = React.createClass
   render: ->
     table = undefined
     if @state.selectedTab is 'players'
-      table = <TableView which={'players'} data={@state.players} sorting={{column: 'Rating', direction: 'desc' }}/>
+      table = <TableView which={'players'} data={@state.players} sorting={{column: 'Rank', direction: 'asc' }}/>
     else
-      table = <TableView which={'teams'} data={@state.teams} sorting={{column: 'Rating', direction: 'desc' }}/>
+      table = <TableView which={'teams'} data={@state.teams} sorting={{column: 'Rank', direction: 'asc' }}/>
 
     <div>
       <section className="row">

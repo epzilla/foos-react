@@ -47,7 +47,7 @@ module.exports = React.createClass
       newPlayerHeader = <h2 className="new-player pad-bottom-1em">{newPlayer}</h2>
     if allPlayers
       for player in allPlayers
-        playerList.push(<li>{player}</li>)
+        playerList.push(<li key={player._id}>{player}</li>)
 
     <section className="container">
       <div className="row">

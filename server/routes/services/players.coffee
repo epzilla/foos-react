@@ -6,7 +6,6 @@ module.exports =
   init: ->
     Player.count (err, count) ->
       if !err and count is 0
-        obj = undefined
         fs.readFile 'conf/players.csv', (err, data) ->
           if err
             throw err
@@ -31,13 +30,15 @@ module.exports =
                 'gamesWon': 0
                 'gamesLost': 0
                 'ptsFor': 0
-                'img': 'images/players/default.png'
+                'img': '/images/players/default.jpg'
                 'matches': 0
                 'matchesLost': 0
                 'matchesWon': 0
                 'name': name
                 'pct': 0
                 'ptsAgainst': 0
+                'rating': 1000
+                'rank': null
 
           Player.collection.insert players, (err, playerList) ->
             if err
@@ -109,13 +110,16 @@ module.exports =
   updatePlayerStats: (match, teams, statPack, cb) ->
     team1 = undefined
     team2 = undefined
+
     # Create one master list of players from the two teams
     playerIdList = teams[0].players.slice()
     teams0StringIDList = []
+
     playerIdList.forEach (objId) ->
       teams0StringIDList.push objId.toString()
 
     playerIdList.push.apply playerIdList, teams[1].players
+
     #Match up the teams
     if teams[0]._id.equals(match.team1)
       team1 = teams[0]
@@ -123,32 +127,41 @@ module.exports =
     else
       team1 = teams[1]
       team2 = teams[0]
+
     Player.find { _id: $in: playerIdList }, (err, players) ->
       if err
         cb err, null
+
       players.forEach (player) ->
         plTeam = undefined
         oppTeam = undefined
         player.matches++
         player.games += match.scores.length
+
         if _.contains(teams0StringIDList, player._id.toString())
           # This player was on team 1
           plTeam = statPack.team1
           oppTeam = statPack.team2
+          player.rating += statPack.team1RatingChange
         else
           plTeam = statPack.team2
           oppTeam = statPack.team1
+          player.rating += statPack.team2RatingChange
+
         player.gamesWon += plTeam.gameWins
         player.gamesLost += oppTeam.gameWins
         player.ptsFor += plTeam.pts
         player.ptsAgainst += oppTeam.pts
+
         if plTeam.isWinner
           player.matchesWon++
         else
           player.matchesLost++
+
         player.pct = parseFloat((player.matchesWon / player.matches).toFixed(3))
         player.avgPtsFor = parseFloat((player.ptsFor / player.games).toFixed(2))
         player.avgPtsAgainst = parseFloat((player.ptsAgainst / player.games).toFixed(2))
+
       # Hack for now, because mongoose doesn't support batch updates
       # We know there are 4 players, so we're just going to
       # hard-code a pyramid of doom
@@ -185,6 +198,8 @@ module.exports =
       player.pct = 0.000
       player.ptsFor = 0
       player.ptsAgainst = 0
+      player.rank = null
+      player.rating = 1000
       player.save (err, updatedPlayer) ->
         if err
           res.status(500).send()
@@ -207,6 +222,8 @@ module.exports =
       player.pct = 0.000
       player.ptsFor = 0
       player.ptsAgainst = 0
+      player.rank = null
+      player.rating = 1000
       pl.save (err) ->
         if err
           res.status(500).send()
@@ -230,6 +247,8 @@ module.exports =
         pl.matchesWon = 0
         pl.pct = 0.000
         pl.ptsFor = 0
+        pl.rank = null
+        pl.rating = 1000
         pl.ptsAgainst = 0
         pl.save (err) ->
           if err
@@ -237,3 +256,31 @@ module.exports =
           plNum++
           if plNum == numPlayers
             res.status(200).send()
+
+  reRank: ->
+    console.log 'Re-ranking players...'
+    Player.find()
+      .where('matches').gt(0)
+      .sort({'rating': 'desc'})
+      .exec (err, players) ->
+        i = 0
+        prevRating = -1
+        prevRanking = -1
+
+        while i < players.length
+          pl = players[i]
+
+          if pl.rating isnt prevRating
+            pl.rank = i + 1
+            prevRanking = i + 1
+            prevRating = pl.rating
+          else
+            pl.rank = prevRanking
+
+          console.log(pl.name + ' now ranks: ' + pl.rank)
+
+          pl.save (err, updatedPlayer) ->
+            if err
+              console.error err
+
+          i++

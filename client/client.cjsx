@@ -14,14 +14,14 @@ Notify = require 'scripts/components/notify'
 Player = require 'scripts/components/player-profile'
 Team = require 'scripts/components/team-profile'
 API = require 'scripts/utils/api'
-{Routes, Route, DefaultRoute, Link} = Router
+{Route, RouteHandler, DefaultRoute, Link, HistoryLocation} = Router
 
 Main = React.createClass
   render: ->
     <div>
       <Header />
       <div className="container">
-        <@props.activeRouteHandler/>
+        <RouteHandler/>
       </div>
       <Alerts />
       <audio src="/sounds/goal/TOUCHDOWN.mp3" preload="auto"/>
@@ -29,24 +29,24 @@ Main = React.createClass
     </div>
 
 routes =
-  <Routes location="history">
-    <Route path="/" handler={Main}>
-      <DefaultRoute name="home" handler={Home}/>
-      <Route name="stats" handler={Stats}/>
-      <Route name="newMatch" handler={NewMatch}/>
-      <Route name="playerRegistration" handler={PlayerRegistration}/>
-      <Route name="nfcRegistration" handler={NFCRegistration}/>
-      <Route name="scoreCorrection" handler={ScoreCorrection}/>
-      <Route name="notify" handler={Notify}/>
-      <Route name="players" handler={Player} path="/players/:playerID"/>
-      <Route name="teams" handler={Team} path="/teams/:teamID"/>
-    </Route>
-  </Routes>
+  <Route path="/" handler={Main}>
+    <DefaultRoute name="home" handler={Home}/>
+    <Route name="stats" handler={Stats}/>
+    <Route name="newMatch" handler={NewMatch}/>
+    <Route name="playerRegistration" handler={PlayerRegistration}/>
+    <Route name="nfcRegistration" handler={NFCRegistration}/>
+    <Route name="scoreCorrection" handler={ScoreCorrection}/>
+    <Route name="notify" handler={Notify}/>
+    <Route name="players" handler={Player} path="/players/:playerID"/>
+    <Route name="teams" handler={Team} path="/teams/:teamID"/>
+  </Route>
 
 $ ->
   API.getHomeData()
   API.getPlayers()
-  React.render(routes, document.body)
+  Router.run(routes, HistoryLocation, (Handler) ->
+    React.render(<Handler/>, document.body)
+  )
   sound = document.querySelector 'audio'
 
   sndInit = ->

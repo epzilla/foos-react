@@ -16,6 +16,8 @@ TeamSchema = new Schema(
   pct: Number
   ptsFor: Number
   ptsAgainst: Number
+  rank: Number
+  rating: Number
   avgPtsFor: Number
   avgPtsAgainst: Number)
 

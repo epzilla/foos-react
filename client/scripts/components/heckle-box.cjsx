@@ -19,7 +19,7 @@ module.exports = React.createClass
     buttons = []
     if @props.players and @props.players.length > 0
       @props.players.forEach (pl) =>
-        buttons.push <button className="btn btn-danger" data-player={pl} onClick={@_heckle}>Heckle {pl}</button>
+        buttons.push <button key={'heckle' + pl} className="btn btn-danger" data-player={pl} onClick={@_heckle}>Heckle {pl}</button>
 
     <section className='heckle-box'>
       <div className="close" onClick={@_close}></div>

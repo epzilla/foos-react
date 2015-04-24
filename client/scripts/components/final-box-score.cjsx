@@ -32,13 +32,13 @@ module.exports = React.createClass
 
 
     # Collect the game scores
-    for score in match.scores
+    for score, i in match.scores
       if score.team1 > score.team2
-        team1scores.push(<div className="col-xs-1 no-pad text-center winning-score">{score.team1}</div>)
-        team2scores.push(<div className="col-xs-1 no-pad text-center losing-score">{score.team2}</div>)
+        team1scores.push(<div key={match._id + 'team1' + i} className="col-xs-1 no-pad text-center winning-score">{score.team1}</div>)
+        team2scores.push(<div key={match._id + 'team2' + i} className="col-xs-1 no-pad text-center losing-score">{score.team2}</div>)
       else
-        team1scores.push(<div className="col-xs-1 no-pad text-center losing-score">{score.team1}</div>)
-        team2scores.push(<div className="col-xs-1 no-pad text-center winning-score">{score.team2}</div>)
+        team1scores.push(<div key={match._id + 'team1' + i} className="col-xs-1 no-pad text-center losing-score">{score.team1}</div>)
+        team2scores.push(<div key={match._id + 'team2' + i} className="col-xs-1 no-pad text-center winning-score">{score.team2}</div>)
 
     <div className="row pad-bottom-1em">
       <div className="row">

@@ -4,8 +4,7 @@ Actions = require 'scripts/actions/view-action-creator'
 module.exports = React.createClass
   incrementScore: ->
     payload =
-      id: @props.match._id
-      team: @props.teamNum
+      team: @props.team
       code: @props.code
       plusMinus: 'plus'
 
@@ -13,16 +12,15 @@ module.exports = React.createClass
 
   decrementScore: ->
     payload =
-      id: @props.match._id
-      team: @props.teamNum
+      team: @props.team
       code: @props.code
       plusMinus: 'minus'
 
     Actions.changeScore(payload)
 
   render: ->
-    teamNum = @props.teamNum
-    title = if @props.match[teamNum] then @props.match[teamNum].title else ''
+    teamNum = @props.team
+    title = @props.title
     classes = @props.classes
 
     <div className={classes}>

@@ -91,7 +91,6 @@ module.exports = React.createClass
     match = @props.match
     winner = @props.winner
     gameStart = undefined
-    scoreSteppers = undefined
     currentUserStartedMatch = match._id is ls.get('matchID')
 
     if winner
@@ -116,15 +115,15 @@ module.exports = React.createClass
 
     i = 1
     while i <= 3
-      gameNums.push(<GameNum gameNum={i} currentGame={match.gameNum}/>)
+      gameNums.push(<GameNum key={'gameNum' + i} gameNum={i} currentGame={match.gameNum}/>)
       if match.scores.length >= i
         isCurrentGame = match.gameNum is i
-        gameScores.push(<GameScoreBox scores={match.scores[i-1]} isCurrentGame={isCurrentGame}/>)
+        gameScores.push(<GameScoreBox key={'gameScoreBox' + i} scores={match.scores[i-1]} isCurrentGame={isCurrentGame}/>)
       else
         fakeScore =
           team1: 0
           team2: 0
-        gameScores.push(<GameScoreBox scores={fakeScore} />)
+        gameScores.push(<GameScoreBox key={'gameScoreBox' + i} scores={fakeScore} />)
       i++
 
     if match.gameNum > 1

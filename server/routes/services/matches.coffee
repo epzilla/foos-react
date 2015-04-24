@@ -6,6 +6,7 @@ PlayerService = require './players'
 SoundService = require './sounds'
 EmailService = require './email'
 Utils = require './utils'
+conf = require '../../conf/config'
 moment = require 'moment'
 _ = require 'lodash'
 mongoose = require 'mongoose'
@@ -18,6 +19,7 @@ errString = ''
 playerIdPool = []
 playerNames = []
 playerPool = []
+teamMap = undefined
 code = ''
 
 getRandomTeamsFromPlayers = (playerList) ->
@@ -47,13 +49,14 @@ sendPlayerNames = (match) ->
   currentPlayers = match.team1.players
   Array.prototype.push.apply currentPlayers, match.team2.players
   pNames = _.pluck currentPlayers, 'name'
-  playerNames = pNames.map (pl) ->
+  plNames = pNames.map (pl) ->
     pl = pl.split(' ')[0]
   MatchService.io.emit 'playerNames',
-    playerNames: playerNames
+    playerNames: plNames
 
 MatchService.init = (sock) ->
   MatchService.io = sock
+  teamMap = conf.TEAM_MAP
   MatchService.io.on 'connection', (socket) ->
     clientIp = socket.request.connection.remoteAddress
     clientPort = socket.request.connection.remotePort
@@ -126,10 +129,22 @@ MatchService.addPlayerToPool = (data) ->
                 if err
                   console.error err
 
-                EmailService.sendStartMatchEmail playerPool, code
-                playerIdPool = []
-                playerNames = []
-                playerPool = []
+                prediction = Utils.getPrediction(match.team1, match.team2)
+
+                if prediction.action is 'tie'
+                  console.log('Prediction is too close to call between ' +
+                              match.team1.title + ' and ' + match.team2.title)
+                else
+                  console.log('Predict ' + prediction.winner.title + ' to ' +
+                              prediction.action + ' ' + prediction.loser.title)
+
+                MatchService.io.emit 'prediction',
+                  prediction: prediction
+
+                EmailService.sendStartMatchEmail playerPool, code, (err, players) ->
+                  playerIdPool = []
+                  playerNames = []
+                  playerPool = []
             else
               ###
               # Set a timeout that will reset the player pool if enough
@@ -172,6 +187,9 @@ MatchService.create = (req, res) ->
     TeamService.getOrCreate req.body.team2, (err, team2) ->
       if err
         res.status(400).send err
+      playerIDs = req.body.team1
+      Array.prototype.push.apply playerIDs, req.body.team2
+
       match = new Match(
         team1: team1._id
         team2: team2._id
@@ -183,8 +201,10 @@ MatchService.create = (req, res) ->
         startTime: now
         endTime: null
         gameStartTime: now
+        players: playerIDs
         gameNum: 1
         active: true)
+
       match.save (err, newMatch) ->
         if err
           res.send err
@@ -199,8 +219,6 @@ MatchService.create = (req, res) ->
               sound: file
               updatedMatch: match
 
-            playerIDs = req.body.team1
-            Array.prototype.push.apply playerIDs, req.body.team2
             code = getRandomCode()
 
             Player.find {'_id' : { $in: playerIDs}}, (err, players) ->
@@ -232,6 +250,7 @@ MatchService.createRandomWithPlayers = (playerList, cb) ->
           team1: 0
           team2: 0
         } ]
+        players: playerList
         startTime: now
         endTime: null
         gameStartTime: now
@@ -326,7 +345,7 @@ MatchService.getCurrentMatch = (req, res) ->
         sendPlayerNames populatedMatch
         res.json populatedMatch
     else
-      res.json null
+      res.json {}
 
 MatchService.endMatch = (data) ->
   if data.code is code
@@ -442,9 +461,8 @@ MatchService.changeScoreUsingCode = (sock, data) ->
 # @param  {socket.io socket} sock
 # @param  {Object} data
 #         {
-#           id: Mongoose ObjectId
-#           team: ['team1', 'team2']
-#           plusMinus: ['plus', 'minus']
+#           team: ('yellow' | 'black')
+#           plusMinus: ('plus' | 'minus')
 #         }
 ###
 MatchService.changeScore = (sock, data) ->
@@ -454,7 +472,11 @@ MatchService.changeScore = (sock, data) ->
         status: 'matchNotFound'
         err: err
     if match
-      team = [ data.team ]
+      if parseInt(match.gameNum) is 2
+        team = teamMap.game2[data.team]
+      else
+        team = teamMap.game1[data.team]
+
       rollbackScore = match.scores[match.gameNum - 1][team]
       gameOver = false
 
@@ -477,7 +499,7 @@ MatchService.changeScore = (sock, data) ->
               pts: 0
               isWinner: false
             team2:
-              id: match.team1
+              id: match.team2
               gameWins: 0
               pts: 0
               isWinner: false
@@ -524,7 +546,7 @@ MatchService.changeScore = (sock, data) ->
           code = ''
 
 
-          TeamService.updateTeamStats updatedMatch, statPack, (err, teams, winnerID) ->
+          TeamService.updateTeamStats updatedMatch, statPack, (err, teams, winnerID, newStatPack) ->
             if err
               sock.emit 'matchError',
                 status: 'matchUpdateFailed'
@@ -533,7 +555,7 @@ MatchService.changeScore = (sock, data) ->
                   score: rollbackScore
                 err: err
 
-            PlayerService.updatePlayerStats updatedMatch, teams, statPack, (err) ->
+            PlayerService.updatePlayerStats updatedMatch, teams, newStatPack, (err) ->
               if err
                 sock.emit 'matchError',
                   status: 'matchUpdateFailed'
@@ -566,6 +588,8 @@ MatchService.changeScore = (sock, data) ->
                     sound: file
                     updatedMatch: updatedMatch
                   EmailService.fireNotifications(updatedMatch, teams)
+                  PlayerService.reRank()
+                  TeamService.reRank()
 
         else if match.scores[match.gameNum - 1].team1 is 9 or match.scores[match.gameNum - 1].team2 is 9
           # Game Point

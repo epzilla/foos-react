@@ -5,6 +5,7 @@ ScoreStepper = require 'scripts/components/score-stepper'
 MatchStore = require 'scripts/stores/match-store'
 Actions = require 'scripts/actions/view-action-creator'
 API = require 'scripts/utils/api'
+conf = require '../../../conf/config'
 cx = React.addons.classSet
 
 getMatchInfo = ->
@@ -35,19 +36,29 @@ module.exports = React.createClass
   render: ->
     code = @getActiveQuery().code
     match = @state.match
+    teamMap = conf.TEAM_MAP
+    blackTitle = ''
+    yellowTitle = ''
 
-    team1classes = cx(
-      'heads-stepper': match.gameNum isnt 2
-      'tails-stepper': match.gameNum is 2
+    if match and match.gameNum
+      if match.gameNum is 2
+        blackTitle = match[teamMap.game2.black].title
+        yellowTitle = match[teamMap.game2.yellow].title
+      else
+        blackTitle = match[teamMap.game1.black].title
+        yellowTitle = match[teamMap.game1.yellow].title
+
+
+    blackClasses = cx(
+      'heads-stepper': true
       'row': true
       'tall': true
       'stepper': true
       'margin-top-1em': true
     )
 
-    team2classes = cx(
-      'heads-stepper': match.gameNum is 2
-      'tails-stepper': match.gameNum isnt 2
+    yellowClasses = cx(
+      'tails-stepper': true
       'row': true
       'tall': true
       'stepper': true
@@ -55,8 +66,8 @@ module.exports = React.createClass
     )
 
     <section>
-      <ScoreStepper classes={team1classes} code={code} match={match} teamNum='team1'/>
-      <ScoreStepper classes={team2classes} code={code} match={match} teamNum='team2'/>
+      <ScoreStepper classes={blackClasses} code={code} team='black' title={blackTitle}/>
+      <ScoreStepper classes={yellowClasses} code={code} team='yellow' title={yellowTitle}/>
       <hr/>
       <div className="row pad-top-1em">
         <div className="col-xs-12 text-center">

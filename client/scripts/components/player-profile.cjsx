@@ -1,18 +1,26 @@
 React = require 'react'
 PlayerStore = require 'scripts/stores/player-store'
 Actions = require 'scripts/actions/view-action-creator'
+Router = require 'react-router'
+{Link} = Router
+_ = require 'lodash'
 
 getPlayerInfo = (id) ->
   {
     player: PlayerStore.getPlayerInfo(id)
+    players: _.remove(PlayerStore.getPlayers(), (pl) ->
+              pl.rank
+            )
   }
 
 module.exports = React.createClass
+  mixins: [ Router.State ]
+
   _onChange: ->
-    @setState getPlayerInfo(@props.params.playerID)
+    @setState getPlayerInfo(@getParams().playerID)
 
   getInitialState: ->
-    getPlayerInfo(@props.params.playerID)
+    getPlayerInfo(@getParams().playerID)
 
   componentDidMount: ->
     PlayerStore.addChangeListener @_onChange
@@ -26,27 +34,74 @@ module.exports = React.createClass
 
   render: ->
     player = @state.player
+    players = _.sortBy(@state.players, 'rank')
+
     if player
       matchRecord = player.matchesWon + '-' + player.matchesLost
       gameRecord = player.gamesWon + '-' + player.gamesLost
-      <section className="container">
-        <div className="row pad-bottom-1em flex-container-small-screen">
-          <div className="col-xs-4 text-right">
-            <img src={player.img} />
+      rawMargin = (parseFloat(player.avgPtsFor) - parseFloat(player.avgPtsAgainst)).toFixed(1)
+      margin = if rawMargin > 0 then '+' + rawMargin else rawMargin
+      playerLinks = []
+
+      players.forEach (pl) ->
+        playerLinks.push(
+          <Link className="list-group-item" to="players" params={{playerID: pl._id}} key={pl._id}>
+            {pl.name}
+          </Link>
+        )
+
+      <div className="container">
+        <div className="row">
+          <div className="col-md-8">
+            <div className="row">
+              <div className="col-md-8">
+                <h1 className="hidden-xs hidden-sm">{player.name}</h1>
+                <div className="col-xs-12 visible-xs visible-sm pad-bottom-1em">
+                  <div className="col-xs-6">
+                    <h1>{player.name}</h1>
+                  </div>
+                  <div className="col-xs-6">
+                    <img src={player.img} className="img-responsive img-rounded"/>
+                  </div>
+                </div>
+                <br />
+                <table className="table table-transparent">
+                  <tr>
+                    <td><strong>Ranking</strong></td>
+                    <td>{player.rank or '—'}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Points</strong></td>
+                    <td>{player.rating}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Match Record</strong></td>
+                    <td>{matchRecord}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Game Record</strong></td>
+                    <td>{gameRecord}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Avg. Scoring Margin</strong></td>
+                    <td>{margin}</td>
+                  </tr>
+                </table>
+              </div>
+              <div className="col-md-4 hidden-xs hidden-sm"><img src={player.img} className="img-responsive img-rounded"/></div>
+            </div>
+            <div className="page-header">
+              <h3>Match History</h3>
+            </div>
           </div>
-          <div className="col-xs-8 player-headers">
-            <h1>{player.name}</h1>
+          <div className="col-md-4">
+            <h4>Player Rankings</h4>
+            <div className="list-group">
+              {playerLinks}
+            </div>
           </div>
         </div>
-        <div className="row text-center">
-          <h3>Match Record: {matchRecord}</h3>
-        </div>
-        <div className="row text-center">
-          <h3>Game Record: {gameRecord}</h3>
-        </div>
-        <div className="row text-center">
-          <h3>Avg. Score: {player.avgPtsFor} - {player.avgPtsAgainst}</h3>
-        </div>
-      </section>
+      </div>
+
     else
       <section className="container"></section>

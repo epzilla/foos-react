@@ -1,5 +1,7 @@
 Team = require '../../models/team'
 Player = require '../../models/player'
+Utils = require './utils'
+elo = require('elo-rank')()
 
 createNewTeam = (playerIDs, cb) ->
   title = ''
@@ -13,6 +15,9 @@ createNewTeam = (playerIDs, cb) ->
       nameArray = players[i].name.split(' ')
       title += ' / ' + nameArray[nameArray.length - 1]
       i++
+
+    rating = (players[0].rating + players[1].rating) / 2
+
     team = new Team(
       players: playerIDs
       title: title
@@ -25,6 +30,8 @@ createNewTeam = (playerIDs, cb) ->
       pct: 0
       ptsFor: 0
       ptsAgainst: 0
+      rank: null
+      rating: rating
       avgPtsFor: 0
       avgPtsAgainst: 0)
     cb null, team
@@ -97,20 +104,14 @@ updateUsingStatPack = (match, teams, statPack, cb) ->
   team1 = undefined
   team2 = undefined
   winnerID = undefined
+
   if teams[0]._id.equals(statPack.team1.id)
     team1 = teams[0]
     team2 = teams[1]
   else
     team1 = teams[1]
     team2 = teams[0]
-  if statPack.team1.isWinner
-    winnerID = team1._id
-    team1.matchesWon++
-    team2.matchesLost++
-  else
-    winnerID = team2._id
-    team2.matchesWon++
-    team1.matchesLost++
+
   team1.matches++
   team2.matches++
   team1.gamesWon += statPack.team1.gameWins
@@ -123,12 +124,49 @@ updateUsingStatPack = (match, teams, statPack, cb) ->
   team2.ptsFor += statPack.team2.pts
   team1.ptsAgainst += statPack.team2.pts
   team2.ptsAgainst += statPack.team1.pts
-  team1.pct = parseFloat((team1.matchesWon / team1.matches).toFixed(3))
-  team2.pct = parseFloat((team2.matchesWon / team2.matches).toFixed(3))
   team1.avgPtsFor = parseFloat((team1.ptsFor / team1.games).toFixed(2))
   team2.avgPtsFor = parseFloat((team2.ptsFor / team2.games).toFixed(2))
   team1.avgPtsAgainst = parseFloat((team1.ptsAgainst / team1.games).toFixed(2))
   team2.avgPtsAgainst = parseFloat((team2.ptsAgainst / team2.games).toFixed(2))
+
+  # For updating Team Ratings
+  expectedTeam1 = elo.getExpected team1.rating, team2.rating
+  expectedTeam2 = elo.getExpected team2.rating, team1.rating
+  margin = Math.abs(statPack.team1.pts - statPack.team2.pts)
+  sweep = statPack.team1.gameWins is 3 or statPack.team2.gameWins is 3
+  originalTeam1Rating = team1.rating
+  originalTeam2Rating = team2.rating
+
+  if statPack.team1.isWinner
+    winnerID = team1._id
+    team1.matchesWon++
+    team2.matchesLost++
+
+    if sweep
+      team1.rating = elo.updateRating expectedTeam1, Utils.getSweepWinValue(margin), team1.rating
+      team2.rating = elo.updateRating expectedTeam2, Utils.getSweepLossValue(margin), team2.rating
+    else
+      team1.rating = elo.updateRating expectedTeam1, Utils.getTwoThirdsWinValue(margin), team1.rating
+      team2.rating = elo.updateRating expectedTeam2, Utils.getTwoThirdsLossValue(margin), team2.rating
+  else
+    winnerID = team2._id
+    team2.matchesWon++
+    team1.matchesLost++
+
+    if sweep
+      team1.rating = elo.updateRating expectedTeam1, Utils.getSweepLossValue(margin), team1.rating
+      team2.rating = elo.updateRating expectedTeam2, Utils.getSweepWinValue(margin), team2.rating
+    else
+      team1.rating = elo.updateRating expectedTeam1, Utils.getTwoThirdsLossValue(margin), team1.rating
+      team2.rating = elo.updateRating expectedTeam2, Utils.getTwoThirdsWinValue(margin), team2.rating
+
+  statPack.team1RatingChange = team1.rating - originalTeam1Rating
+  statPack.team2RatingChange = team2.rating - originalTeam2Rating
+  team1.pct = parseFloat((team1.matchesWon / team1.matches).toFixed(3))
+  team2.pct = parseFloat((team2.matchesWon / team2.matches).toFixed(3))
+  console.info 'Team1 rating change : ' + statPack.team1RatingChange
+  console.info 'Team2 rating change : ' + statPack.team2RatingChange
+
   team1.save (err, updatedTeam1) ->
     if err
       cb err, null
@@ -139,7 +177,8 @@ updateUsingStatPack = (match, teams, statPack, cb) ->
         cb null, [
           updatedTeam1
           updatedTeam2
-        ], winnerID
+        ], winnerID,
+          statPack
 
 module.exports =
   create: (req, res) ->
@@ -150,7 +189,7 @@ module.exports =
       res.json message: 'Team created!'
 
   findAll: (req, res) ->
-    Team.find (err, teams) ->
+    Team.find().populate('players').exec (err, teams) ->
       if err
         res.send err
       res.json teams
@@ -205,3 +244,31 @@ module.exports =
         updateStatsFromMatch match, teams, cb
       else
         updateUsingStatPack match, teams, statPack, cb
+
+  reRank: ->
+    console.log 'Re-ranking teams...'
+    Team.find()
+      .where('matches').gt(0)
+      .sort({'rating': 'desc'})
+      .exec (err, teams) ->
+        i = 0
+        prevRating = -1
+        prevRanking = -1
+
+        while i < teams.length
+          team = teams[i]
+
+          if team.rating isnt prevRating
+            team.rank = i + 1
+            prevRanking = i + 1
+            prevRating = team.rating
+          else
+            team.rank = prevRanking
+
+          console.log(team.title + ' now ranks: ' + team.rank)
+
+          team.save (err, updatedTeam) ->
+            if err
+              console.error err
+
+          i++

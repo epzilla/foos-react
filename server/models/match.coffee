@@ -16,6 +16,7 @@ MatchSchema = new Schema(
     team1: Number
     team2: Number
   } ]
+  players: [Schema.Types.ObjectId]
   startTime: Date
   endTime: Date
   gameStartTime: Date
