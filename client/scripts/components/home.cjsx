@@ -7,6 +7,7 @@ Recents = require 'scripts/components/recents'
 SeriesHistory = require 'scripts/components/series'
 Scoreboard = require 'scripts/components/scoreboard'
 HeckleBox = require 'scripts/components/heckle-box'
+GamePad = require 'scripts/components/gamepad'
 Announcer = require 'scripts/utils/announcer'
 API = require 'scripts/utils/api'
 
@@ -36,7 +37,12 @@ Home = React.createClass
     if @pressedKeys.toString().indexOf(@secretCode) >= 0
       @pressedKeys = []
       heckleBox = document.querySelector '.heckle-box'
+      sound = document.querySelector 'audio'
+      controller = document.getElementById 'controller'
+      sound.src = '/sounds/secret/reveal.wav'
+      sound.play()
       heckleBox.classList.add 'revealed'
+      controller.classList.remove 'revealed'
     else if @pressedKeys.length > 100
       @pressedKeys = []
 
@@ -87,6 +93,7 @@ Home = React.createClass
       <hr />
       {series}
       <Recents recents={@state.recentMatches}/>
+      <GamePad onChange={@_keyUpHandler}/>
       <HeckleBox players={@state.playerNames} />
     </div>
 

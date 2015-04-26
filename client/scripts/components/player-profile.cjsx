@@ -8,7 +8,7 @@ _ = require 'lodash'
 getPlayerInfo = (id) ->
   {
     player: PlayerStore.getPlayerInfo(id)
-    players: _.remove(PlayerStore.getPlayers(), (pl) ->
+    players: _.filter(PlayerStore.getPlayers(), (pl) ->
               pl.rank
             )
   }
@@ -30,7 +30,7 @@ module.exports = React.createClass
     PlayerStore.removeChangeListener @_onChange
 
   componentWillReceiveProps: ->
-    @_onChange
+    @_onChange()
 
   render: ->
     player = @state.player
@@ -46,7 +46,13 @@ module.exports = React.createClass
       players.forEach (pl) ->
         playerLinks.push(
           <Link className="list-group-item" to="players" params={{playerID: pl._id}} key={pl._id}>
-            {pl.name}
+            <table className="table table-transparent list-group-table">
+              <tr>
+                <td className="col-xs-2">{pl.rank}.</td>
+                <td className="col-xs-6">{pl.name}</td>
+                <td className="col-xs-4 text-center">{pl.rating}</td>
+              </tr>
+            </table>
           </Link>
         )
 

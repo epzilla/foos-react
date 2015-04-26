@@ -1,10 +1,13 @@
 React = require 'react/addons'
+Swipeable = require 'react-swipeable'
 Announcer = require 'scripts/utils/announcer'
 
-
 module.exports = React.createClass
+  _intercept: (e) ->
+    e.preventDefault()
+    e.stopPropagation()
 
-  _close: ->
+  _dismiss: (e) ->
     document.querySelector('.heckle-box').classList.remove 'revealed'
 
   _heckle: (e) ->
@@ -17,16 +20,26 @@ module.exports = React.createClass
 
   render: ->
     buttons = []
+    dismissalElement = undefined
+
+    swipeToDismiss = <div className="dismiss-instructions">Swipe ↓ to dismiss</div>
+    clickToDismiss = <div className="close" onClick={@_dismiss}></div>
     if @props.players and @props.players.length > 0
       @props.players.forEach (pl) =>
         buttons.push <button key={'heckle' + pl} className="btn btn-danger" data-player={pl} onClick={@_heckle}>Heckle {pl}</button>
 
-    <section className='heckle-box'>
-      <div className="close" onClick={@_close}></div>
+    `if ('ontouchstart' in window) {
+       dismissalElement = swipeToDismiss
+     } else {
+       dismissalElement = clickToDismiss
+     }`
+
+    <Swipeable onSwipedDown={@_dismiss} onSwipingDown={@_intercept} className='heckle-box'>
+      {dismissalElement}
       <div>
         {buttons}
       </div>
       <div>
         <button className="btn btn-success rando" onClick={@_heckle}>Generic Heckle</button>
       </div>
-    </section>
+    </Swipeable>

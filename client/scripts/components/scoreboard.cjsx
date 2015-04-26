@@ -170,7 +170,7 @@ module.exports = React.createClass
             </div>
             {gameStart}
             <div className="row pad-top-1em">
-              <div className="col-md-2 col-md-offset-4 pad-bottom-1em">
+              <div className="col-md-2 col-md-offset-4 pad-bottom-1em hidden-xs">
                 <button className="btn btn-success fullscreen-mode">
                   <i className="fa fa-arrows-alt"></i>Full Screen
                 </button>

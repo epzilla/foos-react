@@ -4,6 +4,7 @@
 @require 'variables'
 @require 'helpers'
 @require 'bootstrap_overrides'
+@require 'controller'
 
 *
   box-sizing border-box
@@ -243,6 +244,13 @@ table
     cursor pointer
   &.table.table-transparent
     background transparent
+  &.list-group-table
+    margin-bottom 0
+    tr
+      td
+        border none
+        padding 0
+
 
 th[class*='reactable-header-sort-']
   background #3F04A6
@@ -379,13 +387,18 @@ ul.player-list
   min-height 25%
   width 100%
   left 0
-  bottom -10000px
+  bottom 0
+  transform translateY(500px)
   position fixed
+  opacity 0
   background rgba(65, 65, 65, 0.9)
-  transition all 0.3s ease-out
+  transition all 0.1s ease-in
+  will-change transform
   &.revealed
-    bottom 0
-    transition all 0.3s ease-out
+    opacity 1
+    transform translateY(0px)
+    transition all 0.75s linear
+    will-change transform
   div
     width 100%
     button
@@ -409,3 +422,6 @@ ul.player-list
     opacity 1
     &:before
       content: '\00D7'
+  .dismiss-instructions
+    color white
+    padding-top 1em

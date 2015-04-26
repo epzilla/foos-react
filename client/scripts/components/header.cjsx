@@ -8,7 +8,7 @@ module.exports = React.createClass
       <div className="container">
         <div className="navbar-header">
           <a className="navbar-brand" href="#">
-            <img className="img img-rounded" src="images/snappy-foos.jpg" width="40" height="40" />
+            <img className="img img-rounded" src="/images/snappy-foos.jpg" width="40" height="40" />
           </a>
         </div>
         <ul className="nav navbar-nav">

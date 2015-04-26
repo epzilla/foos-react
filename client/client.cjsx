@@ -37,8 +37,8 @@ routes =
     <Route name="nfcRegistration" handler={NFCRegistration}/>
     <Route name="scoreCorrection" handler={ScoreCorrection}/>
     <Route name="notify" handler={Notify}/>
-    <Route name="players" handler={Player} path="/players/:playerID"/>
-    <Route name="teams" handler={Team} path="/teams/:teamID"/>
+    <Route name="players" handler={Player} path="players/:playerID"/>
+    <Route name="teams" handler={Team} path="teams/:teamID"/>
   </Route>
 
 $ ->
@@ -61,6 +61,7 @@ $ ->
 
   `if ('ontouchstart' in window) {
     document.getElementById('init').addEventListener('touchstart', sndInit);
+    document.querySelector('.gamepad-icon').style.display = 'inline';
   } else {
     document.getElementById('init').style.display = 'none'
   }`

@@ -2,10 +2,15 @@ React = require 'react'
 TeamStore = require 'scripts/stores/team-store'
 Actions = require 'scripts/actions/view-action-creator'
 Router = require 'react-router'
+{Link} = Router
+_ = require 'lodash'
 
 getTeamInfo = (id) ->
   {
     team: TeamStore.getTeamInfo(id)
+    teams: _.filter(TeamStore.getTeams(), (tm) ->
+            tm.rank
+          )
   }
 
 module.exports = React.createClass
@@ -29,6 +34,8 @@ module.exports = React.createClass
 
   render: ->
     team = @state.team
+    teams = @state.teams
+
     if team
       teamImgs = []
       team.players.forEach (pl) ->
@@ -37,10 +44,24 @@ module.exports = React.createClass
       gameRecord = team.gamesWon + '-' + team.gamesLost
       rawMargin = (parseFloat(team.avgPtsFor) - parseFloat(team.avgPtsAgainst)).toFixed(1)
       margin = if rawMargin > 0 then '+' + rawMargin else rawMargin
+      teamLinks = []
+
+      teams.forEach (tm) ->
+        teamLinks.push(
+          <Link className="list-group-item" to="teams" params={{teamID: tm._id}} key={tm._id}>
+            <table className="table table-transparent list-group-table">
+              <tr>
+                <td className="col-xs-2">{tm.rank}.</td>
+                <td className="col-xs-6">{tm.title}</td>
+                <td className="col-xs-4 text-center">{tm.rating}</td>
+              </tr>
+            </table>
+          </Link>
+        )
 
       <section className="container">
         <div className="row">
-          <div className="col-md-10 col-md-offset-1">
+          <div className="col-md-8">
             <div className="row">
               <div className="col-md-8">
                 <h1 className="hidden-sm hidden-xs">{team.title}</h1>
@@ -96,6 +117,12 @@ module.exports = React.createClass
             </div>
             <div className="page-header">
               <h3>Match History</h3>
+            </div>
+          </div>
+          <div className="col-md-4">
+            <h4>Team Rankings</h4>
+            <div className="list-group">
+              {teamLinks}
             </div>
           </div>
         </div>

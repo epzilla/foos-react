@@ -22,48 +22,38 @@ TableView = React.createClass
     data = @props.data
     which = @props.which
     rows = []
+    headers = []
+    smallScreen = window.innerWidth < 600
+
     data.forEach( (record) ->
       sortableMatchRecord = recordSort record.matchRecord
       sortableGameRecord = recordSort record.gameRecord
       avgMargin = parseInt record.avgMargin
       rating = parseInt record.rating
       if which is 'players'
-        rows.push(
-          <Tr key={record.id}>
-            <Td column='Rank' value={record.rank} >{record.rank}</Td>
-            <Td column='Player'>
-              <Link to="players" params={{playerID: record.id}}>
-                {record.name}
-              </Link>
-            </Td>
-            <Td column='Match Record' value={sortableMatchRecord} >{record.matchRecord}</Td>
-            <Td column='Game Record' value={sortableGameRecord} >{record.gameRecord}</Td>
-            <Td column='Avg. Score (Margin)' value={avgMargin} >{record.avg}</Td>
-            <Td column='Rating' value={rating} >{record.rating}</Td>
-          </Tr>
-        )
-      else
-        rows.push(
-          <Tr key={record.id}>
-            <Td column='Rank' value={record.rank} >{record.rank}</Td>
-            <Td column='Team'>
-              <Link to="teams" params={{teamID: record.id}}>
-                {record.name}
-              </Link>
-            </Td>
-            <Td column='Match Record' value={sortableMatchRecord} >{record.matchRecord}</Td>
-            <Td column='Game Record' value={sortableGameRecord} >{record.gameRecord}</Td>
-            <Td column='Avg. Score (Margin)' value={avgMargin} >{record.avg}</Td>
-            <Td column='Rating' value={rating} >{record.rating}</Td>
-          </Tr>
-        )
-    )
+        if smallScreen
+          headers = [
+            'Rank',
+            'Teams',
+            'Players',
+            'Match Record',
+            'Rating'
+          ]
 
-    <section className="row">
-      <div className="col-md-12">
-        <Table className="table table-hover table-responsive text-center table-bordered"
-          defaultSort={@props.sorting}
-          sortable={[
+          rows.push(
+            <Tr key={record.id}>
+              <Td column='Rank' value={record.rank} >{record.rank}</Td>
+              <Td column='Player'>
+                <Link to="players" params={{playerID: record.id}}>
+                  {record.name}
+                </Link>
+              </Td>
+              <Td column='Match Record' value={sortableMatchRecord} >{record.matchRecord}</Td>
+              <Td column='Rating' value={rating} >{record.rating}</Td>
+            </Tr>
+          )
+        else
+          headers = [
             'Rank',
             'Teams',
             'Players',
@@ -71,7 +61,73 @@ TableView = React.createClass
             'Game Record',
             'Avg. Score (Margin)',
             'Rating'
-          ]}
+          ]
+          rows.push(
+            <Tr key={record.id}>
+              <Td column='Rank' value={record.rank} >{record.rank}</Td>
+              <Td column='Player'>
+                <Link to="players" params={{playerID: record.id}}>
+                  {record.name}
+                </Link>
+              </Td>
+              <Td column='Match Record' value={sortableMatchRecord} >{record.matchRecord}</Td>
+              <Td column='Game Record' value={sortableGameRecord} >{record.gameRecord}</Td>
+              <Td column='Avg. Score (Margin)' value={avgMargin} >{record.avg}</Td>
+              <Td column='Rating' value={rating} >{record.rating}</Td>
+            </Tr>
+          )
+      else
+        if smallScreen
+          headers = [
+            'Rank',
+            'Teams',
+            'Players',
+            'Match Record',
+            'Rating'
+          ]
+          rows.push(
+            <Tr key={record.id}>
+              <Td column='Rank' value={record.rank} >{record.rank}</Td>
+              <Td column='Team'>
+                <Link to="teams" params={{teamID: record.id}}>
+                  {record.name}
+                </Link>
+              </Td>
+              <Td column='Match Record' value={sortableMatchRecord} >{record.matchRecord}</Td>
+              <Td column='Rating' value={rating} >{record.rating}</Td>
+            </Tr>
+          )
+        else
+          headers = [
+            'Rank',
+            'Teams',
+            'Players',
+            'Match Record',
+            'Game Record',
+            'Avg. Score (Margin)',
+            'Rating'
+          ]
+          rows.push(
+            <Tr key={record.id}>
+              <Td column='Rank' value={record.rank} >{record.rank}</Td>
+              <Td column='Team'>
+                <Link to="teams" params={{teamID: record.id}}>
+                  {record.name}
+                </Link>
+              </Td>
+              <Td column='Match Record' value={sortableMatchRecord} >{record.matchRecord}</Td>
+              <Td column='Game Record' value={sortableGameRecord} className="hidden-xs">{record.gameRecord}</Td>
+              <Td column='Avg. Score (Margin)' value={avgMargin} className="hidden-xs">{record.avg}</Td>
+              <Td column='Rating' value={rating} >{record.rating}</Td>
+            </Tr>
+          )
+    )
+
+    <section className="row">
+      <div className="col-md-12">
+        <Table className="table table-hover table-responsive text-center table-bordered"
+          defaultSort={@props.sorting}
+          sortable={headers}
           >
         {rows}
         </Table>
