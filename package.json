@@ -44,6 +44,7 @@
     "react-maskedinput": "^2.0.0",
     "react-router": "^0.12.2",
     "react-select": "^0.3.4",
+    "react-swipeable": "^3.0.0",
     "reactify": "^1.0.0",
     "run-sequence": "^1.0.2",
     "serve-favicon": "^2.2.0",
