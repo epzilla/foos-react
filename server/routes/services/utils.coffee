@@ -13,7 +13,7 @@ module.exports =
     if margin > 5
       1
     else
-      0.8 + ((factor / 5) * 0.2)
+      0.8 + ((margin / 5) * 0.2)
 
   getTwoThirdsWinValue: (margin) ->
     # Calculate what factor to use in calculating the ratings

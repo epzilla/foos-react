@@ -24,8 +24,7 @@ Main = React.createClass
         <RouteHandler/>
       </div>
       <Alerts />
-      <audio src="/sounds/goal/TOUCHDOWN.mp3" preload="auto"/>
-      <div id="init"></div>
+      <audio src="/sounds/secret/reveal.mp3" preload="auto"/>
     </div>
 
 routes =
@@ -50,7 +49,6 @@ $ ->
   sound = document.querySelector 'audio'
 
   sndInit = ->
-    document.getElementById('init').style.display = 'none'
     sound = document.querySelector 'audio'
     sound.play()
     sound.pause()
@@ -58,11 +56,13 @@ $ ->
       words = ' '
       msg = new SpeechSynthesisUtterance words
       window.speechSynthesis.speak msg
+    document.body.removeEventListener('touchstart', sndInit)
 
   `if ('ontouchstart' in window) {
-    document.getElementById('init').addEventListener('touchstart', sndInit);
-    document.querySelector('.gamepad-icon').style.display = 'inline';
-  } else {
-    document.getElementById('init').style.display = 'none'
+    document.body.addEventListener('touchstart', sndInit);
+    var gamepad = document.querySelector('.gamepad-icon');
+    if (gamepad) {
+      gamepad.style.display = 'block';
+    }
   }`
   return

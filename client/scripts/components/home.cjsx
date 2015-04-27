@@ -1,15 +1,18 @@
 React = require 'react/addons'
 Router = require 'react-router'
-{Link, Navigation} = Router
+{Link, Navigation, State} = Router
 MatchStore = require 'scripts/stores/match-store'
 PlayerStore = require 'scripts/stores/player-store'
 Recents = require 'scripts/components/recents'
 SeriesHistory = require 'scripts/components/series'
 Scoreboard = require 'scripts/components/scoreboard'
+ScoreCorrection = require 'scripts/components/score-correction'
 HeckleBox = require 'scripts/components/heckle-box'
 GamePad = require 'scripts/components/gamepad'
 Announcer = require 'scripts/utils/announcer'
 API = require 'scripts/utils/api'
+conf = require '../../../conf/config'
+cx = React.addons.classSet
 
 heckleBox = undefined
 
@@ -25,7 +28,7 @@ getMatchState = ->
   }
 
 Home = React.createClass
-  mixins: [Navigation]
+  mixins: [Navigation, State]
 
   secretCode: '38,38,40,40,37,39,37,39,66,65'
   pressedKeys: []
@@ -62,6 +65,26 @@ Home = React.createClass
   render: ->
     match = if @state.currentMatch and @state.currentMatch.active then @state.currentMatch else null
     series = undefined
+    scoreCorrector = undefined
+    code = @getQuery().code
+    teamMap = conf.TEAM_MAP
+    blackTitle = ''
+    yellowTitle = ''
+
+    if match and match.gameNum
+      if match.gameNum is 2
+        blackTitle = match[teamMap.game2.black].title
+        yellowTitle = match[teamMap.game2.yellow].title
+      else
+        blackTitle = match[teamMap.game1.black].title
+        yellowTitle = match[teamMap.game1.yellow].title
+
+      if code
+        scoreCorrector =
+          <div>
+            <ScoreCorrection blackTitle={blackTitle} yellowTitle={yellowTitle} code={code} />
+            <hr />
+          </div>
 
     if match
       jumbotron =
@@ -91,6 +114,7 @@ Home = React.createClass
     <div>
       <section>{jumbotron}</section>
       <hr />
+      {scoreCorrector}
       {series}
       <Recents recents={@state.recentMatches}/>
       <GamePad onChange={@_keyUpHandler}/>

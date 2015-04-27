@@ -76,6 +76,7 @@ MatchStore.dispatchToken = Dispatcher.register( (payload) ->
     when ActionTypes.RECEIVE_SCORE_UPDATE
       if action.data.status is 'new'
         _currentMatch = action.data.updatedMatch
+        _winner = undefined
         ViewActionCreator.getSeriesHistory(_currentMatch.team1._id, _currentMatch.team2._id)
         Announcer.giveNewMatchInstructions(_currentMatch, action.data.sound)
         MatchStore.emitChange()
@@ -94,6 +95,7 @@ MatchStore.dispatchToken = Dispatcher.register( (payload) ->
           sound = document.querySelector 'audio'
           sound.addEventListener 'ended', () ->
             _currentMatch.active = false
+            _winner = undefined
             MatchStore.emitChange()
           ViewActionCreator.getRecentMatches()
         MatchStore.emitChange()

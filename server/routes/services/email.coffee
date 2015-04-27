@@ -24,8 +24,8 @@ module.exports =
 
         textString = 'You can click here for the score correction page, ' +
           'though we hope you won\'t need it! ' +
-          '<a href="' + fullAddress + '/scoreCorrection?code=' + passcode + '">' + fullAddress +
-          '/scoreCorrection?code=' + passcode + '</a>'
+          '<a href="' + fullAddress + '/?code=' + passcode + '">' + fullAddress +
+          '/?code=' + passcode + '</a>'
 
         transporter.sendMail
           from: 'snappyfoos@gmail.com'
