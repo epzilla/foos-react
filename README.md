@@ -23,4 +23,4 @@ Foos React
 ## TODOs
 - Add ability to load profile pics
 - Make announcer sounds more configurable
-- Add more in-depth stats (head-to-head between players/teams in particular, and maybe some simple algorithms to try and predict outcomes)
+- Add more in-depth stats (head-to-head between players/teams in particular)
