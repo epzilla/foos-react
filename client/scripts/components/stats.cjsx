@@ -134,6 +134,20 @@ TableView = React.createClass
       </div>
     </section>
 
+throttle = (type, name, o) ->
+  obj = o or window
+  running = false
+
+  func = ->
+    if running
+      return
+    running = true
+    requestAnimationFrame ->
+      obj.dispatchEvent new CustomEvent(name)
+      running = false
+
+  obj.addEventListener type, func
+
 module.exports = React.createClass
   _getTeamsAndPlayers: ->
     players = PlayerStore.getPlayers()
@@ -200,6 +214,13 @@ module.exports = React.createClass
   componentDidMount: ->
     PlayerStore.addChangeListener @_onChange
     TeamStore.addChangeListener @_onChange
+
+    # Handle browser resize events
+    throttle 'resize', 'optimizedResize'
+
+    window.addEventListener 'optimizedResize', =>
+      @forceUpdate()
+
     Actions.getTeams()
     Actions.getPlayers()
     return
@@ -207,6 +228,7 @@ module.exports = React.createClass
   componentWillUnmount: ->
     PlayerStore.removeChangeListener @_onChange
     TeamStore.removeChangeListener @_onChange
+    window.removeEventListener 'optimizedResize'
 
   handleChange: (e) ->
     @state.selectedTab = e.target.value
