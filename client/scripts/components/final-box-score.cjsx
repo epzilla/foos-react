@@ -41,28 +41,30 @@ module.exports = React.createClass
         team2scores.push(<div key={match._id + 'team2' + i} className="col-xs-1 no-pad text-center winning-score">{score.team2}</div>)
 
     <div className="row pad-bottom-1em">
-      <div className="row">
-        <div className="col-xs-10 no-pad-left col-xs-offset-2 text-left italicize text-silver underline">
-          {formattedDate}
+      <div className="final-box-score">
+        <div className="row">
+          <div className="col-xs-10 no-pad-left col-xs-offset-2 text-left italicize text-silver underline">
+            {formattedDate}
+          </div>
         </div>
-      </div>
-      <div className="row">
-        <div className="col-xs-2 text-right pad-right-5px-mobile">{team1checkmark}</div>
-        <div className="col-xs-5 no-pad-left text-left">
-          <span>{match.team1.title}</span>
+        <div className="row">
+          <div className="col-xs-2 text-right pad-right-5px-mobile">{team1checkmark}</div>
+          <div className="col-xs-5 no-pad-left text-left">
+            <span>{match.team1.title}</span>
+          </div>
+          <div>{team1scores}</div>
         </div>
-        <div>{team1scores}</div>
-      </div>
-      <div className="row">
-        <div className="col-xs-2 text-right pad-right-5px-mobile">{team2checkmark}</div>
-        <div className="col-xs-5 no-pad-left text-left">
-          <span>{match.team2.title}</span>
+        <div className="row">
+          <div className="col-xs-2 text-right pad-right-5px-mobile">{team2checkmark}</div>
+          <div className="col-xs-5 no-pad-left text-left">
+            <span>{match.team2.title}</span>
+          </div>
+          <div>{team2scores}</div>
         </div>
-        <div>{team2scores}</div>
-      </div>
-      <div className="row">
-        <div className="col-xs-10 no-pad-left col-xs-offset-2 text-left footnote">
-          <i className="fa fa-clock-o"></i>&nbsp;Match time: {duration}m
+        <div className="row">
+          <div className="col-xs-10 no-pad-left col-xs-offset-2 text-left footnote">
+            <i className="fa fa-clock-o"></i>&nbsp;Match time: {duration}m
+          </div>
         </div>
       </div>
     </div>

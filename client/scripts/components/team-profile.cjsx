@@ -34,7 +34,7 @@ module.exports = React.createClass
 
   render: ->
     team = @state.team
-    teams = @state.teams
+    teams = _.sortBy(@state.teams, 'rank')
 
     if team
       teamImgs = []
@@ -53,7 +53,7 @@ module.exports = React.createClass
               <tr>
                 <td className="col-xs-2">{tm.rank}.</td>
                 <td className="col-xs-6">{tm.title}</td>
-                <td className="col-xs-4 text-center">{tm.rating}</td>
+                <td className="col-xs-4 text-center">{Math.round(tm.rating)}</td>
               </tr>
             </table>
           </Link>
@@ -88,7 +88,7 @@ module.exports = React.createClass
                   </tr>
                   <tr>
                     <td><strong>Points</strong></td>
-                    <td>{team.rating}</td>
+                    <td>{Math.round(team.rating)}</td>
                   </tr>
                   <tr>
                     <td><strong>Match Record</strong></td>

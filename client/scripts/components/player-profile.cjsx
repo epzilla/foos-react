@@ -50,7 +50,7 @@ module.exports = React.createClass
               <tr>
                 <td className="col-xs-2">{pl.rank}.</td>
                 <td className="col-xs-6">{pl.name}</td>
-                <td className="col-xs-4 text-center">{pl.rating}</td>
+                <td className="col-xs-4 text-center">{Math.round(pl.rating)}</td>
               </tr>
             </table>
           </Link>
@@ -78,7 +78,7 @@ module.exports = React.createClass
                   </tr>
                   <tr>
                     <td><strong>Points</strong></td>
-                    <td>{player.rating}</td>
+                    <td>{Math.round(player.rating)}</td>
                   </tr>
                   <tr>
                     <td><strong>Match Record</strong></td>
