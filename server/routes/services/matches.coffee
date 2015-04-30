@@ -208,23 +208,44 @@ MatchService.create = (req, res) ->
       match.save (err, newMatch) ->
         if err
           res.send err
-        Match.findById(newMatch._id).populate('team1 team2').exec (err, match) ->
+
+        Match.deepPopulate newMatch, 'team1.players team2.players', (err, populatedMatch) ->
           if err
-            res.send err
-          console.log req.body.team1
-          console.log req.body.team2
+            res.status(500).send err
+
           SoundService.getRandomStartGameSound (err, file) ->
             MatchService.io.emit 'matchUpdate',
               status: 'new'
               sound: file
-              updatedMatch: match
+              updatedMatch: populatedMatch
+
+            populatedMatch.team1.players.forEach (pl) ->
+              playerPool.push pl
+
+            populatedMatch.team2.players.forEach (pl) ->
+              playerPool.push pl
+
+            sendPlayerNames populatedMatch
 
             code = getRandomCode()
+            prediction = Utils.getPrediction(populatedMatch.team1, populatedMatch.team2)
 
-            Player.find {'_id' : { $in: playerIDs}}, (err, players) ->
-              EmailService.sendStartMatchEmail players, code
+            if prediction.action is 'tie'
+              console.log('Prediction is too close to call between ' +
+                          populatedMatch.team1.title + ' and ' + populatedMatch.team2.title)
+            else
+              console.log('Predict ' + prediction.winner.title + ' to ' +
+                          prediction.action + ' ' + prediction.loser.title)
 
-          res.json match
+            MatchService.io.emit 'prediction',
+              prediction: prediction
+
+            EmailService.sendStartMatchEmail playerPool, code, (err, players) ->
+              playerIdPool = []
+              playerNames = []
+              playerPool = []
+
+              res.json populatedMatch
 
 MatchService.createRandomWithPlayers = (playerList, cb) ->
   now = moment()

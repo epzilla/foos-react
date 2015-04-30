@@ -15,10 +15,16 @@ module.exports = React.createClass
       null
 
     recents = @props.recents
-    recentMatches = []
+    recentMatches = undefined
 
-    for recent in recents
-      recentMatches.push(<FinalBoxScore key={recent._id} match={recent} />)
+    if recents.length > 0
+      recentMatches = []
+
+      for recent in recents
+        recentMatches.push(<FinalBoxScore key={recent._id} match={recent} />)
+
+    else
+      recentMatches = <p className="jumbotron-style-p text-center">Nothing to show. Come on people, play already!</p>
 
     <section id="recent-matches" className="recent-matches row pad-bottom-1em">
       <div className="row">
