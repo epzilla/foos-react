@@ -4,7 +4,7 @@ Router = require 'react-router'
 Table = Reactable.Table
 Tr = Reactable.Tr
 Td = Reactable.Td
-{Link} = Router
+{State, Link, Navigation} = Router
 Actions = require 'scripts/actions/view-action-creator'
 PlayerStore = require 'scripts/stores/player-store'
 TeamStore = require 'scripts/stores/team-store'
@@ -149,11 +149,14 @@ throttle = (type, name, o) ->
   obj.addEventListener type, func
 
 module.exports = React.createClass
+  mixins: [State, Navigation]
+
   _getTeamsAndPlayers: ->
     players = PlayerStore.getPlayers()
     teams = TeamStore.getTeams()
     formattedPlayers = []
     formattedTeams = []
+    selectedTab = @getQuery().tab or 'players'
 
     _.forEach players, (player) ->
       if player.matches isnt 0
@@ -202,7 +205,7 @@ module.exports = React.createClass
     {
       players: formattedPlayers
       teams: formattedTeams
-      selectedTab: 'players'
+      selectedTab: selectedTab
     }
 
   _onChange: ->
@@ -230,9 +233,11 @@ module.exports = React.createClass
     TeamStore.removeChangeListener @_onChange
     window.removeEventListener 'optimizedResize'
 
+  componentWillReceiveProps: ->
+    @_onChange()
+
   handleChange: (e) ->
-    @state.selectedTab = e.target.value
-    @forceUpdate()
+    @transitionTo('/stats?tab=' + e.target.value)
 
   render: ->
     table = undefined

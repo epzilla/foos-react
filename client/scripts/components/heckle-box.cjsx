@@ -1,5 +1,6 @@
 React = require 'react/addons'
 Swipeable = require 'react-swipeable'
+Actions = require 'scripts/actions/view-action-creator'
 Announcer = require 'scripts/utils/announcer'
 
 module.exports = React.createClass
@@ -16,7 +17,7 @@ module.exports = React.createClass
     else if e.target.nodeName is 'SPAN'
       player = e.target.parentNode.getAttribute 'data-player'
 
-    Announcer.heckle player
+    Actions.heckle player
 
   render: ->
     buttons = []

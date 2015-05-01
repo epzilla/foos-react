@@ -42,6 +42,8 @@ router.get '/matches/:matchId', matches.find
 router.put '/matches/:matchId', matches.update
 router.put '/matches/changeScore', matches.changeScore
 router.put '/matches/end/:matchId', matches.endMatch
+router.get '/matchesByPlayer/:playerID', matches.getMatchesByPlayer
+router.get '/matchesByTeam/:teamID', matches.getMatchesByTeam
 
 # Teams
 router.get '/teams', teams.findAll

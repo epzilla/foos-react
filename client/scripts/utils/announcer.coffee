@@ -1,10 +1,13 @@
 Random = require './random'
-
+ls = require './local-storage'
 _prediction = undefined
+
+iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent )
 
 announce = (words) ->
   msg = new SpeechSynthesisUtterance words
-  msg.rate = 0.3
+  if iOS
+    msg.rate = 0.3
   window.speechSynthesis.speak msg
 
 getRandomPlayer = (playerNames) ->
@@ -167,11 +170,13 @@ module.exports =
   queuePrediction: (prediction) ->
     _prediction = getPredictionPhrase prediction
 
-  heckle: (player) ->
-    if window.speechSynthesis
-      if player
-        words = getPlayerHeckleMessage(player)
-      else
-        words = getGenericHeckleMessage()
+  heckle: (data) ->
+    token = ls.get 'announceToken'
+    if token isnt data.token
+      if window.speechSynthesis
+        if data.player
+          words = getPlayerHeckleMessage(data.player)
+        else
+          words = getGenericHeckleMessage()
 
-      announce words
+        announce words

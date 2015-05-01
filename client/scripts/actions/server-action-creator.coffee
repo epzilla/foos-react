@@ -100,6 +100,18 @@ module.exports =
       data: data
     )
 
+  receivePlayerMatches: (data) ->
+    Dispatcher.handleServerAction(
+      type: ActionTypes.RECEIVE_PLAYER_MATCHES
+      data: data
+    )
+
+  receiveTeamMatches: (data) ->
+    Dispatcher.handleServerAction(
+      type: ActionTypes.RECEIVE_TEAM_MATCHES
+      data: data
+    )
+
   receiveCarriers: (data) ->
     Dispatcher.handleServerAction(
       type: ActionTypes.RECEIVE_CARRIERS
@@ -126,3 +138,6 @@ module.exports =
     Dispatcher.handleServerAction(
       type: ActionTypes.CLEAR_ALERTS
     )
+
+  heckle: (data) ->
+    Announcer.heckle data

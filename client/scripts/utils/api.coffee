@@ -2,13 +2,13 @@ Rest = require './rest-service'
 ServerActionCreator = require 'scripts/actions/server-action-creator'
 socket = require 'scripts/utils/socket'
 ls = require 'scripts/utils/local-storage'
+random = require 'scripts/utils/random'
 
 # Polyfill for String.startsWith function
 if !String::includes
 
   String::includes = ->
     String::indexOf.apply(this, arguments) != -1
-
 
 module.exports =
 
@@ -37,6 +37,16 @@ module.exports =
         if not players or players.length is 0 or JSON.stringify(players) isnt JSON.stringify(res)
           ls.set 'players', res
           ServerActionCreator.receivePlayers res
+
+  getPlayerMatches: (playerID) ->
+    Rest.get('/api/matchesByPlayer/' + playerID)
+      .then (res) ->
+        ServerActionCreator.receivePlayerMatches res
+
+  getTeamMatches: (teamID) ->
+    Rest.get('/api/matchesByTeam/' + teamID)
+      .then (res) ->
+        ServerActionCreator.receiveTeamMatches res
 
   getTeams: ->
     teams = ls.get 'teams'
@@ -122,3 +132,11 @@ module.exports =
 
   endMatch: (code) ->
     socket.emit 'endMatch', {code: code}
+
+  heckle: (player) ->
+    token = random.getRandomToken(10)
+    ls.set 'announceToken', token
+    if player
+      socket.emit 'heckle', {player: player, type: 'specific', token: token}
+    else
+      socket.emit 'heckle', {type: 'generic', token: token}

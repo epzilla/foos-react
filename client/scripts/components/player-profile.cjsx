@@ -2,6 +2,7 @@ React = require 'react'
 PlayerStore = require 'scripts/stores/player-store'
 Actions = require 'scripts/actions/view-action-creator'
 Router = require 'react-router'
+FinalBoxScore = require 'scripts/components/final-box-score'
 {Link} = Router
 _ = require 'lodash'
 
@@ -11,6 +12,7 @@ getPlayerInfo = (id) ->
     players: _.filter(PlayerStore.getPlayers(), (pl) ->
               pl.rank
             )
+    playerMatches: PlayerStore.getPlayerMatches()
   }
 
 module.exports = React.createClass
@@ -25,16 +27,19 @@ module.exports = React.createClass
   componentDidMount: ->
     PlayerStore.addChangeListener @_onChange
     Actions.getPlayers()
+    Actions.getPlayerMatches(@getParams().playerID)
 
   componentWillUnmount: ->
     PlayerStore.removeChangeListener @_onChange
 
   componentWillReceiveProps: ->
+    Actions.getPlayerMatches(@getParams().playerID)
     @_onChange()
 
   render: ->
     player = @state.player
     players = _.sortBy(@state.players, 'rank')
+    playerMatches = @state.playerMatches
 
     if player
       matchRecord = player.matchesWon + '-' + player.matchesLost
@@ -42,6 +47,7 @@ module.exports = React.createClass
       rawMargin = (parseFloat(player.avgPtsFor) - parseFloat(player.avgPtsAgainst)).toFixed(1)
       margin = if rawMargin > 0 then '+' + rawMargin else rawMargin
       playerLinks = []
+      matches = []
 
       players.forEach (pl) ->
         playerLinks.push(
@@ -56,6 +62,10 @@ module.exports = React.createClass
           </Link>
         )
 
+      if playerMatches and playerMatches.length > 0
+        playerMatches.forEach (m) ->
+          matches.push <FinalBoxScore key={m._id} match={m} />
+
       <div className="container">
         <div className="row">
           <div className="col-md-8">
@@ -66,7 +76,7 @@ module.exports = React.createClass
                   <div className="col-xs-6">
                     <h1>{player.name}</h1>
                   </div>
-                  <div className="col-xs-6">
+                  <div className="col-xs-6 pad-top-1em">
                     <img src={player.img} className="img-responsive img-rounded"/>
                   </div>
                 </div>
@@ -94,10 +104,15 @@ module.exports = React.createClass
                   </tr>
                 </table>
               </div>
-              <div className="col-md-4 hidden-xs hidden-sm"><img src={player.img} className="img-responsive img-rounded"/></div>
+              <div className="col-md-4 hidden-xs hidden-sm pad-top-1em"><img src={player.img} className="img-responsive img-rounded"/></div>
             </div>
             <div className="page-header">
               <h3>Match History</h3>
+            </div>
+            <div className="row text-left">
+              <div className="col-md-12">
+               {matches}
+              </div>
             </div>
           </div>
           <div className="col-md-4">

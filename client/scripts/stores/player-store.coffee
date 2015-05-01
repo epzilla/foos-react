@@ -8,6 +8,8 @@ CHANGE_EVENT = 'change'
 _ = require 'lodash'
 
 _players = []
+_playerMatches = []
+
 
 # These are only used in new player registration at the beginning of a match
 _playerNames = []
@@ -52,6 +54,9 @@ PlayerStore = assign({}, EventEmitter.prototype,
 
   getPlayerInfo: (id) ->
     _.find(_players, {_id: id})
+
+  getPlayerMatches: (id) ->
+    _playerMatches
 )
 
 PlayerStore.dispatchToken = Dispatcher.register( (payload) ->
@@ -92,6 +97,8 @@ PlayerStore.dispatchToken = Dispatcher.register( (payload) ->
         _didTimeout = true
     when ActionTypes.RECEIVE_NFC_ERROR
       _unrecognized = action.data.nfc
+    when ActionTypes.RECEIVE_PLAYER_MATCHES
+      _playerMatches = action.data
   PlayerStore.emitChange()
 )
 

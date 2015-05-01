@@ -77,6 +77,9 @@ MatchService.init = (sock) ->
     socket.on 'endMatch', (data) ->
       MatchService.endMatch data
 
+    socket.on 'heckle', (data) ->
+      MatchService.io.emit 'announceHeckle', data
+
     socket.on 'disconnect', ->
       console.info 'Socket disconnected : ' + clientIp + ':' + clientPort
 
@@ -750,5 +753,21 @@ MatchService.getSeriesHistory = (req, res) ->
               avgScore: team2avg
           quickStats: quickStats
         res.json payload
+
+MatchService.getMatchesByPlayer = (req, res) ->
+  Match.find({players: req.params.playerID})
+    .populate('team1 team2')
+    .exec (err, matches) ->
+      if err
+        res.status(500).send err
+      res.json matches
+
+MatchService.getMatchesByTeam = (req, res) ->
+  Match.find( {$or: [{team1: req.params.teamID}, {team2: req.params.teamID}] })
+    .populate('team1 team2')
+    .exec (err, matches) ->
+      if err
+        res.status(500).send err
+      res.json matches
 
 module.exports = MatchService

@@ -13,6 +13,12 @@ module.exports =
   getPlayers: () ->
     API.getPlayers()
 
+  getPlayerMatches: (id) ->
+    API.getPlayerMatches(id)
+
+  getTeamMatches: (id) ->
+    API.getTeamMatches(id)
+
   getTeams: () ->
     API.getTeams()
 
@@ -36,3 +42,6 @@ module.exports =
 
   submitSMS: (email) ->
     API.registerSMSNotification(email)
+
+  heckle: (player) ->
+    API.heckle(player)

@@ -7,6 +7,7 @@ ActionTypes = Constants.ActionTypes
 CHANGE_EVENT = 'change'
 
 _teams = []
+_teamMatches = []
 
 TeamStore = assign({}, EventEmitter.prototype,
   emitChange: ->
@@ -23,6 +24,9 @@ TeamStore = assign({}, EventEmitter.prototype,
 
   getTeamInfo: (id) ->
     _.find(_teams, {_id: id})
+
+  getTeamMatches: (id) ->
+    _teamMatches
 )
 
 TeamStore.dispatchToken = Dispatcher.register( (payload) ->
@@ -30,6 +34,8 @@ TeamStore.dispatchToken = Dispatcher.register( (payload) ->
   switch action.type
     when ActionTypes.RECEIVE_TEAMS
       _teams = action.data
+    when ActionTypes.RECEIVE_TEAM_MATCHES
+      _teamMatches = action.data
   TeamStore.emitChange()
 )
 

@@ -33,6 +33,9 @@ socket.on 'connect', ->
   socket.on 'prediction', (data) ->
     ServerActionCreator.receivePrediction data
 
+  socket.on 'announceHeckle', (data) ->
+    ServerActionCreator.heckle data
+
   socket.on 'disconnect', ->
     console.warn 'Socket disconnected.'
     online = false
