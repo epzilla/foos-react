@@ -3,7 +3,7 @@ TeamStore = require 'scripts/stores/team-store'
 Actions = require 'scripts/actions/view-action-creator'
 Router = require 'react-router'
 FinalBoxScore = require 'scripts/components/final-box-score'
-{Link} = Router
+{Link, State} = Router
 _ = require 'lodash'
 
 getTeamInfo = (id) ->
@@ -16,7 +16,7 @@ getTeamInfo = (id) ->
   }
 
 module.exports = React.createClass
-  mixins: [ Router.State ]
+  mixins: [ State ]
 
   _onChange: ->
     @setState getTeamInfo(@getParams().teamID)

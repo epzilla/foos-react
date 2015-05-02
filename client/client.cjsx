@@ -13,6 +13,7 @@ ScoreCorrection = require 'scripts/components/score-correction'
 Notify = require 'scripts/components/notify'
 Player = require 'scripts/components/player-profile'
 Team = require 'scripts/components/team-profile'
+PlayerPic = require 'scripts/components/player-pic'
 API = require 'scripts/utils/api'
 {Route, RouteHandler, DefaultRoute, Link, HistoryLocation} = Router
 
@@ -38,6 +39,7 @@ routes =
     <Route name="notify" handler={Notify}/>
     <Route name="players" handler={Player} path="players/:playerID"/>
     <Route name="teams" handler={Team} path="teams/:teamID"/>
+    <Route name="playerpic" handler={PlayerPic} path="playerpic/:playerID"/>
   </Route>
 
 $ ->

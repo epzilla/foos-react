@@ -3,7 +3,7 @@ PlayerStore = require 'scripts/stores/player-store'
 Actions = require 'scripts/actions/view-action-creator'
 Router = require 'react-router'
 FinalBoxScore = require 'scripts/components/final-box-score'
-{Link} = Router
+{Link, State} = Router
 _ = require 'lodash'
 
 getPlayerInfo = (id) ->
@@ -16,7 +16,7 @@ getPlayerInfo = (id) ->
   }
 
 module.exports = React.createClass
-  mixins: [ Router.State ]
+  mixins: [ State ]
 
   _onChange: ->
     @setState getPlayerInfo(@getParams().playerID)
@@ -77,7 +77,9 @@ module.exports = React.createClass
                     <h1>{player.name}</h1>
                   </div>
                   <div className="col-xs-6 pad-top-1em">
-                    <img src={player.img} className="img-responsive img-rounded"/>
+                    <Link to="playerpic" params={{playerID: player._id}}>
+                      <img src={player.img} className="img-responsive img-rounded" />
+                    </Link>
                   </div>
                 </div>
                 <br />
@@ -104,7 +106,11 @@ module.exports = React.createClass
                   </tr>
                 </table>
               </div>
-              <div className="col-md-4 hidden-xs hidden-sm pad-top-1em"><img src={player.img} className="img-responsive img-rounded"/></div>
+              <div className="col-md-4 hidden-xs hidden-sm pad-top-1em">
+                <Link to="playerpic" params={{playerID: player._id}}>
+                  <img src={player.img} className="img-responsive img-rounded"/>
+                </Link>
+              </div>
             </div>
             <div className="page-header">
               <h3>Match History</h3>
