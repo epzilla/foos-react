@@ -163,19 +163,22 @@ module.exports = React.createClass
         # We want to filter out any player who hasn't actually played a match yet
         formattedMatchPct = if player.pct < 1 then ('.' + player.pct.toPrecision(4).toString().split('.')[1]) else '1.000'
         formattedGamePct = if player.gamesWon then (player.gamesWon / player.games).toPrecision(3) else '.000'
-        rawAvgMargin = (player.avgPtsFor - player.avgPtsAgainst).toFixed 1
+        rawAvgMargin = (player.avgPtsFor.toFixed(1) - player.avgPtsAgainst.toFixed(1)).toFixed 1
+
         if rawAvgMargin > 0
           avgMargin = '(+' + rawAvgMargin + ')'
         else
           avgMargin = '(' + rawAvgMargin + ')'
+
         if formattedGamePct is '1.00'
           formattedGamePct = '1.000'
+
         formattedPlayers.push
           id: player._id
           name: player.name
           matchRecord: player.matchesWon + '-' + player.matchesLost
           gameRecord: player.gamesWon + '-' + player.gamesLost
-          avg: player.avgPtsFor + '-' + player.avgPtsAgainst + ' ' + avgMargin
+          avg: player.avgPtsFor.toFixed(1) + '-' + player.avgPtsAgainst.toFixed(1) + ' ' + avgMargin
           avgMargin: rawAvgMargin
           rank: player.rank
           rating: Math.round(player.rating)
@@ -185,19 +188,22 @@ module.exports = React.createClass
         # We want to filter out any team who hasn't actually played a match yet
         formattedMatchPct = if team.pct < 1 then ('.' + team.pct.toPrecision(4).toString().split('.')[1]) else '1.000'
         formattedGamePct = if team.gamesWon then (team.gamesWon / team.games).toPrecision(3) else '.000'
-        rawAvgMargin = (team.avgPtsFor - team.avgPtsAgainst).toFixed 1
+        rawAvgMargin = (team.avgPtsFor.toFixed(1) - team.avgPtsAgainst.toFixed(1)).toFixed 1
+
         if rawAvgMargin > 0
           avgMargin = '(+' + rawAvgMargin + ')'
         else
           avgMargin = '(' + rawAvgMargin + ')'
+
         if formattedGamePct is '1.00'
           formattedGamePct = '1.000'
+
         formattedTeams.push
           id: team._id
           name: team.title
           matchRecord: team.matchesWon + '-' + team.matchesLost
           gameRecord: team.gamesWon + '-' + team.gamesLost
-          avg: team.avgPtsFor + '-' + team.avgPtsAgainst + ' ' + avgMargin
+          avg: team.avgPtsFor.toFixed(1) + '-' + team.avgPtsAgainst.toFixed(1) + ' ' + avgMargin
           avgMargin: rawAvgMargin
           rank: team.rank
           rating: Math.round(team.rating)
@@ -270,5 +276,8 @@ module.exports = React.createClass
       </section>
       <section className="row main-table">
         {table}
+      </section>
+      <section className="pad-bottom-1em">
+        <Link to="ratingsFAQ">How are these ratings calculated?</Link>
       </section>
     </div>

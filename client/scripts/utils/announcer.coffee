@@ -171,12 +171,10 @@ module.exports =
     _prediction = getPredictionPhrase prediction
 
   heckle: (data) ->
-    token = ls.get 'announceToken'
-    if token isnt data.token
-      if window.speechSynthesis
-        if data.player
-          words = getPlayerHeckleMessage(data.player)
-        else
-          words = getGenericHeckleMessage()
+    if window.speechSynthesis
+      if data.player
+        words = getPlayerHeckleMessage(data.player)
+      else
+        words = getGenericHeckleMessage()
 
-        announce words
+      announce words

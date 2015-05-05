@@ -15,6 +15,17 @@ conf = require '../../../conf/config'
 cx = React.addons.classSet
 
 heckleBox = undefined
+sound = document.querySelector 'audio'
+
+sndInit = ->
+  sound = document.querySelector 'audio'
+  sound.play()
+  sound.pause()
+  if window.speechSynthesis
+    words = ' '
+    msg = new SpeechSynthesisUtterance words
+    window.speechSynthesis.speak msg
+  document.body.removeEventListener('touchstart', sndInit)
 
 getMatchState = ->
   {
@@ -56,6 +67,12 @@ Home = React.createClass
     MatchStore.addChangeListener @_onChange
     PlayerStore.addChangeListener @_onChange
     document.addEventListener 'keyup', @_keyUpHandler
+
+    if 'ontouchstart' of window
+      document.body.addEventListener 'touchstart', sndInit
+      gamepad = document.querySelector '.gamepad-icon'
+      if gamepad
+        gamepad.style.display = 'block'
 
   componentWillUnmount: ->
     MatchStore.removeChangeListener @_onChange

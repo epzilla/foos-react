@@ -59,23 +59,24 @@ module.exports =
           ls.set 'teams', res
           ServerActionCreator.receiveTeams res
 
+  getPlayersInPool: ->
+    Rest.get '/api/matches/playersInPool'
+      .then (res) ->
+        if res.length and res.length > 0
+          ServerActionCreator.receivePlayersInPool res
+
   getHomeData: ->
     self = this
-    Promise.all [Rest.get('/api/matches/current'), Rest.get('/api/matches/recent'), Rest.get('/api/matches/playersInPool')]
-      .then (res) ->
-        currentMatch = res[0]
-        recentMatches = if res[1].length > 0 then res[1] else []
-        playersInPool = if res[2].length > 0 then res[2] else []
-        ServerActionCreator.receiveHomeData(
-          currentMatch: currentMatch
-          recentMatches: recentMatches
-          playersInPool: playersInPool
-        )
+    self.getCurrentMatch()
+      .then (currentMatch) ->
         if currentMatch
           if currentMatch.team1 and currentMatch.team2
             self.getSeriesHistory currentMatch.team1._id, currentMatch.team2._id
       .catch (err) ->
         console.error err.stack
+
+    self.getRecentMatches()
+    self.getPlayersInPool()
 
   changeScore: (info) ->
     if socket.connected
@@ -134,9 +135,7 @@ module.exports =
     socket.emit 'endMatch', {code: code}
 
   heckle: (player) ->
-    token = random.getRandomToken(10)
-    ls.set 'announceToken', token
     if player
-      socket.emit 'heckle', {player: player, type: 'specific', token: token}
+      socket.emit 'heckle', {player: player, type: 'specific'}
     else
-      socket.emit 'heckle', {type: 'generic', token: token}
+      socket.emit 'heckle', {type: 'generic'}

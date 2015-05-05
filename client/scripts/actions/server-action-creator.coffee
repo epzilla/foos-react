@@ -100,6 +100,12 @@ module.exports =
       data: data
     )
 
+  receivePlayersInPool: (data) ->
+    Dispatcher.handleServerAction(
+      type: ActionTypes.RECEIVE_PLAYERS_IN_POOL
+      data: data
+    )
+
   receivePlayerMatches: (data) ->
     Dispatcher.handleServerAction(
       type: ActionTypes.RECEIVE_PLAYER_MATCHES

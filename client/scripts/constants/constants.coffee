@@ -13,6 +13,7 @@ module.exports =
     RECEIVE_PLAYERS: null
     RECEIVE_PLAYER_NAMES: null
     RECEIVE_PLAYER_MATCHES: null
+    RECEIVE_PLAYERS_IN_POOL: null
     RECEIVE_TEAM_MATCHES: null
     RECEIVE_PREDICTION: null
     RECEIVE_TEAMS: null

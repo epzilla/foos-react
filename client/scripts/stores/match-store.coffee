@@ -57,22 +57,22 @@ MatchStore = assign({}, EventEmitter.prototype,
 MatchStore.dispatchToken = Dispatcher.register( (payload) ->
   action = payload.action
   switch action.type
-    when ActionTypes.RECEIVE_HOME_DATA
-      _currentMatch = action.data.currentMatch or {}
-      _recentMatches = if action.data.recentMatches.length > 0 then action.data.recentMatches else []
-      MatchStore.emitChange()
     when ActionTypes.RECEIVE_CURRENT_MATCH
-        _currentMatch = action.data
+        _currentMatch = action.data or {}
         MatchStore.emitChange()
+
     when ActionTypes.RECEIVE_SERIES_HISTORY
       _seriesHistory = action.data
       MatchStore.emitChange()
+
     when ActionTypes.RECEIVE_RECENT_MATCHES
-      _recentMatches = action.data
+      _recentMatches = if action.data.length and action.data.length > 0 then action.data else []
       MatchStore.emitChange()
+
     when ActionTypes.RECEIVE_PREDICTION
       _prediction = action.data.prediction
       MatchStore.emitChange()
+
     when ActionTypes.RECEIVE_SCORE_UPDATE
       if action.data.status is 'new'
         _currentMatch = action.data.updatedMatch
@@ -89,6 +89,7 @@ MatchStore.dispatchToken = Dispatcher.register( (payload) ->
         _currentMatch.gameStartTime = action.data.updatedMatch.gameStartTime
         _currentMatch.active = action.data.updatedMatch.active
         _soundToPlay = action.data.sound
+
         if action.data.status is 'finished'
           _currentMatch.active = true
           _winner = action.data.winner
@@ -99,6 +100,7 @@ MatchStore.dispatchToken = Dispatcher.register( (payload) ->
             MatchStore.emitChange()
           ViewActionCreator.getRecentMatches()
         MatchStore.emitChange()
+
     when ActionTypes.OFFLINE_SCORE_UPDATE
       _updateOfflineScore action.data
       MatchStore.emitChange()

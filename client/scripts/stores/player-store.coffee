@@ -66,39 +66,50 @@ PlayerStore.dispatchToken = Dispatcher.register( (payload) ->
       _players = action.data
       _playerEmails = _.uniq(_.pluck _players, 'email')
       _newPlayer = undefined
-    when ActionTypes.RECEIVE_HOME_DATA
-      if action.data.playersInPool
-        _playerNames = action.data.playersInPool
+
+    when ActionTypes.RECEIVE_PLAYERS_IN_POOL
+      if action.data and action.data.length and action.data.length > 0
+        _playerNames = action.data
       else
         _newPlayer = undefined
 
       if _playerNames.length > 0
         _newPlayer = _playerNames[_playerNames.length - 1]
+
     when ActionTypes.RECEIVE_REGISTERED_PLAYER
       _newPlayer = action.data.player
       _playerNames = action.data.allPlayers
+
       if _newPlayer
         Announcer.announcePlayer _newPlayer
+
     when ActionTypes.RECEIVE_PLAYER_NAMES
       _playerNames = action.data.playerNames
+
       if _playerNames.length is 4
         _newPlayer = undefined
+
     when ActionTypes.RECEIVE_NEW_PLAYER
       _createdPlayer = action.data
       _newPlayer = action.data.name
       _playerNames.push action.data.name
       _unrecognized = undefined
+
     when ActionTypes.RECEIVE_SCORE_UPDATE
       _newPlayer = undefined
+
     when ActionTypes.RECEIVE_MATCH_ERROR
       if action.data.status is 'timeout'
         _newPlayer = undefined
         _playerNames = []
         _didTimeout = true
+
     when ActionTypes.RECEIVE_NFC_ERROR
       _unrecognized = action.data.nfc
+
     when ActionTypes.RECEIVE_PLAYER_MATCHES
       _playerMatches = action.data
+
   PlayerStore.emitChange()
 )
 

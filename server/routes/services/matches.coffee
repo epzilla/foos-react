@@ -757,6 +757,7 @@ MatchService.getSeriesHistory = (req, res) ->
 MatchService.getMatchesByPlayer = (req, res) ->
   Match.find({players: req.params.playerID})
     .populate('team1 team2')
+    .sort({'endTime': 'desc'})
     .exec (err, matches) ->
       if err
         res.status(500).send err
@@ -765,6 +766,7 @@ MatchService.getMatchesByPlayer = (req, res) ->
 MatchService.getMatchesByTeam = (req, res) ->
   Match.find( {$or: [{team1: req.params.teamID}, {team2: req.params.teamID}] })
     .populate('team1 team2')
+    .sort({'endTime': 'desc'})
     .exec (err, matches) ->
       if err
         res.status(500).send err
