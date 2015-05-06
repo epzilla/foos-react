@@ -13,9 +13,12 @@ if !String::includes
 module.exports =
 
   getCurrentMatch: ->
+    self = this
     Rest.get '/api/matches/current'
       .then (res) ->
         ServerActionCreator.receiveCurrentMatch res
+        if res and res.team1 and res.team2
+          self.getSeriesHistory res.team1._id, res.team2._id
 
   getSeriesHistory: (team1, team2) ->
     Rest.get('/api/matches/series/?team1=' + team1 + '&team2=' + team2)
@@ -68,13 +71,6 @@ module.exports =
   getHomeData: ->
     self = this
     self.getCurrentMatch()
-      .then (currentMatch) ->
-        if currentMatch
-          if currentMatch.team1 and currentMatch.team2
-            self.getSeriesHistory currentMatch.team1._id, currentMatch.team2._id
-      .catch (err) ->
-        console.error err.stack
-
     self.getRecentMatches()
     self.getPlayersInPool()
 

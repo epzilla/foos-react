@@ -118,7 +118,7 @@ Home = React.createClass
             <div className="jumbotron text-center">
               <h1>Good news, everyone!</h1>
               <p>The table is open.</p>
-              <img className="img img-responsive margin-centered" src="images/professor.jpg" />
+              <img className="img img-responsive img-rounded margin-centered" src="images/professor.jpg" />
               <div className="text-center pad-top-1em">
                 <Link className="btn btn-lg btn-primary" to="newMatch">
                   Start New Match
