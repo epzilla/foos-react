@@ -11,6 +11,7 @@ PlayerSchema = new Schema(
   matchesLost: Number
   gamesWon: Number
   gamesLost: Number
+  img: String
   rating: Number
   rank: Number
   pct: Number

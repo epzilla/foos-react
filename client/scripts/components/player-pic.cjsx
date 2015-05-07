@@ -7,6 +7,7 @@ Router = require 'react-router'
 getPlayerInfo = (id) ->
   {
     player: PlayerStore.getPlayerInfo(id)
+    fileToUpload: undefined
   }
 
 module.exports = React.createClass
@@ -14,6 +15,18 @@ module.exports = React.createClass
 
   _onChange: ->
     @setState getPlayerInfo(@getParams().playerID)
+
+  _handleFiles: (e) ->
+    self = this
+    if e.target.files[0]
+      @state.fileToUpload = e.target.files[0]
+
+  _submitPic: (e) ->
+    e.preventDefault()
+    formData = new FormData()
+    formData.append('img', @state.fileToUpload)
+    formData.append('player', JSON.stringify(@state.player))
+    Actions.submitPic formData
 
   getInitialState: ->
     getPlayerInfo(@getParams().playerID)
@@ -30,4 +43,11 @@ module.exports = React.createClass
 
   render: ->
     player = @state.player
-    <h1>{player.name}</h1>
+    <section>
+      <h1>{player.name}</h1>
+      <form onSubmit={@_submitPic} role="form" name="pic-upload" id="pic-upload" encType="multipart/form-data">
+        <img src={player.img} className="img-responsive img-rounded" />
+        <input type="file" name="img" onChange={@_handleFiles}/>
+        <input type="submit" value="Submit" />
+      </form>
+    </section>

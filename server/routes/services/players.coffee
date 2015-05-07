@@ -284,3 +284,21 @@ module.exports =
               console.error err
 
           i++
+
+  uploadPic: (req, res) ->
+    pl = JSON.parse(req.body.player)
+    newPicName = '/images/players/' + req.files.img.name
+    Player.findById pl._id, (err, player) ->
+      if err
+        res.status(500).send err
+
+      if player
+        player.img = newPicName
+        player.save (err, updatedPlayer) ->
+          if err
+            res.status(500).send()
+
+          console.log updatedPlayer
+          res.status(200).send()
+      else
+        res.status(400).send()

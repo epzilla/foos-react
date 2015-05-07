@@ -60,6 +60,9 @@ router.get '/carriers', carriers.findAll
 # Sounds
 # router.get '/sounds/random', sounds.getRandomSound
 
+#Pics
+router.post '/uploadPic', players.uploadPic
+
 module.exports =
   router: router
   init: init

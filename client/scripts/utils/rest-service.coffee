@@ -10,3 +10,6 @@ module.exports =
 
   put: (url, data) ->
     qwest.put(url, data, {dataType: 'json', responseType: 'json'})
+
+  upload: (url, data) ->
+    qwest.post(url, data, {dataType: 'formdata'})

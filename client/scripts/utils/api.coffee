@@ -135,3 +135,6 @@ module.exports =
       socket.emit 'heckle', {player: player, type: 'specific'}
     else
       socket.emit 'heckle', {type: 'generic'}
+
+  submitPic: (data) ->
+    Rest.upload('/api/uploadPic', data)

@@ -43,5 +43,8 @@ module.exports =
   submitSMS: (email) ->
     API.registerSMSNotification(email)
 
+  submitPic: (file) ->
+    API.submitPic(file)
+
   heckle: (player) ->
     API.heckle(player)
