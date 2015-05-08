@@ -69,6 +69,7 @@ module.exports =
       winner = null
       loser = null
       action = 'tie'
+      quickString = 'Too close to call'
     else if expected > 0.45 and expected <= 0.48
       winner = team2
       loser = team1
@@ -82,4 +83,5 @@ module.exports =
       winner: winner
       loser: loser
       action: action
+      quickString: quickString or (winner.title + ' will ' + action + ' ' + loser.title)
     }

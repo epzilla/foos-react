@@ -21,7 +21,8 @@ MatchSchema = new Schema(
   endTime: Date
   gameStartTime: Date
   gameNum: Number
-  active: Boolean)
+  active: Boolean
+  prediction: Schema.Types.Mixed)
 
 MatchSchema.plugin(deepPopulate)
 module.exports = mongoose.model('Match', MatchSchema)

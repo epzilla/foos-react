@@ -132,7 +132,7 @@ MatchService.addPlayerToPool = (data) ->
                 if err
                   console.error err
 
-                prediction = Utils.getPrediction(match.team1, match.team2)
+                prediction = match.prediction
 
                 if prediction.action is 'tie'
                   console.log('Prediction is too close to call between ' +
@@ -192,6 +192,8 @@ MatchService.create = (req, res) ->
         res.status(400).send err
       playerIDs = req.body.team1
       Array.prototype.push.apply playerIDs, req.body.team2
+      prediction = Utils.getPrediction(team1, team2)
+      console.log prediction
 
       match = new Match(
         team1: team1._id
@@ -205,6 +207,7 @@ MatchService.create = (req, res) ->
         endTime: null
         gameStartTime: now
         players: playerIDs
+        prediction: prediction
         gameNum: 1
         active: true)
 
@@ -231,7 +234,6 @@ MatchService.create = (req, res) ->
             sendPlayerNames populatedMatch
 
             code = getRandomCode()
-            prediction = Utils.getPrediction(populatedMatch.team1, populatedMatch.team2)
 
             if prediction.action is 'tie'
               console.log('Prediction is too close to call between ' +
@@ -266,6 +268,8 @@ MatchService.createRandomWithPlayers = (playerList, cb) ->
           status: 'teamNotFound'
           err: err
 
+      prediction = Utils.getPrediction(team1, team2)
+
       match = new Match(
         team1: team1._id
         team2: team2._id
@@ -279,7 +283,8 @@ MatchService.createRandomWithPlayers = (playerList, cb) ->
         endTime: null
         gameStartTime: now
         gameNum: 1
-        active: true)
+        active: true,
+        prediction: prediction)
 
       match.save (err, newMatch) ->
         if err

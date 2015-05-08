@@ -14,6 +14,7 @@ module.exports = React.createClass
     team2scores = []
     team1checkmark = null
     team2checkmark = null
+    prediction = null
 
     # Date and time formatting for display
     start = moment(match.startTime)
@@ -29,6 +30,13 @@ module.exports = React.createClass
       team1checkmark = <i className="fa fa-check text-success"></i>
     else
       team2checkmark = <i className="fa fa-check text-success"></i>
+
+    if match.prediction
+      prediction = <div className="row">
+                     <div className="col-xs-10 no-pad-left col-xs-offset-2 text-left footnote small-font pad-top-1em">
+                       The Oracle predicted: {match.prediction.quickString}
+                     </div>
+                   </div>
 
 
     # Collect the game scores
@@ -66,5 +74,6 @@ module.exports = React.createClass
             <i className="fa fa-clock-o"></i>&nbsp;Match time: {duration}m
           </div>
         </div>
+        {prediction}
       </div>
     </div>

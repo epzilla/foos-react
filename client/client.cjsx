@@ -50,4 +50,6 @@ $ ->
   Router.run(routes, HistoryLocation, (Handler) ->
     React.render(<Handler/>, document.body)
   )
+  if 'ontouchstart' of window
+    document.body.style['overflow-y'] = 'scroll'
   return

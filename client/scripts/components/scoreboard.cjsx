@@ -113,6 +113,8 @@ module.exports = React.createClass
       'winner': winner and winner._id is match.team2._id
     )
 
+    prediction = <div className="row pad-top-1em">The Oracle says: <em>"{match.prediction.quickString}"</em></div>
+
     i = 1
     while i <= 3
       gameNums.push(<GameNum key={'gameNum' + i} gameNum={i} currentGame={match.gameNum}/>)
@@ -181,6 +183,7 @@ module.exports = React.createClass
                 </button>
               </div>
             </div>
+            {prediction}
           </div>
         </div>
       </div>
