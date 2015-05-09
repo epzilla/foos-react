@@ -1,14 +1,16 @@
 Random = require './random'
 ls = require './local-storage'
+Settings = require 'scripts/stores/settings-store'
 _prediction = undefined
 
 iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent )
 
 announce = (words) ->
-  msg = new SpeechSynthesisUtterance words
-  if iOS
-    msg.rate = 0.3
-  window.speechSynthesis.speak msg
+  if not Settings.isMuted()
+    msg = new SpeechSynthesisUtterance words
+    if iOS
+      msg.rate = 0.3
+    window.speechSynthesis.speak msg
 
 getRandomPlayer = (playerNames) ->
   if playerNames and playerNames.length > 0
@@ -125,37 +127,38 @@ getGenericHeckleMessage = (player) ->
 
 module.exports =
   announcePlayer: (name) ->
-    if window.speechSynthesis
+    if window.speechSynthesis and not Settings.isMuted()
       firstName = name.split(' ')[0]
       words = getWelcomePhrase firstName
       announce words
 
   giveNewMatchInstructions: (match, nextSound) ->
-    sound = document.querySelector 'audio'
-    sound.src = nextSound
+    if not Settings.isMuted()
+      sound = document.querySelector 'audio'
+      sound.src = nextSound
 
-    if window.speechSynthesis
-      startMsg = getStartMessage()
-      ins = getMatchInstructions match
-      totalMsg = startMsg + ' ' + ins
+      if window.speechSynthesis
+        startMsg = getStartMessage()
+        ins = getMatchInstructions match
+        totalMsg = startMsg + ' ' + ins
 
-      msg = new SpeechSynthesisUtterance totalMsg
-      msg.rate = 0.3
-      msg.onend = (e) ->
-        if _prediction
-          pred = new SpeechSynthesisUtterance _prediction
-          pred.onend = (e) ->
+        msg = new SpeechSynthesisUtterance totalMsg
+        msg.rate = 0.3
+        msg.onend = (e) ->
+          if _prediction
+            pred = new SpeechSynthesisUtterance _prediction
+            pred.onend = (e) ->
+              sound.play()
+
+            window.speechSynthesis.speak pred
+          else
             sound.play()
 
-          window.speechSynthesis.speak pred
-        else
+        window.speechSynthesis.speak msg
+      else
+        window.setTimeout(->
           sound.play()
-
-      window.speechSynthesis.speak msg
-    else
-      window.setTimeout(->
-        sound.play()
-      , 1000)
+        , 1000)
 
   announceSwitch: ->
     if window.speechSynthesis

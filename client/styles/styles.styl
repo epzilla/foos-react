@@ -169,6 +169,9 @@ input#by-team[type=radio]:checked
   border 1px solid silver
   border-radius 5px
   box-shadow lightShadow
+  .footnote
+    font-style italic
+    color #B2B2B2
   @media (max-width 600px)
     width 90%
 
@@ -185,9 +188,7 @@ input#by-team[type=radio]:checked
     font-size 28px
     font-weight bolder !important
   .footnote
-    font-style italic
     font-size 20px
-    color #B2B2B2
   @media (max-width 1050px)
     width 75%
   @media (max-width 925px)
@@ -443,3 +444,31 @@ ul.player-list
   p
     font-size 1.25em
     margin 1.25em 0
+
+.btn-mute
+  height 40px
+  background-color #d9534f
+  border-color #943A37
+  color white
+  &:focus, &:hover
+    color white
+    background-color lighten(#d9534f, 5)
+    border-color lighten(#943A37, 5)
+  &:active
+    color white
+    background-color darken(#d9534f, 5)
+    border-color darken(#943A37, 5)
+
+.btn-unmute
+  height 40px
+  background-color tealGreen
+  border-color darken(tealGreen, 10)
+  color white
+  &:focus, &:hover
+    color white
+    background-color lighten(tealGreen, 5)
+    border-color tealGreen
+  &:active
+    color white
+    background-color darken(tealGreen, 5)
+    border-color darken(tealGreen, 10)

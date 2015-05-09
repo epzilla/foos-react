@@ -1,7 +1,7 @@
 Dispatcher = require 'scripts/dispatcher/app-dispatcher'
 ActionTypes = require('scripts/constants/constants').ActionTypes
 Announcer = require 'scripts/utils/announcer'
-
+Settings = require 'scripts/stores/settings-store'
 announcementQueued = false
 
 module.exports =
@@ -32,7 +32,8 @@ module.exports =
     sound = document.querySelector 'audio'
     sound.src = data.sound
     if data.status isnt 'new'
-      sound.play()
+      if not Settings.isMuted()
+        sound.play()
       match = data.updatedMatch
       thisGame = match.scores[match.gameNum - 1]
       totalPoints = thisGame.team1 + thisGame.team2

@@ -48,3 +48,13 @@ module.exports =
 
   heckle: (player) ->
     API.heckle(player)
+
+  mute: ->
+    Dispatcher.handleViewAction(
+      type: ActionTypes.MUTE
+    )
+
+  unmute: ->
+    Dispatcher.handleViewAction(
+      type: ActionTypes.UNMUTE
+    )

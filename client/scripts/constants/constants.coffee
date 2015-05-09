@@ -25,6 +25,8 @@ module.exports =
     RECEIVE_ALERT: null
     CLEAR_ALERTS: null
     OFFLINE_SCORE_UPDATE: null
+    MUTE: null
+    UNMUTE: null
   )
 
   PayloadSources: keyMirror(
