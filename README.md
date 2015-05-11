@@ -21,6 +21,6 @@ Foos React
 - After build, everything you need should be in the `/dist` directory, and you can just run `node dist/server.js` to run.
 
 ## TODOs
-- Add ability to load profile pics
+- Improve profile pic uploading
 - Make announcer sounds more configurable
 - Add more in-depth stats (head-to-head between players/teams in particular)
