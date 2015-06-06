@@ -7,7 +7,7 @@ conf = require './conf/config'
 routes = require './routes/api'
 server = require('http').createServer(app)
 
-port = process.env.PORT or conf.PORT or 3000
+port = conf.PORT or 3000
 env = conf.ENVIRONMENT or 'dev'
 
 # configure app

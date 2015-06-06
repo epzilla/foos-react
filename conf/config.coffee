@@ -1,4 +1,4 @@
-env = 'prod'
+env = 'dev'
 
 if env is 'prod' or env is 'production'
   address = 'http://snappy-foos.herokuapp.com'
