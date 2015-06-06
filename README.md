@@ -4,7 +4,7 @@ Foos React
 # Installation
 ### Prerequisites
 - NodeJS and npm
-- MongoDB (create a db named `foos`, and collections named `players`, `teams`, `matches`, `carriers`, and `notifications`)
+- MongoDB
 - Bower `npm install -g bower`
 - Gulp `npm install -g gulp`
 
@@ -16,7 +16,7 @@ Foos React
 - `gulp` to start server (make sure in `/server/conf/config.coffee`, that `ENVIRONMENT` is set to `"dev"`)
 
 ### Production Build
-- Inside `/server/conf/config.coffee`, change `ENVIRONMENT` to either `"prod"` or `"production"`. 
+- Inside `/server/conf/config.coffee`, change `ENVIRONMENT` to either `"prod"` or `"production"`.
 - Run `gulp build`
 - After build, everything you need should be in the `/dist` directory, and you can just run `node dist/server.js` to run.
 
