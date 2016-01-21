@@ -1,6 +1,8 @@
 Foos React
 ==========
 
+Live site: http://snappy-foos.herokuapp.com
+
 # Installation
 ### Prerequisites
 - NodeJS and npm
